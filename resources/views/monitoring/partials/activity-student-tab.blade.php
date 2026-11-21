@@ -19,7 +19,7 @@
                             :class="studentSubTab === 'pasif' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                         <span>Pasif & Kritis (Perlu Perhatian)</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black"
+                        <span class="px-1.5 py-0.2 rounded-md text-[11px] font-black"
                               :class="studentSubTab === 'pasif' ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300'">
                             {{ count($inactive_students) }}
                         </span>
@@ -80,7 +80,7 @@
                                             default => 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
                                         };
                                     @endphp
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border {{ $healthBadgeClass }}">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider border {{ $healthBadgeClass }}">
                                         {{ $s['health_status'] }}
                                     </span>
                                 </div>
@@ -179,11 +179,11 @@
                                                 <span class="font-semibold text-slate-800 dark:text-slate-200 block text-[11px]">
                                                     {{ \Carbon\Carbon::parse($s['last_session_at'])->diffForHumans() }}
                                                 </span>
-                                                <span class="text-[10px] text-slate-400">
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400">
                                                     {{ \Carbon\Carbon::parse($s['last_session_at'])->format('d M Y') }}
                                                 </span>
                                             @else
-                                                <span class="text-slate-400 italic text-[11px]">-</span>
+                                                <span class="text-slate-500 dark:text-slate-400 italic text-[11px]">-</span>
                                             @endif
                                         </td>
 
@@ -198,7 +198,7 @@
                                             default => 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
                                         };
                                     @endphp
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border {{ $healthBadgeClass }}">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider border {{ $healthBadgeClass }}">
                                                 {{ $s['health_status'] }}
                                             </span>
                                         </td>
@@ -256,7 +256,7 @@
                                             {{ $s['days_since_last'] }} Hari
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-xl text-[10px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 shrink-0">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-xl text-[11px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 shrink-0">
                                             Belum Pernah
                                         </span>
                                     @endif
@@ -265,7 +265,7 @@
                                 <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400">
                                     <div class="space-y-0.5 min-w-0">
                                         <div class="flex items-center gap-1.5">
-                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">{{ $s['stage'] }}</span>
+                                            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">{{ $s['stage'] }}</span>
                                             <span>• {{ $s['last_session_at'] ? \Carbon\Carbon::parse($s['last_session_at'])->format('d M Y') : 'Nol Bimbingan' }}</span>
                                         </div>
                                         <p class="truncate">P1: {{ $s['pembimbing1_name'] ?: '-' }} | P2: {{ $s['pembimbing2_name'] ?: '-' }}</p>
@@ -297,7 +297,7 @@
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 text-xs text-slate-700 dark:text-slate-300">
                                 @foreach($inactive_students as $idx => $s)
                                     <tr class="hover:bg-rose-50/30 dark:hover:bg-rose-950/10 transition-colors">
-                                        <td class="py-4 px-4 text-center font-bold text-slate-400">{{ $idx + 1 }}</td>
+                                        <td class="py-4 px-4 text-center font-bold text-slate-500 dark:text-slate-400">{{ $idx + 1 }}</td>
                                         
                                         <!-- Profile -->
                                         <td class="py-4 px-5">
@@ -327,7 +327,7 @@
                                                     {{ $s['days_since_last'] }} Hari
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-300">
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-black bg-rose-100 text-rose-800 border border-rose-300">
                                                     Belum Pernah Sesi
                                                 </span>
                                             @endif
@@ -335,7 +335,7 @@
 
                                         <!-- Status & Sesi Terakhir -->
                                         <td class="py-4 px-4 whitespace-nowrap">
-                                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mb-1">
+                                            <span class="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mb-1">
                                                 {{ $s['stage'] }}
                                             </span>
                                             <p class="text-[11px] text-slate-500">

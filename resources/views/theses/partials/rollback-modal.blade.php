@@ -29,7 +29,7 @@
                                 </div>
                                 <div>
                                     <h3 class="text-sm font-black text-rose-800 dark:text-rose-200 uppercase tracking-widest">Konfirmasi Rollback Pembimbing</h3>
-                                    <p class="text-[10px] text-rose-600 dark:text-rose-400 font-bold uppercase mt-0.5">Kembalikan status skripsi ke Menunggu</p>
+                                    <p class="text-[11px] text-rose-600 dark:text-rose-400 font-bold uppercase mt-0.5">Kembalikan status skripsi ke Menunggu</p>
                                 </div>
                             </div>
 
@@ -41,24 +41,24 @@
                                     </p>
                                     <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-1.5 text-[11px]">
                                         <div class="flex justify-between">
-                                            <span class="text-slate-400 uppercase font-black text-[9px]">Pembimbing 1 Saat Ini:</span>
+                                            <span class="text-slate-500 dark:text-slate-400 uppercase font-black text-[11px]">Pembimbing 1 Saat Ini:</span>
                                             <span class="font-extrabold text-slate-700 dark:text-slate-200" x-text="rollbackData.p1"></span>
                                         </div>
                                         <div class="flex justify-between">
-                                            <span class="text-slate-400 uppercase font-black text-[9px]">Pembimbing 2 Saat Ini:</span>
+                                            <span class="text-slate-500 dark:text-slate-400 uppercase font-black text-[11px]">Pembimbing 2 Saat Ini:</span>
                                             <span class="font-extrabold text-slate-700 dark:text-slate-200" x-text="rollbackData.p2"></span>
                                         </div>
                                     </div>
-                                    <p class="text-[10px] text-amber-600 dark:text-amber-400 font-bold italic">
+                                    <p class="text-[11px] text-amber-600 dark:text-amber-400 font-bold italic">
                                         * Status skripsi akan dikembalikan ke 'pending', kuota pembimbing akan dilepaskan, dan seluruh riwayat ACC awal akan di-reset.
                                     </p>
                                 </div>
 
                                 <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
-                                    <button type="button" @click="rollbackModalOpen = false" class="px-5 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors cursor-pointer">
+                                    <button type="button" @click="rollbackModalOpen = false" class="px-5 py-2.5 text-[11px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors cursor-pointer">
                                         Batal
                                     </button>
-                                    <button type="submit" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md shadow-rose-500/20 cursor-pointer">
+                                    <button type="submit" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-md shadow-rose-500/20 cursor-pointer">
                                         Ya, Rollback Penugasan
                                     </button>
                                 </div>

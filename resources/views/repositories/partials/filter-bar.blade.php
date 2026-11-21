@@ -8,11 +8,11 @@
                 <div class="space-y-4.5 sm:space-y-5">
                     <!-- Baris 1: Pencarian Utama (Full Width + Tombol Cari) -->
                     <div x-data="{ q: '{{ addslashes($search) }}' }">
-                        <label for="search" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Kata Kunci / Judul / Nama</label>
+                        <label for="search" class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">Kata Kunci / Judul / Nama</label>
                         <div class="flex items-center gap-2">
                             <!-- Input Wrapper -->
                             <div class="relative flex-1 min-w-0">
-                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 </div>
                                 <input type="text" 
@@ -26,7 +26,7 @@
                                         x-cloak
                                         aria-label="Hapus pencarian arsip"
                                         @click="q = ''; document.getElementById('search').value = ''; document.getElementById('filterForm').submit();"
-                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
                                         title="Reset kata kunci pencarian">
                                     <div class="w-4 h-4 rounded-full bg-slate-200 hover:bg-rose-100 dark:bg-slate-700 dark:hover:bg-rose-950/60 flex items-center justify-center text-slate-500 hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-300 transition-colors">
                                         <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +49,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5 sm:gap-4 items-end">
                         <!-- Angkatan Dropdown -->
                         <div class="sm:col-span-5 lg:col-span-4 min-w-0">
-                            <label for="year" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Tahun Angkatan</label>
+                            <label for="year" class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">Tahun Angkatan</label>
                             <select name="year" id="year" onchange="this.form.submit()" 
                                     class="w-full h-10 pl-3.5 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
                                 <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Angkatan</option>
@@ -61,7 +61,7 @@
 
                         <!-- Dosen Pembimbing Dropdown -->
                         <div class="sm:col-span-7 lg:col-span-8 min-w-0">
-                            <label for="advisor" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Dosen Pembimbing</label>
+                            <label for="advisor" class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">Dosen Pembimbing</label>
                             <select name="advisor" id="advisor" onchange="this.form.submit()" 
                                     class="w-full h-10 pl-3.5 pr-8 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all cursor-pointer shadow-2xs">
                                 <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">Semua Dosen Pembimbing</option>
@@ -76,7 +76,7 @@
                 <!-- Horizontal Topic Filter Pills -->
                 <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60">
                     <div class="flex items-center gap-2 overflow-x-auto pb-1 custom-scrollbar">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 shrink-0 mr-1">Kategori:</span>
+                        <span class="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 shrink-0 mr-1">Kategori:</span>
                         @foreach($topics as $key => $topData)
                             <button type="button" 
                                     onclick="document.getElementById('topicInput').value='{{ $key }}'; document.getElementById('filterForm').submit();"
@@ -97,22 +97,22 @@
                         <span class="text-slate-300 dark:text-slate-600">•</span>
                         <div class="flex items-center gap-1.5 flex-wrap">
                             @if($search)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 text-[10px] font-bold border border-orange-200 dark:border-orange-800">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 text-[11px] font-bold border border-orange-200 dark:border-orange-800">
                                     "{{ $search }}"
                                 </span>
                             @endif
                             @if($year)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold border border-indigo-200 dark:border-indigo-800">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[11px] font-bold border border-indigo-200 dark:border-indigo-800">
                                     Angkatan {{ $year }}
                                 </span>
                             @endif
                             @if($advisor)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 text-[10px] font-bold border border-purple-200 dark:border-purple-800">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 text-[11px] font-bold border border-purple-200 dark:border-purple-800">
                                     Pembimbing: {{ $advisor }}
                                 </span>
                             @endif
                             @if($topic && $topic !== 'all')
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-[10px] font-bold border border-amber-200 dark:border-amber-800">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-200 dark:border-amber-800">
                                     {{ $topics[$topic]['label'] ?? $topic }}
                                 </span>
                             @endif

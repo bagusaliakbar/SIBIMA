@@ -59,7 +59,7 @@
                                     <span class="text-slate-500 dark:text-slate-400 font-medium">Mahasiswa:</span>
                                     <div class="text-right">
                                         <span class="font-bold text-slate-800 dark:text-slate-200" x-text="cancelData.student_name"></span>
-                                        <span class="text-slate-400 text-[10px] ml-1" x-text="'(' + cancelData.student_npm + ')'"></span>
+                                        <span class="text-slate-500 dark:text-slate-400 text-[11px] ml-1" x-text="'(' + cancelData.student_npm + ')'"></span>
                                     </div>
                                 </div>
                                 <div class="h-px bg-slate-200/70 dark:bg-slate-700/70"></div>
@@ -77,7 +77,7 @@
                             <!-- Group Option -->
                             <template x-if="cancelData.is_group">
                                 <div class="p-3 bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 rounded-xl space-y-2">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
                                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                         <span>Sesi Bimbingan Bersama Terdeteksi</span>
                                     </span>

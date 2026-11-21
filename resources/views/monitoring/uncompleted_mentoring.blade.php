@@ -23,7 +23,7 @@
                 </div>
                 <div class="flex items-baseline gap-2">
                     <span class="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400 tracking-tight">{{ number_format($global_uncompleted_count) }}</span>
-                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500">sesi</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">sesi</span>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
                     <span class="inline-block w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
@@ -42,7 +42,7 @@
                 </div>
                 <div class="flex items-baseline gap-2">
                     <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ number_format($global_overdue_count) }}</span>
-                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500">sesi</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">sesi</span>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
                     <span class="inline-block w-1.5 h-1.5 rounded-full bg-orange-500"></span>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="flex items-baseline gap-2">
                     <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ number_format($unique_dosen_count) }}</span>
-                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500">dosen</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">dosen</span>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
                     <span class="inline-block w-1.5 h-1.5 rounded-full bg-blue-500"></span>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="flex items-baseline gap-2">
                     <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ number_format($affected_students_count) }}</span>
-                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500">mahasiswa</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">mahasiswa</span>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
                     <span class="inline-block w-1.5 h-1.5 rounded-full bg-purple-500"></span>
@@ -98,21 +98,21 @@
                     <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'all'])) }}"
                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'all') === 'all' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
                         <span>Semua Terlewat</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'all') === 'all' ? 'bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
+                        <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($filters['scope'] ?? 'all') === 'all' ? 'bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $global_uncompleted_count }}
                         </span>
                     </a>
                     <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'overdue'])) }}"
                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'all') === 'overdue' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
                         <span>Lewat Hari (H-1+)</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'all') === 'overdue' ? 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
+                        <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($filters['scope'] ?? 'all') === 'overdue' ? 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $global_overdue_count }}
                         </span>
                     </a>
                     <a href="{{ route('monitoring.uncompleted-mentoring', array_merge(request()->query(), ['scope' => 'today'])) }}"
                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ ($filters['scope'] ?? 'all') === 'today' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' }}">
                         <span>Hari Ini (Terlewat)</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($filters['scope'] ?? 'all') === 'today' ? 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
+                        <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($filters['scope'] ?? 'all') === 'today' ? 'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $global_today_count }}
                         </span>
                     </a>
@@ -180,7 +180,7 @@
                                    value="{{ $filters['search'] ?? '' }}" 
                                    placeholder="Cari nama dosen, nama mahasiswa, NPM, atau topik..." 
                                    class="w-full pl-9 pr-20 text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500 shadow-2xs">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
                             <div class="absolute inset-y-0 right-0 pr-1.5 flex items-center gap-1">
@@ -217,7 +217,7 @@
                                             <h4 class="text-sm sm:text-base font-black text-slate-900 dark:text-white">
                                                 {{ $dosen->name }}
                                             </h4>
-                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40">
+                                            <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40">
                                                 {{ ucfirst($dosen->role) }}
                                             </span>
                                         </div>
@@ -257,7 +257,7 @@
                             <!-- Sessions Table inside Lecturer Card (Desktop) -->
                             <div class="hidden md:block overflow-x-auto">
                                 <table class="w-full text-xs text-left">
-                                    <thead class="text-[10px] text-slate-400 dark:text-slate-500 uppercase bg-slate-50/70 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
+                                    <thead class="text-[11px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/70 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                                         <tr>
                                             <th class="py-3 px-5">Jadwal Sesi</th>
                                             <th class="py-3 px-5">Mahasiswa</th>
@@ -279,7 +279,7 @@
                                                     <p class="font-bold text-slate-800 dark:text-slate-200">
                                                         {{ $session->scheduled_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB
                                                     </p>
-                                                    <p class="text-[10px] text-slate-400 font-medium">
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                                         {{ ucfirst($session->type ?? 'offline') }} {{ $session->location ? "• {$session->location}" : '' }}
                                                     </p>
                                                 </td>
@@ -288,31 +288,31 @@
                                                         <img src="{{ $student?->avatar_url }}" alt="" class="w-6 h-6 rounded-lg object-cover">
                                                         <div>
                                                             <p class="font-bold text-slate-800 dark:text-slate-200">{{ $student?->name ?? '-' }}</p>
-                                                            <p class="text-[10px] text-slate-400">{{ $student?->identifier ?? '-' }}</p>
+                                                            <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $student?->identifier ?? '-' }}</p>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td class="py-3 px-5">
                                                     <p class="font-bold text-slate-700 dark:text-slate-300 line-clamp-1 max-w-xs">{{ $session->topic }}</p>
-                                                    <p class="text-[10px] text-slate-400 line-clamp-1 max-w-xs">{{ $session->thesis?->title ?? '-' }}</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 max-w-xs">{{ $session->thesis?->title ?? '-' }}</p>
                                                 </td>
                                                 <td class="py-3 px-5 whitespace-nowrap">
                                                     @if($session->student_attendance_status === 'attending')
-                                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                                                             Hadir
                                                         </span>
                                                     @elseif($session->student_attendance_status === 'permission')
-                                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800" title="{{ $session->student_attendance_reason }}">
+                                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800" title="{{ $session->student_attendance_reason }}">
                                                             Izin
                                                         </span>
                                                     @else
-                                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+                                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
                                                             Pending
                                                         </span>
                                                     @endif
                                                 </td>
                                                 <td class="py-3 px-5 whitespace-nowrap">
-                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                                                         {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
                                                     </span>
@@ -346,7 +346,7 @@
                                                     <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $student?->identifier ?? '-' }}</p>
                                                 </div>
                                             </div>
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 shrink-0">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 shrink-0">
                                                 {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
                                             </span>
                                         </div>
@@ -360,11 +360,11 @@
                                         <div class="flex items-center justify-between pt-1">
                                             <div>
                                                 @if($session->student_attendance_status === 'attending')
-                                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Hadir</span>
+                                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Hadir</span>
                                                 @elseif($session->student_attendance_status === 'permission')
-                                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">Izin</span>
+                                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">Izin</span>
                                                 @else
-                                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Pending</span>
+                                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Pending</span>
                                                 @endif
                                             </div>
                                             <a href="{{ route('mentoring-sessions.edit', $session) }}"
@@ -392,7 +392,7 @@
                 <!-- VIEW 2: FLAT SESSION LIST (Desktop) -->
                 <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-sm text-left">
-                        <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
+                        <thead class="text-[11px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                             <tr>
                                 <th class="py-4 px-6 text-center w-14">No</th>
                                 <th class="py-4 px-6">Waktu Jadwal</th>
@@ -413,51 +413,51 @@
                                     $daysOver = $isOverdue ? (int) $session->scheduled_at->copy()->startOfDay()->diffInDays(now()->startOfDay()) : 0;
                                 @endphp
                                 <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-700/40 transition-colors">
-                                    <td class="py-4 px-6 text-center text-xs font-bold text-slate-400">
+                                    <td class="py-4 px-6 text-center text-xs font-bold text-slate-500 dark:text-slate-400">
                                         {{ $index + 1 }}
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200">
                                             {{ $session->scheduled_at->locale('id')->translatedFormat('d M Y, H:i') }}
                                         </p>
-                                        <p class="text-[10px] text-slate-400 font-medium">
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                             {{ ucfirst($session->type ?? 'offline') }} {{ $session->location ? "• {$session->location}" : '' }}
                                         </p>
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200">{{ $dosen?->name ?? '-' }}</p>
-                                        <p class="text-[10px] text-slate-400">{{ $dosen?->identifier ? 'NIDN: ' . $dosen->identifier : '-' }}</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $dosen?->identifier ? 'NIDN: ' . $dosen->identifier : '-' }}</p>
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
                                         <div class="flex items-center gap-2.5">
                                             <img src="{{ $student?->avatar_url }}" alt="" class="w-7 h-7 rounded-lg object-cover">
                                             <div>
                                                 <p class="text-xs font-bold text-slate-800 dark:text-slate-200">{{ $student?->name ?? '-' }}</p>
-                                                <p class="text-[10px] text-slate-400 font-medium">{{ $student?->identifier ?? '-' }}</p>
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{{ $student?->identifier ?? '-' }}</p>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="py-4 px-6">
                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-300 line-clamp-1 max-w-sm">{{ $session->topic }}</p>
-                                        <p class="text-[11px] text-slate-400 line-clamp-1 max-w-sm">{{ $session->thesis?->title ?? '-' }}</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 max-w-sm">{{ $session->thesis?->title ?? '-' }}</p>
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
                                         @if($session->student_attendance_status === 'attending')
-                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                            <span class="px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                                                 Hadir
                                             </span>
                                         @elseif($session->student_attendance_status === 'permission')
-                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800" title="{{ $session->student_attendance_reason }}">
+                                            <span class="px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800" title="{{ $session->student_attendance_reason }}">
                                                 Izin
                                             </span>
                                         @else
-                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+                                            <span class="px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
                                                 Pending
                                             </span>
                                         @endif
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60">
                                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                                             {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
                                         </span>
@@ -512,7 +512,7 @@
                                         <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $student?->identifier ?? '-' }}</p>
                                     </div>
                                 </div>
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 shrink-0">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 shrink-0">
                                     {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
                                 </span>
                             </div>
@@ -521,11 +521,11 @@
                                 <div class="flex items-center justify-between gap-2">
                                     <span class="font-bold text-slate-700 dark:text-slate-200 truncate">Dosen: {{ $dosen?->name ?? '-' }}</span>
                                     @if($session->student_attendance_status === 'attending')
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">Hadir</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">Hadir</span>
                                     @elseif($session->student_attendance_status === 'permission')
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shrink-0">Izin</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shrink-0">Izin</span>
                                     @else
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 shrink-0">Pending</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 shrink-0">Pending</span>
                                     @endif
                                 </div>
                                 <p class="font-semibold text-slate-800 dark:text-slate-100">{{ $session->topic }}</p>
@@ -610,7 +610,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <button type="button" @click="closeReminderModal()" aria-label="Tutup modal pengingat WhatsApp" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer">
+                            <button type="button" @click="closeReminderModal()" aria-label="Tutup modal pengingat WhatsApp" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -621,7 +621,7 @@
                             <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-700 flex items-center justify-between">
                                 <div>
                                     <span class="text-xs font-black text-slate-800 dark:text-slate-200 block" x-text="modalData.dosenName"></span>
-                                    <span class="text-[11px] text-slate-400 font-mono" x-text="modalData.dosenPhone || 'Nomor WA belum diatur'"></span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 font-mono" x-text="modalData.dosenPhone || 'Nomor WA belum diatur'"></span>
                                 </div>
                                 <span class="px-2.5 py-1 rounded-xl text-xs font-black bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400" x-text="modalData.sessionCount + ' Sesi Tertunda'"></span>
                             </div>
@@ -635,7 +635,7 @@
                                           rows="8" 
                                           x-model="modalData.messageText"
                                           class="w-full text-xs font-medium rounded-2xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:ring-emerald-500 focus:border-emerald-500 p-3 leading-relaxed shadow-2xs"></textarea>
-                                <p class="text-[11px] text-slate-400 mt-1">Anda dapat menyesuaikan isi pesan di atas sebelum mengirimkannya.</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Anda dapat menyesuaikan isi pesan di atas sebelum mengirimkannya.</p>
                             </div>
                         </div>
 

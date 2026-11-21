@@ -2,7 +2,7 @@
                                 <button type="button" x-ref="button" @click="toggle()" :aria-expanded="isOpen" aria-label="Buka pusat notifikasi" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all relative cursor-pointer" title="Notifikasi">
                                     <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                     <template x-if="unreadCount > 0">
-                                        <span style="top: 2px; right: 2px;" class="absolute flex h-3.5 min-w-[14px] px-1 items-center justify-center rounded-full bg-rose-600 text-[9px] font-black text-white border border-white dark:border-slate-800 leading-none select-none shadow-xs pointer-events-none">
+                                        <span style="top: 2px; right: 2px;" class="absolute flex h-3.5 min-w-[14px] px-1 items-center justify-center rounded-full bg-rose-600 text-[11px] font-black text-white border border-white dark:border-slate-800 leading-none select-none shadow-xs pointer-events-none">
                                             <span x-text="unreadCount > 9 ? '9+' : unreadCount"></span>
                                         </span>
                                     </template>
@@ -24,7 +24,7 @@
                                     <div class="p-4 border-b border-slate-50 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
                                         <div class="flex items-center gap-2">
                                             <h3 class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Notifikasi</h3>
-                                            <span x-show="unreadCount > 0" class="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[10px] font-black" x-text="unreadCount + ' Baru'"></span>
+                                            <span x-show="unreadCount > 0" class="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[11px] font-black" x-text="unreadCount + ' Baru'"></span>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <!-- Push Notification Device Toggle Button -->
@@ -54,7 +54,7 @@
                                                 </template>
                                             </button>
 
-                                            <button type="button" @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
+                                            <button type="button" @click="markAllAsRead()" x-show="unreadCount > 0" class="text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
                                                 Tandai semua dibaca
                                             </button>
                                         </div>
@@ -67,7 +67,7 @@
                                                 <div class="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-3">
                                                     <svg class="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                                                 </div>
-                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Tidak ada notifikasi baru</p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Tidak ada notifikasi baru</p>
                                             </div>
                                         </template>
 
@@ -153,7 +153,7 @@
                                                         </div>
                                                     </template>
                                                     <div class="flex items-center gap-2 mt-1.5">
-                                                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium" x-text="formatDate(notif.created_at)"></span>
+                                                        <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium" x-text="formatDate(notif.created_at)"></span>
                                                         <span x-show="!notif.read_at" class="text-[11px] font-black text-orange-600 dark:text-orange-400">&bull; Baru</span>
                                                     </div>
 
@@ -164,13 +164,13 @@
                                                             <template x-if="attendanceSuccess[notif.data.mentoring_id]">
                                                                 <div class="flex items-center gap-1.5 py-0.5 text-[11px] font-bold">
                                                                     <template x-if="attendanceSuccess[notif.data.mentoring_id] === 'attending'">
-                                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 text-[10px] font-black uppercase tracking-wider">
+                                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 text-[11px] font-black uppercase tracking-wider">
                                                                             <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                                                             <span>Akan Hadir</span>
                                                                         </span>
                                                                     </template>
                                                                     <template x-if="attendanceSuccess[notif.data.mentoring_id] === 'permission'">
-                                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/80 text-[10px] font-black uppercase tracking-wider">
+                                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/80 text-[11px] font-black uppercase tracking-wider">
                                                                             <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"/></svg>
                                                                             <span>Izin Diajukan</span>
                                                                         </span>
@@ -186,7 +186,7 @@
                                                                         <button type="button" 
                                                                                 @click.stop="confirmAttendance(notif, 'attending')" 
                                                                                 :disabled="attendanceLoading[notif.data.mentoring_id]"
-                                                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase tracking-wider shadow-2xs transition-all cursor-pointer disabled:opacity-50">
+                                                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black uppercase tracking-wider shadow-2xs transition-all cursor-pointer disabled:opacity-50">
                                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                                                             <span>Akan Hadir</span>
                                                                         </button>
@@ -194,12 +194,12 @@
                                                                         <button type="button" 
                                                                                 @click.stop="activePermissionInput = notif.id" 
                                                                                 :disabled="attendanceLoading[notif.data.mentoring_id]"
-                                                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-600 text-[10px] font-black uppercase tracking-wider shadow-2xs transition-all cursor-pointer disabled:opacity-50">
+                                                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-600 text-[11px] font-black uppercase tracking-wider shadow-2xs transition-all cursor-pointer disabled:opacity-50">
                                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"/></svg>
                                                                             <span>Izin</span>
                                                                         </button>
 
-                                                                        <span x-show="attendanceLoading[notif.data.mentoring_id]" class="text-[10px] text-slate-400 animate-pulse font-medium">Menyimpan...</span>
+                                                                        <span x-show="attendanceLoading[notif.data.mentoring_id]" class="text-[11px] text-slate-500 dark:text-slate-400 animate-pulse font-medium">Menyimpan...</span>
                                                                     </div>
 
                                                                     <!-- Inline Reason Form for Izin -->
@@ -213,12 +213,12 @@
                                                                             <button type="button" 
                                                                                     @click.stop="submitPermission(notif)"
                                                                                     :disabled="attendanceLoading[notif.data.mentoring_id]"
-                                                                                    class="px-2.5 py-1 rounded-md bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer">
+                                                                                    class="px-2.5 py-1 rounded-md bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer">
                                                                                 Kirim Izin
                                                                             </button>
                                                                             <button type="button" 
                                                                                     @click.stop="activePermissionInput = null" 
-                                                                                    class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors cursor-pointer">
+                                                                                    class="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors cursor-pointer">
                                                                                 Batal
                                                                             </button>
                                                                         </div>

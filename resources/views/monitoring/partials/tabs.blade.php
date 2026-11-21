@@ -15,7 +15,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
         </svg>
         <span>Monitoring Mingguan</span>
-        <span class="px-2 py-0.5 text-[10px] font-black rounded-full uppercase tracking-wider {{ request()->routeIs('monitoring.weekly') ? 'bg-white/20 text-white' : 'bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40' }}">
+        <span class="px-2 py-0.5 text-[11px] font-black rounded-full uppercase tracking-wider {{ request()->routeIs('monitoring.weekly') ? 'bg-white/20 text-white' : 'bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40' }}">
             Wajib P1 & P2
         </span>
     </a>
@@ -27,7 +27,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
         </svg>
         <span>Radar Keaktifan</span>
-        <span class="px-2 py-0.5 text-[10px] font-black rounded-full uppercase tracking-wider {{ request()->routeIs('monitoring.activity*') ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40' }}">
+        <span class="px-2 py-0.5 text-[11px] font-black rounded-full uppercase tracking-wider {{ request()->routeIs('monitoring.activity*') ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40' }}">
             Ranking
         </span>
     </a>
@@ -52,7 +52,7 @@
         </svg>
         <span>Sesi Belum Selesai</span>
         @if($uncompletedCount > 0)
-            <span class="px-2 py-0.5 text-[10px] font-black rounded-full uppercase tracking-wider {{ request()->routeIs('monitoring.uncompleted-mentoring*') ? 'bg-white/20 text-white' : 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800/40' }}">
+            <span class="px-2 py-0.5 text-[11px] font-black rounded-full uppercase tracking-wider {{ request()->routeIs('monitoring.uncompleted-mentoring*') ? 'bg-white/20 text-white' : 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800/40' }}">
                 {{ $uncompletedCount }}
             </span>
         @endif

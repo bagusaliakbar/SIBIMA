@@ -61,7 +61,7 @@
                     <h5 id="{{ $uid }}_inspTitle" class="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">
                         Memuat Tahapan...
                     </h5>
-                    <span id="{{ $uid }}_inspBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 text-orange-800 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60">
+                    <span id="{{ $uid }}_inspBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-orange-50 text-orange-800 border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60">
                         Aktif
                     </span>
                 </div>
@@ -144,15 +144,15 @@
         if (stage.isCurrent) {
             iconBox.className = 'w-11 h-11 rounded-xl bg-orange-600 text-white flex items-center justify-center shrink-0 font-black text-sm shadow-xs';
             iconBox.textContent = stage.num;
-            badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60';
+            badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60';
         } else if (stage.isCompleted) {
             iconBox.className = 'w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 font-black text-sm shadow-xs';
             iconBox.textContent = '✓';
-            badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60';
+            badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60';
         } else {
             iconBox.className = 'w-11 h-11 rounded-xl bg-slate-500 text-white flex items-center justify-center shrink-0 font-black text-sm shadow-xs';
             iconBox.textContent = stage.num;
-            badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
+            badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
         }
 
         if (stage.isLocked) {

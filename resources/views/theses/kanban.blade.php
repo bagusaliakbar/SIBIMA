@@ -27,7 +27,7 @@
                        aria-label="Cari mahasiswa, NPM, atau judul skripsi"
                        placeholder="Cari mahasiswa, NPM, atau judul..." 
                        class="w-full border-0 bg-transparent p-0 text-xs font-medium text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-0">
-                <button type="button" x-show="search" @click="search = ''" aria-label="Hapus kata kunci pencarian" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 shrink-0 cursor-pointer p-1">
+                <button type="button" x-show="search" @click="search = ''" aria-label="Hapus kata kunci pencarian" class="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 shrink-0 cursor-pointer p-1">
                     <svg aria-hidden="true" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -47,14 +47,14 @@
                         <span class="w-2 h-2 rounded-full bg-slate-400"></span>
                         Baru Daftar
                     </h3>
-                    <span class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-[10px] font-black px-2 py-0.5 rounded-full border border-slate-300 dark:border-slate-600">{{ $pengajuanBaru->count() }}</span>
+                    <span class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 text-[11px] font-black px-2 py-0.5 rounded-full border border-slate-300 dark:border-slate-600">{{ $pengajuanBaru->count() }}</span>
                 </div>
                 <div class="p-3 overflow-y-auto custom-scrollbar flex-1 space-y-3">
                     @forelse($pengajuanBaru as $thesis)
                         @include('theses.partials.kanban-card', ['thesis' => $thesis, 'accent' => 'slate'])
                     @empty
                         <div class="py-8 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border border-dashed border-slate-200/80 dark:border-slate-800 rounded-xl bg-white/40 dark:bg-slate-900/20">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Kosong</span>
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Kosong</span>
                         </div>
                     @endforelse
                 </div>
@@ -67,14 +67,14 @@
                         <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                         Belum Seminar
                     </h3>
-                    <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-[10px] font-black px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">{{ $bimbinganUp->count() }}</span>
+                    <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-[11px] font-black px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">{{ $bimbinganUp->count() }}</span>
                 </div>
                 <div class="p-3 overflow-y-auto custom-scrollbar flex-1 space-y-3">
                     @forelse($bimbinganUp as $thesis)
                         @include('theses.partials.kanban-card', ['thesis' => $thesis, 'accent' => 'blue'])
                     @empty
                         <div class="py-8 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border border-dashed border-blue-200/60 dark:border-blue-900/30 rounded-xl bg-white/40 dark:bg-slate-900/20">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Kosong</span>
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Kosong</span>
                         </div>
                     @endforelse
                 </div>
@@ -87,14 +87,14 @@
                         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
                         Sudah Seminar
                     </h3>
-                    <span class="bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 text-[10px] font-black px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">{{ $prosesSeminar->count() }}</span>
+                    <span class="bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 text-[11px] font-black px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">{{ $prosesSeminar->count() }}</span>
                 </div>
                 <div class="p-3 overflow-y-auto custom-scrollbar flex-1 space-y-3">
                     @forelse($prosesSeminar as $thesis)
                         @include('theses.partials.kanban-card', ['thesis' => $thesis, 'accent' => 'amber'])
                     @empty
                         <div class="py-8 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border border-dashed border-amber-200/60 dark:border-amber-900/30 rounded-xl bg-white/40 dark:bg-slate-900/20">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Kosong</span>
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Kosong</span>
                         </div>
                     @endforelse
                 </div>
@@ -107,14 +107,14 @@
                         <span class="w-2 h-2 rounded-full bg-orange-500"></span>
                         Siap Sidang
                     </h3>
-                    <span class="bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 text-[10px] font-black px-2 py-0.5 rounded-full border border-orange-200 dark:border-orange-800">{{ $siapSidang->count() }}</span>
+                    <span class="bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 text-[11px] font-black px-2 py-0.5 rounded-full border border-orange-200 dark:border-orange-800">{{ $siapSidang->count() }}</span>
                 </div>
                 <div class="p-3 overflow-y-auto custom-scrollbar flex-1 space-y-3">
                     @forelse($siapSidang as $thesis)
                         @include('theses.partials.kanban-card', ['thesis' => $thesis, 'accent' => 'orange'])
                     @empty
                         <div class="py-8 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border border-dashed border-orange-200/60 dark:border-orange-900/30 rounded-xl bg-white/40 dark:bg-slate-900/20">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Kosong</span>
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Kosong</span>
                         </div>
                     @endforelse
                 </div>
@@ -127,14 +127,14 @@
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                         Lulus
                     </h3>
-                    <span class="bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">{{ $lulus->count() }}</span>
+                    <span class="bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-[11px] font-black px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">{{ $lulus->count() }}</span>
                 </div>
                 <div class="p-3 overflow-y-auto custom-scrollbar flex-1 space-y-3">
                     @forelse($lulus as $thesis)
                         @include('theses.partials.kanban-card', ['thesis' => $thesis, 'accent' => 'emerald'])
                     @empty
                         <div class="py-8 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 border border-dashed border-emerald-200/60 dark:border-emerald-900/30 rounded-xl bg-white/40 dark:bg-slate-900/20">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Kosong</span>
+                            <span class="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Kosong</span>
                         </div>
                     @endforelse
                 </div>

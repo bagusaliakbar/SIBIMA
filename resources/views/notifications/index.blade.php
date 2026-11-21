@@ -19,7 +19,7 @@
             <a href="{{ route('notifications.index', ['tab' => 'all', 'search' => $search]) }}" 
                class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'all' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Semua Notifikasi</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'all' ? 'bg-orange-600 text-white shadow-2xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ $activeTab === 'all' ? 'bg-orange-600 text-white shadow-2xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
                     {{ $totalCount }}
                 </span>
             </a>
@@ -31,7 +31,7 @@
                     <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
                 @endif
                 <span>Belum Dibaca</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'unread' ? 'bg-orange-600 text-white shadow-2xs' : ($unreadCount > 0 ? 'bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400') }}">
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ $activeTab === 'unread' ? 'bg-orange-600 text-white shadow-2xs' : ($unreadCount > 0 ? 'bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400') }}">
                     {{ $unreadCount }}
                 </span>
             </a>
@@ -40,7 +40,7 @@
             <a href="{{ route('notifications.index', ['tab' => 'read', 'search' => $search]) }}" 
                class="px-6 py-4 border-b-2 text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2.5 shrink-0 {{ $activeTab === 'read' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Sudah Dibaca</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $activeTab === 'read' ? 'bg-orange-600 text-white shadow-2xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ $activeTab === 'read' ? 'bg-orange-600 text-white shadow-2xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">
                     {{ $readCount ?? max(0, $totalCount - $unreadCount) }}
                 </span>
             </a>
@@ -102,7 +102,7 @@
                         </p>
                     @elseif($activeTab === 'read')
                         {{-- No read notifications yet --}}
-                        <div class="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-800 flex items-center justify-center mx-auto mb-4 shadow-xs">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 flex items-center justify-center mx-auto mb-4 shadow-xs">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                         </div>
                         <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Belum Ada Notifikasi yang Dibaca</h3>
@@ -111,7 +111,7 @@
                         </p>
                     @else
                         {{-- Completely empty --}}
-                        <div class="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-800 flex items-center justify-center mx-auto mb-4 shadow-xs">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 flex items-center justify-center mx-auto mb-4 shadow-xs">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         </div>
                         <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">Belum Ada Riwayat Notifikasi</h3>
@@ -280,12 +280,12 @@
                                             {{ $title }}
                                         </h4>
                                         @if(!$notif->read_at)
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[10px] font-black">
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-[11px] font-black">
                                                 Baru
                                             </span>
                                         @endif
                                     </div>
-                                    <span class="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
                                         {{ $notif->created_at->locale('id')->diffForHumans() }} ({{ $notif->created_at->format('d/m/Y H:i') }})
                                     </span>
                                 </div>
@@ -306,13 +306,13 @@
                                     <div class="mt-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 text-xs space-y-2">
                                         @if($notifTopic)
                                             <div class="flex items-start gap-2">
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 shrink-0">TOPIK</span>
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 shrink-0">TOPIK</span>
                                                 <span class="text-slate-900 dark:text-slate-100 font-semibold">{{ $notifTopic }}</span>
                                             </div>
                                         @endif
                                         @if($notifNotes)
                                             <div class="flex items-start gap-2">
-                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 shrink-0">CATATAN</span>
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 shrink-0">CATATAN</span>
                                                 <span class="text-slate-800 dark:text-slate-200 italic font-medium">{{ $notifNotes }}</span>
                                             </div>
                                         @endif
@@ -366,7 +366,7 @@
                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"></path></svg>
                                                         <span>Izin</span>
                                                     </button>
-                                                    <span x-show="loading" class="text-xs text-slate-400 animate-pulse font-medium">Menyimpan...</span>
+                                                    <span x-show="loading" class="text-xs text-slate-500 dark:text-slate-400 animate-pulse font-medium">Menyimpan...</span>
                                                 </div>
 
                                                 <div x-show="showReasonInput" class="space-y-2 mt-2 max-w-md">

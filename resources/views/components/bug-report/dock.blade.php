@@ -11,9 +11,8 @@
                 class="bug-report-pill-btn group relative flex items-center justify-center p-3 sm:px-3.5 sm:py-2.5 rounded-full hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
                 title="Buka Toolbar Pelaporan Bug">
             <span class="relative flex items-center justify-center w-5 h-5 shrink-0">
-                <!-- Pulsing Badge Indicator Dot -->
+                <!-- Badge Indicator Dot -->
                 <span class="absolute top-0 right-0 flex h-2 w-2 pointer-events-none">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                     <span class="bug-badge-ring relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
                 </span>
                 <!-- Bug/Alert Icon -->

@@ -37,14 +37,14 @@
                             Sidang Tugas Akhir / Skripsi
                         </span>
                         @if($firstSchedule && $firstSchedule->date)
-                            <span class="text-xs text-slate-400">•</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">•</span>
                             <span class="text-xs font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 {{ \Carbon\Carbon::parse($firstSchedule->date)->locale('id')->translatedFormat('d F Y') }}
                             </span>
                         @endif
                         @if($firstSchedule && $firstSchedule->location)
-                            <span class="text-xs text-slate-400">•</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">•</span>
                             <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">
                                 {{ $firstSchedule->location }}
                             </span>
@@ -92,7 +92,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div class="min-w-0">
-                            <span class="block text-[10px] font-black uppercase tracking-wider text-slate-400">Status Revisi</span>
+                            <span class="block text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Revisi</span>
                             <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
                                 Menunggu Input Catatan Dosen
                             </p>
@@ -132,7 +132,7 @@
                                                 {{ $examinerUser->name }}
                                             </h4>
                                             <div class="flex items-center gap-1.5 mt-1">
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                                                     {{ $roleLabel }}
                                                 </span>
                                             </div>
@@ -159,7 +159,7 @@
                                                 </span>
                                             @else
                                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-50 text-slate-700 dark:bg-slate-900/60 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60" title="Revisi terkirim, menunggu dosen">
-                                                    <span class="font-bold text-slate-400">✓</span>
+                                                    <span class="font-bold text-slate-500 dark:text-slate-400">✓</span>
                                                     <span>Terkirim</span>
                                                 </span>
                                             @endif
@@ -179,7 +179,7 @@
 
                                 <!-- Note Container -->
                                 <div class="bg-slate-50/70 dark:bg-slate-900/40 rounded-xl p-3.5 border border-slate-100 dark:border-slate-800 space-y-2">
-                                    <div class="flex items-center justify-between text-[11px] text-slate-400">
+                                    <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
                                         <span class="font-semibold text-slate-500 dark:text-slate-400">
                                             @if($latestMessage)
                                                 {{ $latestMessage->sender_id === $examinerUser->id ? 'Catatan Dosen' : 'Tanggapan Terakhir Anda' }}
@@ -197,11 +197,11 @@
                                             {{ $latestMessage->message }}
                                         </p>
                                     @elseif($hasRevision)
-                                        <p class="text-xs text-slate-400 dark:text-slate-500 italic">
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 italic">
                                             Belum ada catatan tertulis dari dosen.
                                         </p>
                                     @else
-                                        <p class="text-xs text-slate-400 dark:text-slate-500 italic">
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 italic">
                                             Dosen belum mengunggah catatan revisi sidang skripsi.
                                         </p>
                                     @endif
@@ -233,7 +233,7 @@
                                         </a>
                                     @endif
                                 @else
-                                    <button type="button" disabled class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200/80 dark:border-slate-700 rounded-xl text-xs font-bold cursor-not-allowed">
+                                    <button type="button" disabled class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700 rounded-xl text-xs font-bold cursor-not-allowed">
                                         <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         <span>Menunggu Catatan Dosen</span>
                                     </button>

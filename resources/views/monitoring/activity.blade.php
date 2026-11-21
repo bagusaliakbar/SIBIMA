@@ -127,10 +127,7 @@
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400">Pasif / Kritis</span>
                         <div class="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-                            <span class="relative flex h-3 w-3">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-                            </span>
+                            <span class="inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
                         </div>
                     </div>
                     <div class="mt-3">
@@ -181,7 +178,7 @@
                     <div class="sm:col-span-2">
                         <label for="search" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Pencarian Nama / NIM / NIDN</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
                             <input type="text" 
@@ -192,7 +189,7 @@
                                    class="w-full pl-10 pr-10 py-2.5 rounded-xl border text-xs sm:text-sm bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 transition-all">
                             @if($search)
                                 <a href="{{ route('monitoring.activity', ['period' => $period, 'cohort' => $cohort, 'tab' => $activeTab]) }}" 
-                                   class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                   class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </a>
                             @endif
@@ -205,7 +202,7 @@
                     <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-3 flex-wrap">
                         <span class="text-xs font-bold text-slate-500">Rentang Tanggal:</span>
                         <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}" class="py-1.5 px-3 rounded-xl border text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700">
-                        <span class="text-xs text-slate-400">s/d</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">s/d</span>
                         <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}" class="py-1.5 px-3 rounded-xl border text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700">
                         <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-xs">Terapkan Tanggal</button>
                     </div>
@@ -222,7 +219,7 @@
                         :class="activeMainTab === 'mahasiswa' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'">
                     <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
                     <span>Keaktifan Mahasiswa</span>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black"
+                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black"
                           :class="activeMainTab === 'mahasiswa' ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">
                         {{ count($top_students) }}
                     </span>
@@ -234,7 +231,7 @@
                         :class="activeMainTab === 'dosen' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'">
                     <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     <span>Keaktifan Dosen Pembimbing</span>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black"
+                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black"
                           :class="activeMainTab === 'dosen' ? 'bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">
                         {{ count($top_dosens) }}
                     </span>

@@ -139,24 +139,24 @@
                     <div>
                         <!-- Card Badges Header -->
                         <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                                 {{ $template->category }}
                             </span>
                             
                             <div class="flex items-center gap-1.5">
                                 @if($template->is_customized)
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                                         Custom
                                     </span>
                                 @endif
 
                                 @if($template->is_active)
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                         Aktif
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                                         Nonaktif
                                     </span>
@@ -210,7 +210,7 @@
                                 @csrf
                                 <button type="submit" 
                                         title="Reset ke Default Bawaan" aria-label="Reset ke Default Bawaan"
-                                        class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-700/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer">
+                                        class="p-2 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-700/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                 </button>
                             </form>
@@ -261,14 +261,14 @@
 
                                 <!-- Kategori & Kode -->
                                 <td class="py-4 px-4 align-top space-y-1">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                                         {{ $template->category }}
                                     </span>
-                                    <div class="font-mono text-[10px] text-slate-400 dark:text-slate-500 break-all">
+                                    <div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 break-all">
                                         {{ $template->code }}
                                     </div>
                                     @if($template->is_customized)
-                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                                             Custom
                                         </span>
                                     @endif
@@ -282,12 +282,12 @@
                                     @if($template->available_variables && is_array($template->available_variables))
                                         <div class="flex flex-wrap gap-1 mt-2">
                                             @foreach(array_slice($template->available_variables, 0, 4) as $vKey => $vDesc)
-                                                <span class="font-mono text-[9px] bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded">
+                                                <span class="font-mono text-[11px] bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded">
                                                     {{ '{' . $vKey . '}' }}
                                                 </span>
                                             @endforeach
                                             @if(count($template->available_variables) > 4)
-                                                <span class="text-[9px] text-slate-400 self-center">
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400 self-center">
                                                     +{{ count($template->available_variables) - 4 }} variabel
                                                 </span>
                                             @endif
@@ -323,7 +323,7 @@
                                                 @csrf
                                                 <button type="submit" 
                                                         title="Reset ke Default Bawaan" aria-label="Reset ke Default Bawaan"
-                                                        class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-700/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer">
+                                                        class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-700/50 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors cursor-pointer">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                                 </button>
                                             </form>
@@ -333,7 +333,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-12 text-center text-slate-400">
+                                <td colspan="5" class="py-12 text-center text-slate-500 dark:text-slate-400">
                                     Tidak ada template pada kategori ini.
                                 </td>
                             </tr>

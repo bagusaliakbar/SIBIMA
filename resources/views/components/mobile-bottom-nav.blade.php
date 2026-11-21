@@ -78,7 +78,7 @@
                     <span class="absolute -bottom-1 w-1 h-1 rounded-full bg-orange-600 dark:bg-orange-400"></span>
                 @endif
             </div>
-            <span class="text-[10px] tracking-tight mt-1">{{ $dashboardLabel }}</span>
+            <span class="text-[11px] tracking-tight mt-1">{{ $dashboardLabel }}</span>
         </a>
 
         <!-- 2. Bimbingan / Skripsi -->
@@ -92,7 +92,7 @@
                     <span class="absolute -bottom-1 w-1 h-1 rounded-full bg-orange-600 dark:bg-orange-400"></span>
                 @endif
             </div>
-            <span class="text-[10px] tracking-tight mt-1">{{ $bimbinganLabel }}</span>
+            <span class="text-[11px] tracking-tight mt-1">{{ $bimbinganLabel }}</span>
         </a>
 
         <!-- 3. Jadwal / Seminar / Sidang -->
@@ -112,7 +112,7 @@
                     <span class="absolute -bottom-1 w-1 h-1 rounded-full bg-orange-600 dark:bg-orange-400"></span>
                 @endif
             </div>
-            <span class="text-[10px] tracking-tight mt-1">{{ $jadwalLabel }}</span>
+            <span class="text-[11px] tracking-tight mt-1">{{ $jadwalLabel }}</span>
         </a>
 
         <!-- 4. Notifikasi (dengan Red Badge Counter) -->
@@ -123,7 +123,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ $isNotif ? '2.5' : '2' }}" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                 </svg>
                 @if($unreadCount > 0)
-                    <span class="absolute -top-1 -right-2 flex h-3.5 min-w-[14px] px-1 items-center justify-center rounded-full bg-rose-600 text-[9px] font-black text-white leading-none shadow-xs">
+                    <span class="absolute -top-1 -right-2 flex h-3.5 min-w-[14px] px-1 items-center justify-center rounded-full bg-rose-600 text-[11px] font-black text-white leading-none shadow-xs">
                         {{ $unreadCount > 9 ? '9+' : $unreadCount }}
                     </span>
                 @endif
@@ -131,7 +131,7 @@
                     <span class="absolute -bottom-1 w-1 h-1 rounded-full bg-orange-600 dark:bg-orange-400"></span>
                 @endif
             </div>
-            <span class="text-[10px] tracking-tight mt-1">Notifikasi</span>
+            <span class="text-[11px] tracking-tight mt-1">Notifikasi</span>
         </a>
 
         <!-- 5. Logbook (Mahasiswa) / Menu Drawer (Dosen/Admin) -->
@@ -146,7 +146,7 @@
                         <span class="absolute -bottom-1 w-1 h-1 rounded-full bg-orange-600 dark:bg-orange-400"></span>
                     @endif
                 </div>
-                <span class="text-[10px] tracking-tight mt-1">{{ $slot5Label }}</span>
+                <span class="text-[11px] tracking-tight mt-1">{{ $slot5Label }}</span>
             </a>
         @else
             <button type="button" 
@@ -158,7 +158,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </div>
-                <span class="text-[10px] tracking-tight mt-1">Menu</span>
+                <span class="text-[11px] tracking-tight mt-1">Menu</span>
             </button>
         @endif
     </div>

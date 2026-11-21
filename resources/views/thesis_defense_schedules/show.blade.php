@@ -39,15 +39,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                     <div class="space-y-3">
                         <div class="flex items-center">
-                            <span class="w-32 text-[10px] font-black text-slate-400 uppercase tracking-widest">Hari / Tanggal</span>
+                            <span class="w-32 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Hari / Tanggal</span>
                             <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ \Carbon\Carbon::parse($thesisDefenseSchedule->date)->locale('id')->translatedFormat('l, d F Y') }}</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="w-32 text-[10px] font-black text-slate-400 uppercase tracking-widest">Ketua Sidang</span>
+                            <span class="w-32 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Ketua Sidang</span>
                             <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ $thesisDefenseSchedule->chairman?->name ?? '-' }}</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="w-32 text-[10px] font-black text-slate-400 uppercase tracking-widest">Moderator</span>
+                            <span class="w-32 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Moderator</span>
                             <span class="text-sm font-bold text-slate-800 dark:text-slate-200">: {{ $thesisDefenseSchedule->moderator?->name ?? '-' }}</span>
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                 <div class="hidden md:block overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                     <table class="w-full text-sm text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-center">
+                            <tr class="bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-center">
                                 <th class="py-4 px-3 w-12 border-b border-r border-slate-200 dark:border-slate-700">NO</th>
                                 <th class="py-4 px-3 w-32 border-b border-r border-slate-200 dark:border-slate-700">WAKTU</th>
                                 <th class="py-4 px-3 border-b border-r border-slate-200 dark:border-slate-700">DETAIL KEGIATAN / PESERTA</th>
@@ -91,7 +91,7 @@
                                         <td class="py-5 px-6 border-r border-slate-200 dark:border-slate-700">
                                             <div class="space-y-2">
                                                 <div class="flex items-center flex-wrap gap-2">
-                                                    <span class="text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider">
+                                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 tracking-wider">
                                                         {{ $detail->thesis->student->identifier }}
                                                     </span> 
                                                     <span class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $detail->thesis->student->name }}</span>
@@ -102,12 +102,12 @@
                                         <td class="py-5 px-5 border-r border-slate-200 dark:border-slate-700">
                                             <div class="space-y-2">
                                                 <div class="flex items-start">
-                                                    <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">1.</span>
+                                                    <span class="text-[11px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">1.</span>
                                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->thesis->pembimbing1?->name ?? '-' }}</span>
                                                 </div>
                                                 @if($detail->thesis->pembimbing2)
                                                 <div class="flex items-start">
-                                                    <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">2.</span>
+                                                    <span class="text-[11px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">2.</span>
                                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->thesis->pembimbing2->name }}</span>
                                                 </div>
                                                 @endif
@@ -117,13 +117,13 @@
                                             <div class="space-y-2">
                                                 @if($detail->examiner1)
                                                 <div class="flex items-start">
-                                                    <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">1.</span>
+                                                    <span class="text-[11px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">1.</span>
                                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->examiner1->name }}</span>
                                                 </div>
                                                 @endif
                                                 @if($detail->examiner2)
                                                 <div class="flex items-start">
-                                                    <span class="text-[9px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">2.</span>
+                                                    <span class="text-[11px] font-black text-slate-300 dark:text-slate-600 mt-0.5 mr-2">2.</span>
                                                     <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 leading-tight">{{ $detail->examiner2->name }}</span>
                                                 </div>
                                                 @endif
@@ -147,7 +147,7 @@
                                     </tr>
                                 @else
                                     <tr class="bg-slate-50/50 dark:bg-slate-900/30">
-                                        <td class="py-3 px-3 text-center border-r border-slate-200 dark:border-slate-700 font-bold text-slate-400">#</td>
+                                        <td class="py-3 px-3 text-center border-r border-slate-200 dark:border-slate-700 font-bold text-slate-500 dark:text-slate-400">#</td>
                                         <td class="py-3 px-3 text-center border-r border-slate-200 dark:border-slate-700">
                                             <span class="text-xs font-bold text-slate-500">{{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}</span>
                                         </td>
@@ -186,14 +186,14 @@
                                 <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{{ $detail->thesis->title }}</p>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-700 text-xs">
                                     <div class="space-y-1">
-                                        <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Pembimbing</div>
+                                        <div class="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400">Pembimbing</div>
                                         <div class="font-semibold text-slate-700 dark:text-slate-200">1. {{ $detail->thesis->pembimbing1?->name ?? '-' }}</div>
                                         @if($detail->thesis->pembimbing2)
                                             <div class="font-semibold text-slate-700 dark:text-slate-200">2. {{ $detail->thesis->pembimbing2->name }}</div>
                                         @endif
                                     </div>
                                     <div class="space-y-1">
-                                        <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Penguji</div>
+                                        <div class="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400">Penguji</div>
                                         @if($detail->examiner1)
                                             <div class="font-semibold text-slate-700 dark:text-slate-200">1. {{ $detail->examiner1->name }}</div>
                                         @endif

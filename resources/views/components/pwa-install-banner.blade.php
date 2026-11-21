@@ -23,7 +23,7 @@
             <!-- Content -->
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-1.5 mb-0.5">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-200/70 dark:border-orange-500/20">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-200/70 dark:border-orange-500/20">
                         Pasang SIBIMA di Layar HP
                     </span>
                 </div>
@@ -53,7 +53,7 @@
             <button type="button" 
                     @click="dismissBanner()" 
                     aria-label="Tutup saran instalasi"
-                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg transition-colors cursor-pointer shrink-0">
+                    class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg transition-colors cursor-pointer shrink-0">
                 <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>

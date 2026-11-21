@@ -433,7 +433,7 @@
 
                         if (listContainer && data.users) {
                             if (data.users.length === 0) {
-                                listContainer.innerHTML = '<div class="text-center py-6"><p class="text-xs text-slate-400 font-medium italic">Tidak ada pengguna aktif lain saat ini.</p></div>';
+                                listContainer.innerHTML = '<div class="text-center py-6"><p class="text-xs text-slate-500 dark:text-slate-400 font-medium italic">Tidak ada pengguna aktif lain saat ini.</p></div>';
                             } else {
                                 let html = '';
                                 const currentUserId = {{ Auth::id() }};
@@ -454,7 +454,7 @@
                                                 </div>
                                                 <div class="min-w-0">
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-orange-600 transition-colors">${safeName}</p>
-                                                    <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">${safeRole}</span>
+                                                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">${safeRole}</span>
                                                 </div>
                                             </div>
                                             ${!isSelf ? `
@@ -502,7 +502,7 @@
                             </div>
                             <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight" id="modal-title">Revisi Judul / Deskripsi Skripsi</h3>
                         </div>
-                        <button type="button" aria-label="Tutup modal revisi judul" @click="open = false; document.getElementById('edit-thesis-modal').classList.add('hidden'); document.getElementById('edit-thesis-modal').style.display = 'none';" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors cursor-pointer">
+                        <button type="button" aria-label="Tutup modal revisi judul" @click="open = false; document.getElementById('edit-thesis-modal').classList.add('hidden'); document.getElementById('edit-thesis-modal').style.display = 'none';" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors cursor-pointer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>

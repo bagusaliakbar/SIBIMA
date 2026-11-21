@@ -111,7 +111,7 @@
                         </label>
                         <template x-for="(roomName, rIdx) in form.room_names" :key="rIdx">
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-black text-slate-400 uppercase w-12" x-text="'R. ' + (rIdx + 1)"></span>
+                                <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase w-12" x-text="'R. ' + (rIdx + 1)"></span>
                                 <input type="text" x-model="form.room_names[rIdx]" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-orange-500" placeholder="Contoh: Ruang Sidang Utama (R. 201)">
                             </div>
                         </template>
@@ -189,7 +189,7 @@
                                 {{ $candidates->count() }} Mahasiswa
                             </span>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-1">Sudah ACC seminar dan belum memiliki jadwal terbit.</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Sudah ACC seminar dan belum memiliki jadwal terbit.</p>
                     </div>
                 </div>
             </div>
@@ -214,37 +214,37 @@
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <!-- Bebas Bentrok -->
                         <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs">
-                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Deteksi Konflik</span>
+                            <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Deteksi Konflik</span>
                             <div class="mt-1 flex items-center gap-1.5">
                                 <span class="w-2.5 h-2.5 rounded-full" :class="simulationResult?.has_conflict ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'"></span>
                                 <span class="text-sm font-black" :class="simulationResult?.has_conflict ? 'text-rose-600' : 'text-emerald-600 dark:text-emerald-400'"
                                       x-text="simulationResult?.has_conflict ? 'Ada Bentrok' : '100% Aman'"></span>
                             </div>
-                            <span class="text-[10px] text-slate-400 mt-0.5 block" x-text="(simulationResult?.conflicts?.length || 0) + ' bentrok terdeteksi'"></span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block" x-text="(simulationResult?.conflicts?.length || 0) + ' bentrok terdeteksi'"></span>
                         </div>
 
                         <!-- Peserta Terjadwal -->
                         <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs">
-                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Peserta Terjadwal</span>
+                            <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Peserta Terjadwal</span>
                             <div class="mt-1 text-sm font-black text-slate-800 dark:text-slate-100"
                                  x-text="(simulationResult?.stats?.scheduled_candidates || 0) + ' / ' + (simulationResult?.stats?.total_candidates || 0)"></div>
-                            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5 block">Mahasiswa siap ujian</span>
+                            <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5 block">Mahasiswa siap ujian</span>
                         </div>
 
                         <!-- Pengelompokan P1 -->
                         <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs">
-                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Grouping Pembimbing 1</span>
+                            <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Grouping Pembimbing 1</span>
                             <div class="mt-1 text-sm font-black text-orange-600 dark:text-orange-400"
                                  x-text="(simulationResult?.stats?.grouping_p1_success_rate || 100) + '% Efisien'"></div>
-                            <span class="text-[10px] text-slate-400 mt-0.5 block">Terpusat di 1 ruangan</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block">Terpusat di 1 ruangan</span>
                         </div>
 
                         <!-- Ruangan Terpakai -->
                         <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs">
-                            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Ruangan Terpakai</span>
+                            <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Ruangan Terpakai</span>
                             <div class="mt-1 text-sm font-black text-slate-800 dark:text-slate-100"
                                  x-text="(simulationResult?.rooms?.length || 0) + ' Ruangan'"></div>
-                            <span class="text-[10px] text-slate-400 mt-0.5 block" x-text="simulationResult?.date_formatted"></span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block" x-text="simulationResult?.date_formatted"></span>
                         </div>
                     </div>
 
@@ -261,7 +261,7 @@
                                         :class="activeRoomTab === rIdx ? 'bg-white dark:bg-slate-800 text-orange-600 font-bold shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'"
                                         class="px-3.5 py-2 text-xs rounded-xl transition-all whitespace-nowrap flex items-center gap-1.5">
                                     <span x-text="room.room_name"></span>
-                                    <span class="px-1.5 py-0.5 text-[9px] rounded-full bg-slate-100 dark:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" x-text="room.sessions?.length + ' Mhs'"></span>
+                                    <span class="px-1.5 py-0.5 text-[11px] rounded-full bg-slate-100 dark:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" x-text="room.sessions?.length + ' Mhs'"></span>
                                 </button>
                             </template>
                         </div>
@@ -291,7 +291,7 @@
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                     <div class="space-y-1 flex-1">
                                         <div class="flex items-center gap-2">
-                                            <span class="px-2.5 py-0.5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 text-[10px] font-black uppercase tracking-wider" x-text="'Ruangan ' + (rIdx + 1)"></span>
+                                            <span class="px-2.5 py-0.5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 text-[11px] font-black uppercase tracking-wider" x-text="'Ruangan ' + (rIdx + 1)"></span>
                                             <span class="text-xs font-bold text-slate-500 dark:text-slate-400" x-text="room.sessions?.length + ' Peserta'"></span>
                                         </div>
                                         <input type="text" x-model="room.title" class="w-full text-sm font-black bg-transparent border-0 border-b border-dashed border-slate-300 dark:border-slate-600 focus:ring-0 p-0 text-slate-800 dark:text-slate-100">
@@ -300,7 +300,7 @@
                                     <!-- Ketua Sidang & Moderator Selection -->
                                     <div class="flex flex-wrap items-center gap-3">
                                         <div>
-                                            <label class="block text-[9px] font-black uppercase tracking-wider text-slate-400">Ketua Sidang</label>
+                                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Ketua Sidang</label>
                                             <select x-model="room.chairman_id" class="text-xs py-1 px-2.5 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-slate-700 dark:text-slate-200">
                                                 <option value="">Pilih Ketua</option>
                                                 <template x-for="d in simulationResult?.dosens" :key="d.id">
@@ -310,7 +310,7 @@
                                         </div>
 
                                         <div>
-                                            <label class="block text-[9px] font-black uppercase tracking-wider text-slate-400">Moderator</label>
+                                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Moderator</label>
                                             <select x-model="room.moderator_id" class="text-xs py-1 px-2.5 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-slate-700 dark:text-slate-200">
                                                 <option value="">Pilih Moderator</option>
                                                 <template x-for="d in simulationResult?.dosens" :key="d.id">
@@ -326,7 +326,7 @@
                             <div class="hidden md:block overflow-x-auto">
                                 <table class="w-full text-xs text-left">
                                     <thead>
-                                        <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                                        <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                                             <th class="py-3 px-4 w-12 text-center">No</th>
                                             <th class="py-3 px-4 w-32">Waktu</th>
                                             <th class="py-3 px-4">Mahasiswa & Judul</th>
@@ -339,22 +339,22 @@
                                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-medium">
                                         <template x-for="(session, sIdx) in room.sessions" :key="sIdx">
                                             <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors">
-                                                <td class="py-3.5 px-4 text-center font-bold text-slate-400" x-text="sIdx + 1"></td>
+                                                <td class="py-3.5 px-4 text-center font-bold text-slate-500 dark:text-slate-400" x-text="sIdx + 1"></td>
                                                 <td class="py-3.5 px-4 whitespace-nowrap">
                                                     <span class="font-bold text-slate-800 dark:text-slate-200" x-text="session.start_time + ' - ' + session.end_time"></span>
-                                                    <span class="text-[10px] text-slate-400 block">WIB</span>
+                                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 block">WIB</span>
                                                 </td>
                                                 <td class="py-3.5 px-4">
                                                     <div class="font-bold text-slate-800 dark:text-slate-100" x-text="session.thesis.student_name"></div>
-                                                    <div class="text-[10px] text-slate-400 font-normal" x-text="'NIM: ' + session.thesis.student_nim"></div>
+                                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-normal" x-text="'NIM: ' + session.thesis.student_nim"></div>
                                                     <div class="text-[11px] text-slate-600 dark:text-slate-300 mt-1 line-clamp-1 italic font-normal" x-text="session.thesis.title"></div>
                                                 </td>
                                                 <td class="py-3.5 px-4 whitespace-nowrap">
-                                                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border text-[10px] font-bold mb-1" :class="session.thesis.p1_color">
+                                                    <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border text-[11px] font-bold mb-1" :class="session.thesis.p1_color">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                                         <span x-text="'P1: ' + session.thesis.pembimbing1_name"></span>
                                                     </div>
-                                                    <div x-show="session.thesis.pembimbing2_name" class="text-[10px] text-slate-500 block" x-text="'P2: ' + session.thesis.pembimbing2_name"></div>
+                                                    <div x-show="session.thesis.pembimbing2_name" class="text-[11px] text-slate-500 block" x-text="'P2: ' + session.thesis.pembimbing2_name"></div>
                                                 </td>
                                                 <td class="py-3.5 px-4 whitespace-nowrap">
                                                     <select x-model="session.examiner1_id" class="text-xs py-1 px-2 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-slate-700 dark:text-slate-200 w-44">
@@ -371,7 +371,7 @@
                                                     </select>
                                                 </td>
                                                 <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
                                                         Aman
                                                     </span>
                                                 </td>
@@ -388,13 +388,13 @@
                                         <div class="flex items-start justify-between gap-2">
                                             <div class="min-w-0">
                                                 <div class="flex items-center gap-1.5">
-                                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-900 text-[10px] font-black text-slate-600 dark:text-slate-300" x-text="'#' + (sIdx + 1)"></span>
+                                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-900 text-[11px] font-black text-slate-600 dark:text-slate-300" x-text="'#' + (sIdx + 1)"></span>
                                                     <span class="text-xs font-bold text-slate-800 dark:text-slate-100" x-text="session.start_time + ' - ' + session.end_time + ' WIB'"></span>
                                                 </div>
                                                 <div class="font-bold text-sm text-slate-800 dark:text-slate-100 mt-1" x-text="session.thesis.student_name"></div>
                                                 <div class="text-[11px] text-slate-500 dark:text-slate-400" x-text="'NIM: ' + session.thesis.student_nim"></div>
                                             </div>
-                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shrink-0">Aman</span>
+                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shrink-0">Aman</span>
                                         </div>
 
                                         <p class="text-xs text-slate-600 dark:text-slate-300 italic line-clamp-2" x-text="session.thesis.title"></p>
@@ -406,7 +406,7 @@
 
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
                                             <div>
-                                                <label class="block text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1">Penguji 1</label>
+                                                <label class="block text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1">Penguji 1</label>
                                                 <select x-model="session.examiner1_id" class="w-full text-xs py-1.5 px-2.5 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-slate-700 dark:text-slate-200">
                                                     <template x-for="d in simulationResult?.dosens" :key="'m1-' + d.id">
                                                         <option :value="d.id" :selected="d.id == session.examiner1_id" x-text="d.name"></option>
@@ -414,7 +414,7 @@
                                                 </select>
                                             </div>
                                             <div>
-                                                <label class="block text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1">Penguji 2</label>
+                                                <label class="block text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1">Penguji 2</label>
                                                 <select x-model="session.examiner2_id" class="w-full text-xs py-1.5 px-2.5 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-slate-700 dark:text-slate-200">
                                                     <template x-for="d in simulationResult?.dosens" :key="'m2-' + d.id">
                                                         <option :value="d.id" :selected="d.id == session.examiner2_id" x-text="d.name"></option>

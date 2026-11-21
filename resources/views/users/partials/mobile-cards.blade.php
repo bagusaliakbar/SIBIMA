@@ -67,7 +67,7 @@
                                     <x-status-badge :type="$user->role === 'dosen' ? 'blue' : ($user->role === 'kaprodi' ? 'orange' : 'slate')" :label="strtoupper($user->role)" size="xs" />
                                 </div>
                                 <p class="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">{{ $user->identifier }} {{ $user->role === 'mahasiswa' && $user->entry_year ? '• Angkatan ' . $user->entry_year : '' }}</p>
-                                <p class="text-[11px] text-slate-400 truncate">{{ $user->email }}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ $user->email }}</p>
                             </div>
                         </div>
 

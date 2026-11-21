@@ -10,7 +10,7 @@
                                     Tab Filter
                                 </h3>
                                 @if($hasActiveDosenFilters)
-                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60">
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[11px] font-black bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60">
                                         Filter Aktif
                                     </span>
                                 @endif
@@ -47,7 +47,7 @@
                                 </svg>
                                 
                                 <span>{{ $currentRoleLabel }}</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ $isRoleActive ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ $isRoleActive ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                     {{ $currentRoleBadge }}
                                 </span>
 
@@ -68,7 +68,7 @@
                                  class="absolute left-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-700 p-1.5 z-50 text-left"
                                  style="display: none;">
                                 
-                                <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                                <div class="px-3 py-2 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
                                     <span>Filter Peran</span>
                                     @if($isRoleActive)
                                         <a href="{{ $buildQuery(['role_filter' => 'all']) }}" 
@@ -86,7 +86,7 @@
                                             <span>Semua Peran</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ empty($roleFilter) || $roleFilter === 'all' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ empty($roleFilter) || $roleFilter === 'all' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                                 {{ $stats['total'] ?? $dosenStats['total'] ?? 0 }}
                                             </span>
                                             @if(empty($roleFilter) || $roleFilter === 'all')
@@ -102,7 +102,7 @@
                                             <span>Sebagai Pembimbing 1</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($roleFilter ?? '') === 'p1' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($roleFilter ?? '') === 'p1' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                                 {{ $stats['p1'] ?? $dosenStats['p1'] ?? 0 }}
                                             </span>
                                             @if(($roleFilter ?? '') === 'p1')
@@ -118,7 +118,7 @@
                                             <span>Sebagai Pembimbing 2</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($roleFilter ?? '') === 'p2' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($roleFilter ?? '') === 'p2' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                                 {{ $stats['p2'] ?? $dosenStats['p2'] ?? 0 }}
                                             </span>
                                             @if(($roleFilter ?? '') === 'p2')
@@ -166,7 +166,7 @@
                                     @endif
 
                                     <span>{{ $currentProgressLabel }}</span>
-                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ $isProgressStalled ? 'bg-rose-200/80 dark:bg-rose-500/30 text-rose-800 dark:text-rose-200' : ($isProgressActive ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300') }}">
+                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ $isProgressStalled ? 'bg-rose-200/80 dark:bg-rose-500/30 text-rose-800 dark:text-rose-200' : ($isProgressActive ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300') }}">
                                         {{ $currentProgressBadge }}
                                     </span>
 
@@ -187,7 +187,7 @@
                                      class="absolute left-0 mt-2 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-700 p-1.5 z-50 text-left"
                                      style="display: none;">
                                     
-                                    <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                                    <div class="px-3 py-2 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
                                         <span>Kategori Progres</span>
                                         @if($isProgressActive)
                                             <a href="{{ $buildQuery(['filter' => 'all']) }}" 
@@ -205,7 +205,7 @@
                                                 <span>Semua Progres</span>
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ empty($filter) || $filter === 'all' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ empty($filter) || $filter === 'all' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                                     {{ $stats['total'] ?? $dosenStats['total'] ?? 0 }}
                                                 </span>
                                                 @if(empty($filter) || $filter === 'all')
@@ -220,11 +220,11 @@
                                                 <span class="w-2 h-2 rounded-full {{ ($filter ?? '') === 'proposal' ? 'bg-orange-500' : 'bg-blue-500' }} shrink-0"></span>
                                                 <div>
                                                     <span>Tahap Proposal</span>
-                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&lt; 8 sesi (belum 4x P1 &amp; 4x P2)</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">&lt; 8 sesi (belum 4x P1 &amp; 4x P2)</p>
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($filter ?? '') === 'proposal' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($filter ?? '') === 'proposal' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                                     {{ $stats['proposal'] ?? 0 }}
                                                 </span>
                                                 @if(($filter ?? '') === 'proposal')
@@ -239,11 +239,11 @@
                                                 <span class="w-2 h-2 rounded-full {{ ($filter ?? '') === 'ready_up' ? 'bg-orange-500' : 'bg-emerald-500' }} shrink-0"></span>
                                                 <div>
                                                     <span>Siap Seminar Proposal (UP)</span>
-                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&ge; 8 sesi (4x P1 &amp; 4x P2)</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">&ge; 8 sesi (4x P1 &amp; 4x P2)</p>
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($filter ?? '') === 'ready_up' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($filter ?? '') === 'ready_up' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                                     {{ $stats['ready_up'] ?? 0 }}
                                                 </span>
                                                 @if(($filter ?? '') === 'ready_up')
@@ -258,11 +258,11 @@
                                                 <span class="w-2 h-2 rounded-full {{ ($filter ?? '') === 'ready_sidang' ? 'bg-orange-500' : 'bg-indigo-500' }} shrink-0"></span>
                                                 <div>
                                                     <span>Siap Sidang Skripsi</span>
-                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&ge; 16 sesi (8x P1 &amp; 8x P2)</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">&ge; 16 sesi (8x P1 &amp; 8x P2)</p>
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($filter ?? '') === 'ready_sidang' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($filter ?? '') === 'ready_sidang' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                                     {{ $stats['ready_sidang'] ?? 0 }}
                                                 </span>
                                                 @if(($filter ?? '') === 'ready_sidang')
@@ -278,11 +278,11 @@
                                                 <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
                                                 <div>
                                                     <span class="text-rose-700 dark:text-rose-400">Macet / Pasif</span>
-                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">&gt; 14 hari tanpa bimbingan</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">&gt; 14 hari tanpa bimbingan</p>
                                                 </div>
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($filter ?? '') === 'stalled' ? 'bg-rose-200/80 dark:bg-rose-500/30 text-rose-800 dark:text-rose-200' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300' }}">
+                                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($filter ?? '') === 'stalled' ? 'bg-rose-200/80 dark:bg-rose-500/30 text-rose-800 dark:text-rose-200' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300' }}">
                                                     {{ $stalledCount }}
                                                 </span>
                                                 @if(($filter ?? '') === 'stalled')
@@ -327,7 +327,7 @@
                                  class="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-700 p-1.5 z-50 text-left"
                                  style="display: none;">
                                 
-                                <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                                <div class="px-3 py-2 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
                                     <span>Tahun Angkatan</span>
                                     @if($isYearActive)
                                         <a href="{{ $buildQuery(['entry_year' => 'all']) }}" 

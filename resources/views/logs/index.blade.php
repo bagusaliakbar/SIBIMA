@@ -15,7 +15,7 @@
             <x-slot name="headerActions">
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <!-- Export Button -->
-                    <a href="{{ route('admin.logs.export', ['search' => $search, 'module' => $module]) }}" class="inline-flex items-center px-3 py-1.5 bg-emerald-600 border border-transparent rounded-md font-bold text-[10px] text-white uppercase tracking-widest hover:bg-emerald-700 focus:outline-none transition ease-in-out duration-150 shadow-sm">
+                    <a href="{{ route('admin.logs.export', ['search' => $search, 'module' => $module]) }}" class="inline-flex items-center px-3 py-1.5 bg-emerald-600 border border-transparent rounded-md font-bold text-[11px] text-white uppercase tracking-widest hover:bg-emerald-700 focus:outline-none transition ease-in-out duration-150 shadow-sm">
                         <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         Export Excel
                     </a>
@@ -45,7 +45,7 @@
             {{-- Desktop Table View --}}
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-sm text-left">
-                <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
+                <thead class="text-[11px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                     <tr>
                         <th scope="col" class="py-4 px-6">Waktu</th>
                         <th scope="col" class="py-4 px-6">Pengguna</th>
@@ -59,7 +59,7 @@
                         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors group">
                             <td class="py-4 px-6 whitespace-nowrap">
                                 <p class="text-xs font-bold text-slate-700 dark:text-slate-200">{{ $log->created_at->locale('id')->translatedFormat('d M Y') }}</p>
-                                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">{{ $log->created_at->format('H:i:s') }}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{{ $log->created_at->format('H:i:s') }}</p>
                             </td>
                             <td class="py-4 px-6 whitespace-nowrap">
                                 @if($log->user)
@@ -69,11 +69,11 @@
                                         </div>
                                         <div>
                                             <p class="text-xs font-bold text-slate-800 dark:text-slate-200">{{ $log->user->name }}</p>
-                                            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium uppercase tracking-tighter">{{ $log->user->role }}</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium uppercase tracking-tighter">{{ $log->user->role }}</p>
                                         </div>
                                     </div>
                                 @else
-                                    <div class="flex items-center text-slate-400 dark:text-slate-500">
+                                    <div class="flex items-center text-slate-500 dark:text-slate-400">
                                         <div class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center mr-3">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                         </div>
@@ -94,11 +94,11 @@
                                                         @php $oldValue = $log->properties['before'][$key] ?? 'N/A'; @endphp
                                                         @if($oldValue != $newValue)
                                                             <div class="flex flex-col gap-1">
-                                                                  <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}</span>
+                                                                  <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}</span>
                                                                   <div class="flex items-center gap-2">
-                                                                      <span class="px-2 py-0.5 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-[9px] font-bold rounded border border-rose-100 dark:border-rose-800/30 line-through decoration-rose-300">{{ is_scalar($oldValue) ? $oldValue : '...' }}</span>
+                                                                      <span class="px-2 py-0.5 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 text-[11px] font-bold rounded border border-rose-100 dark:border-rose-800/30 line-through decoration-rose-300">{{ is_scalar($oldValue) ? $oldValue : '...' }}</span>
                                                                       <svg class="w-3 h-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                                                                      <span class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold rounded border border-emerald-100 dark:border-emerald-800/30">{{ is_scalar($newValue) ? $newValue : '...' }}</span>
+                                                                      <span class="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold rounded border border-emerald-100 dark:border-emerald-800/30">{{ is_scalar($newValue) ? $newValue : '...' }}</span>
                                                                   </div>
                                                             </div>
                                                         @endif
@@ -108,8 +108,8 @@
                                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                     @foreach($log->properties['after'] as $key => $value)
                                                         @if(is_scalar($value))
-                                                            <div class="flex items-center gap-2 text-[9px]">
-                                                                <span class="font-bold text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}:</span>
+                                                            <div class="flex items-center gap-2 text-[11px]">
+                                                                <span class="font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}:</span>
                                                                 <span class="font-black text-slate-700 dark:text-slate-300 uppercase">{{ $value }}</span>
                                                             </div>
                                                         @endif
@@ -119,9 +119,9 @@
                                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                     @foreach($log->properties['before'] as $key => $value)
                                                         @if(is_scalar($value))
-                                                            <div class="flex items-center gap-2 text-[9px]">
-                                                                <span class="font-bold text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}:</span>
-                                                                <span class="font-black text-slate-400 dark:text-slate-500 line-through">{{ $value }}</span>
+                                                            <div class="flex items-center gap-2 text-[11px]">
+                                                                <span class="font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}:</span>
+                                                                <span class="font-black text-slate-500 dark:text-slate-400 line-through">{{ $value }}</span>
                                                             </div>
                                                         @endif
                                                     @endforeach
@@ -130,13 +130,13 @@
                                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                                     @foreach($log->properties['new_scores'] as $key => $score)
                                                         <div class="flex flex-col gap-1">
-                                                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter">{{ $key }}</span>
+                                                            <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-tighter">{{ $key }}</span>
                                                             <div class="flex items-center gap-1.5">
                                                                 @if($log->properties['old_scores'])
-                                                                    <span class="text-[9px] text-slate-400 line-through">{{ $log->properties['old_scores'][$key] }}</span>
+                                                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 line-through">{{ $log->properties['old_scores'][$key] }}</span>
                                                                     <svg class="w-2.5 h-2.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
                                                                 @endif
-                                                                <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400">{{ $score }}</span>
+                                                                <span class="text-[11px] font-black text-indigo-600 dark:text-indigo-400">{{ $score }}</span>
                                                             </div>
                                                         </div>
                                                     @endforeach
@@ -145,8 +145,8 @@
                                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                                     @foreach($log->properties as $key => $value)
                                                         @if(is_scalar($value))
-                                                            <div class="flex items-center gap-2 text-[9px]">
-                                                                <span class="font-bold text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}:</span>
+                                                            <div class="flex items-center gap-2 text-[11px]">
+                                                                <span class="font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tighter">{{ str_replace('_', ' ', $key) }}:</span>
                                                                 <span class="font-black text-slate-700 dark:text-slate-300 uppercase">{{ $value }}</span>
                                                             </div>
                                                         @endif
@@ -162,7 +162,7 @@
                                     :type="$log->module === 'Auth' ? 'blue' : ($log->module === 'Skripsi' ? 'orange' : ($log->module === 'User' ? 'emerald' : ($log->module === 'Seminar' ? 'purple' : 'slate')))" 
                                     :label="$log->module ?: 'General'" />
                             </td>
-                            <td class="py-4 px-6 whitespace-nowrap font-mono text-[10px] text-slate-400">
+                            <td class="py-4 px-6 whitespace-nowrap font-mono text-[11px] text-slate-500 dark:text-slate-400">
                                 {{ $log->ip_address }}
                             </td>
                         </tr>
@@ -185,10 +185,10 @@
                                     </div>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ $log->user->name }}</p>
-                                        <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">{{ $log->user->role }}</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase">{{ $log->user->role }}</p>
                                     </div>
                                 @else
-                                    <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 shrink-0">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 shrink-0">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                     </div>
                                     <p class="text-xs italic font-medium text-slate-500 dark:text-slate-400">Guest / System</p>

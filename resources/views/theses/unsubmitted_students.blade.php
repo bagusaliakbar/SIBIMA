@@ -46,7 +46,7 @@
             <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Total Belum Mengajukan</p>
+                        <p class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Total Belum Mengajukan</p>
                         <h3 class="text-2xl font-black text-slate-800 dark:text-white mt-1">{{ $totalUnsubmitted }}</h3>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">Mahasiswa terdaftar aktif</p>
                     </div>
@@ -60,7 +60,7 @@
             <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-black text-rose-500 dark:text-rose-400 uppercase tracking-widest">Semester Kritis (≥13)</p>
+                        <p class="text-[11px] font-black text-rose-500 dark:text-rose-400 uppercase tracking-widest">Semester Kritis (≥13)</p>
                         <h3 class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">{{ $criticalCount }}</h3>
                         <p class="text-[11px] text-rose-500/80 dark:text-rose-400/80 mt-1 font-medium">Potensi masa studi habis</p>
                     </div>
@@ -74,7 +74,7 @@
             <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">Perhatian (Sem 7–12)</p>
+                        <p class="text-[11px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">Perhatian (Sem 7–12)</p>
                         <h3 class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">{{ $warningCount }}</h3>
                         <p class="text-[11px] text-amber-600/80 dark:text-amber-400/80 mt-1 font-medium">Wajib segera mengajukan</p>
                     </div>
@@ -87,14 +87,14 @@
             <!-- Card 4: Distribusi Angkatan -->
             <div class="bg-white dark:bg-slate-800/80 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-xs relative overflow-hidden group">
                 <div>
-                    <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Sebaran Angkatan Terbanyak</p>
+                    <p class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Sebaran Angkatan Terbanyak</p>
                     <div class="flex flex-wrap gap-1.5">
                         @forelse($yearDistribution->take(4) as $year => $count)
-                            <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700/60 rounded-lg text-[10px] font-black text-slate-700 dark:text-slate-300">
+                            <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700/60 rounded-lg text-[11px] font-black text-slate-700 dark:text-slate-300">
                                 '{{ substr($year, -2) }}: <span class="text-orange-600 dark:text-orange-400">{{ $count }}</span>
                             </span>
                         @empty
-                            <span class="text-xs text-slate-400">Tidak ada data</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Tidak ada data</span>
                         @endforelse
                     </div>
                 </div>
@@ -108,7 +108,7 @@
                 <form action="{{ route('theses.unsubmitted-students') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     <!-- Search Input -->
                     <div class="relative flex items-center">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                         <input type="text" 
@@ -160,7 +160,7 @@
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-sm whitespace-nowrap">
                     <thead>
-                        <tr class="bg-slate-50/80 dark:bg-slate-900/60 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                        <tr class="bg-slate-50/80 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                             <th class="py-4 px-6">Mahasiswa</th>
                             <th class="py-4 px-6">NPM & Angkatan</th>
                             <th class="py-4 px-6 text-center">Semester</th>
@@ -191,7 +191,7 @@
                                             <div class="font-bold text-slate-800 dark:text-slate-100 text-sm group-hover:text-orange-600 transition-colors">
                                                 {{ $student->name }}
                                             </div>
-                                            <div class="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
+                                            <div class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
                                                 <span>{{ $student->email }}</span>
                                             </div>
                                         </div>
@@ -205,11 +205,11 @@
                                             {{ $student->identifier ?? '-' }}
                                         </div>
                                         @if($student->entry_year)
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
                                                 Angkatan {{ $student->entry_year }}
                                             </span>
                                         @else
-                                            <span class="text-xs text-slate-400">-</span>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400">-</span>
                                         @endif
                                     </div>
                                 </td>
@@ -231,7 +231,7 @@
                                             </span>
                                         @endif
                                     @else
-                                        <span class="text-xs text-slate-400 font-medium">-</span>
+                                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">-</span>
                                     @endif
                                 </td>
 
@@ -241,7 +241,7 @@
                                         <div class="text-xs font-bold text-slate-700 dark:text-slate-300">
                                             {{ $student->created_at ? $student->created_at->translatedFormat('d M Y') : '-' }}
                                         </div>
-                                        <div class="text-[11px] text-slate-400 font-medium mt-0.5">
+                                        <div class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                                             {{ $daysSinceCreation }} hari yang lalu
                                         </div>
                                     </div>
@@ -250,11 +250,11 @@
                                 <!-- Status Akun -->
                                 <td class="py-4 px-6 text-center">
                                     @if($student->is_active)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
                                             Aktif
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">
                                             Nonaktif
                                         </span>
                                     @endif
@@ -273,7 +273,7 @@
                                                 <span>Ingatkan WA</span>
                                             </a>
                                         @else
-                                            <span class="inline-flex items-center px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 text-slate-400 rounded-lg text-[10px] font-semibold" title="Nomor WhatsApp belum terdaftar di profil mahasiswa">
+                                            <span class="inline-flex items-center px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 rounded-lg text-[11px] font-semibold" title="Nomor WhatsApp belum terdaftar di profil mahasiswa">
                                                 No WA Kosong
                                             </span>
                                         @endif
@@ -306,7 +306,7 @@
                                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     </div>
                                     <h4 class="text-base font-bold text-slate-800 dark:text-white">Semua Mahasiswa Sudah Mengajukan!</h4>
-                                    <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
                                         Tidak ditemukan mahasiswa terdaftar yang belum memiliki draf atau pengajuan skripsi untuk kriteria filter ini.
                                     </p>
                                 </td>
@@ -344,11 +344,11 @@
                             </div>
                             <div class="flex flex-col items-end gap-1 shrink-0">
                                 @if($semester)
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black border {{ $isCritical ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200 dark:border-rose-800' : ($isWarning ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800') }}">
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black border {{ $isCritical ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200 dark:border-rose-800' : ($isWarning ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800') }}">
                                         Sem {{ $semester }}{{ $isCritical ? ' (Kritis)' : '' }}
                                     </span>
                                 @endif
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $student->is_active ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400' }}">
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ $student->is_active ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400' }}">
                                     {{ $student->is_active ? 'Aktif' : 'Nonaktif' }}
                                 </span>
                             </div>

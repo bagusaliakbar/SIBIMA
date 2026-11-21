@@ -94,7 +94,7 @@
             <form action="{{ route('repositories.books') }}" method="GET" class="w-full">
                 <div class="flex flex-col sm:flex-row items-stretch gap-3 w-full">
                     <div class="relative flex-1 group min-w-0">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors z-10">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors z-10">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
@@ -112,7 +112,7 @@
                                 x-cloak
                                 aria-label="Hapus pencarian buku"
                                 @click="searchQuery = ''; @if(!empty($query)) window.location.href = '{{ route('repositories.books', ['topic' => $topic, 'source' => $source, 'access' => $access]) }}'; @else document.getElementById('book-search-input').focus(); @endif"
-                                class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer z-10"
+                                class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer z-10"
                                 title="Hapus / Reset pencarian">
                             <div class="w-6 h-6 rounded-full bg-slate-100 hover:bg-rose-100 dark:bg-slate-800 dark:hover:bg-rose-950/60 flex items-center justify-center transition-colors">
                                 <svg class="w-3.5 h-3.5 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,7 +168,7 @@
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-2 pt-2">
-                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500 mr-1">Rekomendasi Topik:</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400 mr-1">Rekomendasi Topik:</span>
                     <a href="{{ route('repositories.books', ['topic' => 'basis_data']) }}" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600 transition-all border border-slate-200/80 dark:border-slate-700/80">Basis Data</a>
                     <a href="{{ route('repositories.books', ['topic' => 'analisis_desain']) }}" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600 transition-all border border-slate-200/80 dark:border-slate-700/80">Analisis & Desain (UML)</a>
                     <a href="{{ route('repositories.books', ['topic' => 'rekayasa_web']) }}" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600 transition-all border border-slate-200/80 dark:border-slate-700/80">RPL & Web</a>
@@ -231,7 +231,7 @@
                                             <span class="text-xs font-black text-slate-700 dark:text-slate-200 line-clamp-2 px-2">
                                                 {{ $book['title'] }}
                                             </span>
-                                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1">
                                                 {{ $book['authors_string'] }}
                                             </span>
                                         </div>
@@ -239,7 +239,7 @@
 
                                     <!-- SOURCE BADGE (TOP LEFT) -->
                                     <div class="absolute top-2.5 left-2.5">
-                                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase shadow-xs {{ $sourceColor }}">
+                                        <span class="px-2.5 py-1 rounded-lg text-[11px] font-black tracking-wider uppercase shadow-xs {{ $sourceColor }}">
                                             @if($book['source'] === 'openlibrary')
                                                 Open Library
                                             @elseif($book['source'] === 'doab')
@@ -255,7 +255,7 @@
                                     <!-- ACCESS BADGE (TOP RIGHT) -->
                                     @if($book['is_free_readable'] || $book['pdf_url'])
                                         <div class="absolute top-2.5 right-2.5">
-                                            <span class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-emerald-500 text-white shadow-xs flex items-center gap-1">
+                                            <span class="px-2 py-0.5 rounded-lg text-[11px] font-black bg-emerald-500 text-white shadow-xs flex items-center gap-1">
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                                                 </svg>
@@ -267,7 +267,7 @@
 
                                 <!-- BOOK DETAILS CONTENT -->
                                 <div class="p-4 sm:p-5 space-y-2.5">
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-400 dark:text-slate-400">
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                                         <span>{{ $book['year'] ?: 'Tahun n.d.' }}</span>
                                         <span>•</span>
                                         <span class="truncate" title="{{ $book['publisher'] }}">{{ Str::limit($book['publisher'], 25) }}</span>
@@ -287,7 +287,7 @@
                                     @if(!empty($book['subjects']))
                                         <div class="flex flex-wrap items-center gap-1 pt-1">
                                             @foreach(array_slice($book['subjects'], 0, 2) as $subj)
-                                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 truncate max-w-[130px]">
+                                                <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 truncate max-w-[130px]">
                                                     #{{ $subj }}
                                                 </span>
                                             @endforeach
@@ -357,7 +357,7 @@
                                             :disabled="isSyncingBookmark['{{ $book['identifier'] }}']"
                                             class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400 transition-colors cursor-pointer disabled:opacity-50">
                                         <svg class="w-4 h-4 transition-transform active:scale-125" 
-                                             :class="bookmarkedMap['{{ $book['identifier'] }}'] ? 'text-amber-500 fill-amber-500' : 'text-slate-400 dark:text-slate-500 fill-none'" 
+                                             :class="bookmarkedMap['{{ $book['identifier'] }}'] ? 'text-amber-500 fill-amber-500' : 'text-slate-500 dark:text-slate-400 fill-none'" 
                                              stroke="currentColor" 
                                              viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
@@ -469,7 +469,7 @@
                     
                     <div class="flex items-start justify-between gap-4">
                         <div class="space-y-1">
-                            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 text-[10px] font-black uppercase">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 text-[11px] font-black uppercase">
                                 Sitasi Buku Akademik
                             </div>
                             <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white line-clamp-2" x-text="activeBook.title"></h3>
@@ -478,7 +478,7 @@
                         <button type="button" 
                                 @click="citationModalOpen = false" 
                                 aria-label="Tutup modal sitasi buku"
-                                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer">
+                                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
@@ -685,7 +685,7 @@
             wrapper.className = 'w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900';
 
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('class', 'w-8 h-8 mb-2 text-slate-400');
+            svg.setAttribute('class', 'w-8 h-8 mb-2 text-slate-500 dark:text-slate-400');
             svg.setAttribute('fill', 'none');
             svg.setAttribute('stroke', 'currentColor');
             svg.setAttribute('viewBox', '0 0 24 24');

@@ -62,7 +62,7 @@
                     </svg>
                 </x-slot>
                 <x-slot name="subtitle">
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Tersimpan di storage lokal</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Tersimpan di storage lokal</p>
                 </x-slot>
             </x-stat-card>
 
@@ -77,7 +77,7 @@
                     </svg>
                 </x-slot>
                 <x-slot name="subtitle">
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Kapasitas media penyimpanan</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Kapasitas media penyimpanan</p>
                 </x-slot>
             </x-stat-card>
 
@@ -92,7 +92,7 @@
                     </svg>
                 </x-slot>
                 <x-slot name="subtitle">
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
                         {{ $stats['latest_backup'] ? $stats['latest_backup']['created_at_formatted'] : 'Belum ada arsip dibuat' }}
                     </p>
                 </x-slot>
@@ -109,7 +109,7 @@
                     </svg>
                 </x-slot>
                 <x-slot name="subtitle">
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                         {{ $stats['tables_count'] }} Tabel ({{ $stats['database_size_formatted'] }}) • {{ $stats['database_driver'] }}
                     </p>
                 </x-slot>
@@ -176,7 +176,7 @@
                 {{-- Desktop Table View --}}
                 <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-sm text-left">
-                    <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
+                    <thead class="text-[11px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                         <tr>
                             <th scope="col" class="py-4 px-6">Nama Berkas Cadangan</th>
                             <th scope="col" class="py-4 px-6">Waktu Pembuatan</th>
@@ -199,7 +199,7 @@
                                             <p class="font-bold text-slate-800 dark:text-slate-100 text-xs truncate max-w-xs sm:max-w-md" title="{{ $backup['filename'] }}">
                                                 {{ $backup['filename'] }}
                                             </p>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                                                 SIBIMA Database Dump
                                             </p>
                                         </div>
@@ -209,7 +209,7 @@
                                     <p class="text-xs font-bold text-slate-700 dark:text-slate-200">
                                         {{ $backup['created_at_formatted'] }}
                                     </p>
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                         {{ $backup['created_at_human'] }}
                                     </p>
                                 </td>
@@ -219,7 +219,7 @@
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-center whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-orange-100/70 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200/50">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-orange-100/70 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200/50">
                                         {{ $backup['is_compressed'] ? 'SQL GZ' : 'SQL DUMP' }}
                                     </span>
                                 </td>
@@ -279,7 +279,7 @@
                                         <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{{ $backup['created_at_formatted'] }} ({{ $backup['created_at_human'] }})</p>
                                     </div>
                                 </div>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-orange-100/70 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200/50 shrink-0">
+                                <span class="px-2 py-0.5 rounded text-[11px] font-black uppercase bg-orange-100/70 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200/50 shrink-0">
                                     {{ $backup['is_compressed'] ? 'SQL GZ' : 'SQL DUMP' }}
                                 </span>
                             </div>
@@ -351,7 +351,7 @@
                             pattern="^[a-zA-Z0-9_\-]+$"
                             maxlength="50"
                             class="w-full text-xs rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 py-2.5 px-3">
-                        <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                             Hanya boleh huruf, angka, strip (-), atau garis bawah (_). Jika dikosongkan, nama akan menggunakan tanggal & waktu otomatis.
                         </p>
                     </div>
@@ -431,7 +431,7 @@
                             accept=".sql,.gz"
                             required
                             class="w-full text-xs file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100 rounded-xl border border-slate-300 dark:border-slate-700 dark:bg-slate-900 text-slate-800 dark:text-slate-200 p-2">
-                        <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Maksimal ukuran file: 100 MB.</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Maksimal ukuran file: 100 MB.</p>
                     </div>
                 </div>
 

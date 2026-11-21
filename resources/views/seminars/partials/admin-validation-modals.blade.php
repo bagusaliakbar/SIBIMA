@@ -12,25 +12,25 @@
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <h3 class="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">Validasi Berkas Seminar Proposal</h3>
-                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
                                                 5 Dokumen
                                             </span>
                                         </div>
                                         <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mt-0.5">
-                                            <span x-text="selectedApp.student_name"></span> <span class="font-mono text-slate-400 dark:text-slate-500">(<span x-text="selectedApp.student_id"></span>)</span>
+                                            <span x-text="selectedApp.student_name"></span> <span class="font-mono text-slate-500 dark:text-slate-400">(<span x-text="selectedApp.student_id"></span>)</span>
                                         </p>
                                     </div>
 
                                     <div class="flex items-center gap-2">
                                         <button type="button" @click="setAllStatus('approved')" 
-                                                class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-[10px] font-bold transition-all shadow-2xs cursor-pointer">
+                                                class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-[11px] font-bold transition-all shadow-2xs cursor-pointer">
                                             ✓ Setujui Semua (OK)
                                         </button>
                                         <button type="button" @click="setAllStatus('rejected')" 
-                                                class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950 dark:hover:bg-rose-900 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 rounded-xl text-[10px] font-bold transition-all shadow-2xs cursor-pointer">
+                                                class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950 dark:hover:bg-rose-900 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 rounded-xl text-[11px] font-bold transition-all shadow-2xs cursor-pointer">
                                             ✕ Tolak Semua
                                         </button>
-                                        <button type="button" @click="openValidation = false" aria-label="Tutup modal validasi seminar" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-1 cursor-pointer">
+                                        <button type="button" @click="openValidation = false" aria-label="Tutup modal validasi seminar" class="p-1.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-1 cursor-pointer">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                         </button>
                                     </div>
@@ -43,10 +43,10 @@
                                     <div class="px-6 py-5 space-y-5 max-h-[66vh] overflow-y-auto bg-white dark:bg-slate-900">
                                         <div>
                                             <div class="flex items-center justify-between mb-2.5">
-                                                <label class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest block">
+                                                <label class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest block">
                                                     Verifikasi 5 Berkas Persyaratan:
                                                 </label>
-                                                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Klik nama berkas untuk melihat dokumen</span>
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Klik nama berkas untuk melihat dokumen</span>
                                             </div>
 
                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -64,7 +64,7 @@
 
                                                             {{-- Radio Controls (OK / Tolak) Segmented Pill --}}
                                                             <div class="flex items-center p-0.5 bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shrink-0">
-                                                                <label class="px-2 py-1 rounded-lg text-[10px] cursor-pointer transition-all flex items-center gap-1"
+                                                                <label class="px-2 py-1 rounded-lg text-[11px] cursor-pointer transition-all flex items-center gap-1"
                                                                        :class="!isRejected ? 'bg-emerald-600 text-white shadow-xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-bold'">
                                                                     <input type="radio" name="file_reviews[{{ $field }}][status]" value="approved" 
                                                                            @change="isRejected = false"
@@ -72,7 +72,7 @@
                                                                            class="sr-only">
                                                                     <span>✓ OK</span>
                                                                 </label>
-                                                                <label class="px-2 py-1 rounded-lg text-[10px] cursor-pointer transition-all flex items-center gap-1"
+                                                                <label class="px-2 py-1 rounded-lg text-[11px] cursor-pointer transition-all flex items-center gap-1"
                                                                        :class="isRejected ? 'bg-rose-600 text-white shadow-xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-bold'">
                                                                     <input type="radio" name="file_reviews[{{ $field }}][status]" value="rejected" 
                                                                            @change="isRejected = true"
@@ -97,7 +97,7 @@
                                         {{-- Final Decision & Admin Global Note in 2 Columns --}}
                                         <div class="pt-4 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
                                             <div>
-                                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">
+                                                <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">
                                                     Status Akhir Pengajuan:
                                                 </label>
                                                 <select name="status" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-bold uppercase tracking-wider p-2.5 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-2xs">
@@ -105,13 +105,13 @@
                                                     <option value="rejected" :selected="selectedApp.status === 'rejected'">✕ TOLAK (PERLU REVISI BERKAS)</option>
                                                     <option value="pending" :selected="selectedApp.status === 'pending'">TETAP MENUNGGU</option>
                                                 </select>
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                                                     Pilih "SETUJUI" jika seluruh 5 berkas telah lengkap dan sesuai syarat.
                                                 </p>
                                             </div>
                                             
                                             <div>
-                                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">
+                                                <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">
                                                     Catatan Admin (Global / Feedback Mahasiswa):
                                                 </label>
                                                 <textarea name="admin_feedback" rows="2" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 rounded-xl text-xs font-medium p-2.5 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-2xs" placeholder="Silakan upload ulang berkas yang ditolak..." x-text="selectedApp.admin_feedback || ''"></textarea>
@@ -155,7 +155,7 @@
                                         <div class="min-w-0">
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <h3 class="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">Pratinjau Pendaftaran Seminar Proposal</h3>
-                                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider"
+                                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider"
                                                       :class="{
                                                           'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800': previewApp.status === 'approved',
                                                           'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800': previewApp.status === 'rejected',
@@ -205,7 +205,7 @@
                                                 <span class="text-slate-500 dark:text-slate-400 truncate max-w-[170px]" x-text="previewApp.student_email"></span>
                                                 <template x-if="previewApp.clean_phone">
                                                     <a :href="'https://wa.me/' + previewApp.clean_phone + '?text=' + previewApp.wa_message" target="_blank"
-                                                       class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 rounded-lg text-[10px] font-bold border border-emerald-200 dark:border-emerald-800 transition-colors">
+                                                       class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 rounded-lg text-[11px] font-bold border border-emerald-200 dark:border-emerald-800 transition-colors">
                                                         <span>WhatsApp</span>
                                                     </a>
                                                 </template>
@@ -215,16 +215,16 @@
                                         {{-- Judul Skripsi & Pembimbing --}}
                                         <div class="bg-slate-50 dark:bg-slate-800/70 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-700/80 space-y-2.5">
                                             <div>
-                                                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Judul Proposal Skripsi:</span>
+                                                <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Judul Proposal Skripsi:</span>
                                                 <p class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1 leading-relaxed" x-text="previewApp.thesis_title || '-'"></p>
                                             </div>
                                             <div class="pt-2 border-t border-slate-200/80 dark:border-slate-700/80 space-y-1.5 text-xs">
                                                 <div class="flex items-center gap-2">
-                                                    <span class="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[8px] font-black shrink-0">1</span>
+                                                    <span class="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[11px] font-black shrink-0">1</span>
                                                     <span class="text-slate-700 dark:text-slate-300 font-medium truncate" x-text="previewApp.pembimbing1_name || 'Belum ada Pembimbing 1'"></span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
-                                                    <span class="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[8px] font-black shrink-0">2</span>
+                                                    <span class="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-black shrink-0">2</span>
                                                     <span class="text-slate-700 dark:text-slate-300 font-medium truncate" x-text="previewApp.pembimbing2_name || 'Belum ada Pembimbing 2'"></span>
                                                 </div>
                                             </div>
@@ -233,7 +233,7 @@
                                         {{-- Catatan Admin Sebelumnya (jika ada) --}}
                                         <template x-if="previewApp.admin_feedback">
                                             <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-800 text-xs">
-                                                <span class="text-[9px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 block mb-1">Catatan Validasi Admin:</span>
+                                                <span class="text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 block mb-1">Catatan Validasi Admin:</span>
                                                 <p class="text-amber-900 dark:text-amber-200 font-medium italic" x-text="'&quot;' + previewApp.admin_feedback + '&quot;'"></p>
                                             </div>
                                         </template>
@@ -241,8 +241,8 @@
                                         {{-- Daftar 5 Berkas Persyaratan Interaktif --}}
                                         <div>
                                             <div class="flex items-center justify-between mb-2">
-                                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Pilih Berkas untuk Ditinjau:</span>
-                                                <span class="text-[10px] font-bold text-orange-600 dark:text-orange-400">5 Dokumen</span>
+                                                <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Pilih Berkas untuk Ditinjau:</span>
+                                                <span class="text-[11px] font-bold text-orange-600 dark:text-orange-400">5 Dokumen</span>
                                             </div>
                                             <div class="space-y-1.5">
                                                 @foreach($fileLabels as $field => $label)
@@ -256,18 +256,18 @@
                                                                 {{ $label }}
                                                             </span>
                                                             <template x-if="previewApp.file_reviews && previewApp.file_reviews['{{ $field }}'] && previewApp.file_reviews['{{ $field }}'].note">
-                                                                <span class="text-[9px] text-rose-600 dark:text-rose-400 truncate block mt-0.5" x-text="'Catatan: ' + previewApp.file_reviews['{{ $field }}'].note"></span>
+                                                                <span class="text-[11px] text-rose-600 dark:text-rose-400 truncate block mt-0.5" x-text="'Catatan: ' + previewApp.file_reviews['{{ $field }}'].note"></span>
                                                             </template>
                                                         </div>
                                                         <div class="shrink-0">
                                                             <template x-if="previewApp.file_reviews && previewApp.file_reviews['{{ $field }}'] && previewApp.file_reviews['{{ $field }}'].status === 'rejected'">
-                                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">✕ Tolak</span>
+                                                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300">✕ Tolak</span>
                                                             </template>
                                                             <template x-if="previewApp.file_reviews && previewApp.file_reviews['{{ $field }}'] && previewApp.file_reviews['{{ $field }}'].status === 'approved'">
-                                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">✓ OK</span>
+                                                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">✓ OK</span>
                                                             </template>
                                                             <template x-if="!previewApp.file_reviews || !previewApp.file_reviews['{{ $field }}'] || !previewApp.file_reviews['{{ $field }}'].status">
-                                                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">Lihat</span>
+                                                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">Lihat</span>
                                                             </template>
                                                         </div>
                                                     </button>
@@ -321,12 +321,12 @@
                                                     <template x-if="previewApp && previewApp.clean_phone">
                                                         <a :href="'https://wa.me/' + previewApp.clean_phone + '?text=' + encodeURIComponent('Halo ' + previewApp.student_name + ', terkait pengajuan berkas di SIBIMA: Berkas ' + previewFileLabel + ' Anda tidak dapat dibuka (Google Drive 403 / Akses Dibatasi). Mohon segera ubah setelan akses link Google Drive Anda menjadi \'Siapa saja yang memiliki link dapat melihat\' (Anyone with the link) agar dapat divalidasi oleh prodi. Terima kasih.')"
                                                            target="_blank"
-                                                           class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors shadow-2xs cursor-pointer">
+                                                           class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors shadow-2xs cursor-pointer">
                                                             <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
                                                             <span>Minta Buka Akses via WA</span>
                                                         </a>
                                                     </template>
-                                                    <a :href="previewRawUrl" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-white rounded-lg text-[10px] font-bold transition-colors border border-amber-500/30">
+                                                    <a :href="previewRawUrl" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-white rounded-lg text-[11px] font-bold transition-colors border border-amber-500/30">
                                                         <span>Buka Tab Baru ↗</span>
                                                     </a>
                                                 </div>

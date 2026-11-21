@@ -21,9 +21,9 @@
                                     <div class="flex items-center gap-1.5">
                                         <span>{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }}</span>
                                         @if($session->scheduled_at->isToday())
-                                            <span class="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-[9px] font-black uppercase">Hari Ini</span>
+                                            <span class="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 text-[11px] font-black uppercase">Hari Ini</span>
                                         @elseif($session->scheduled_at->isTomorrow())
-                                            <span class="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-[9px] font-black uppercase">Besok</span>
+                                            <span class="px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-[11px] font-black uppercase">Besok</span>
                                         @endif
                                     </div>
                                     <span class="text-xs text-slate-500 dark:text-slate-400 font-normal tabular-nums">{{ $session->scheduled_at->format('H:i') }} WIB</span>
@@ -38,7 +38,7 @@
                                                 $linkUrl = Str::startsWith($session->location ?? '', 'http') ? $session->location : 'https://' . $session->location;
                                             @endphp
                                             @if($session->location)
-                                                <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg {{ $isMeet ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/60' : ($isZoom ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/60' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100') }} transition-all shadow-2xs font-bold text-[10px] uppercase tracking-wider">
+                                                <a href="{{ $linkUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg {{ $isMeet ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/60' : ($isZoom ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/60' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100') }} transition-all shadow-2xs font-bold text-[11px] uppercase tracking-wider">
                                                     <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                                     <span>{{ $isMeet ? 'Gabung Google Meet' : ($isZoom ? 'Gabung Zoom' : 'Buka Meeting') }}</span>
                                                 </a>
@@ -65,7 +65,7 @@
                                         </div>
                                         <div class="min-w-0">
                                             <div class="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate max-w-[130px]">{{ $session->dosen->name ?? '-' }}</div>
-                                            <div class="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-bold tracking-tighter">
+                                            <div class="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-tighter">
                                                 @if($session->dosen_id === $session->thesis->pembimbing1_id)
                                                     Pembimbing 1
                                                 @elseif($session->dosen_id === $session->thesis->pembimbing2_id)
@@ -92,7 +92,7 @@
                                                 </div>
                                                 <div class="flex gap-1">
                                                     {{-- Ganti dokumen --}}
-                                                    <button type="button" @click="uploading = !uploading" class="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">
+                                                    <button type="button" @click="uploading = !uploading" class="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                                                         Ganti
                                                     </button>
@@ -105,7 +105,7 @@
                                                           data-confirm-button="Ya, Hapus">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-slate-700 border border-red-200 dark:border-red-900 rounded hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors relative z-10 cursor-pointer">
+                                                        <button type="submit" class="flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-slate-700 border border-red-200 dark:border-red-900 rounded hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors relative z-10 cursor-pointer">
                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                             Hapus
                                                         </button>
@@ -127,10 +127,10 @@
                                                         <input type="url" name="document" placeholder="https://drive.google.com/..." required
                                                             class="block w-full text-xs text-slate-600 dark:text-slate-400 rounded border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 shadow-sm py-1.5 px-2">
                                                     </label>
-                                                    <p class="text-[10px] text-slate-400">Masukkan Dokumen dari Google Drive.</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Masukkan Dokumen dari Google Drive.</p>
                                                     <div class="flex gap-1">
-                                                        <button type="submit" class="px-2.5 py-1 bg-orange-600 text-white text-[10px] font-bold rounded hover:bg-orange-700 transition-colors">Simpan</button>
-                                                        <button type="button" @click="uploading = false" class="px-2.5 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400 text-[10px] font-semibold rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">Batal</button>
+                                                        <button type="submit" class="px-2.5 py-1 bg-orange-600 text-white text-[11px] font-bold rounded hover:bg-orange-700 transition-colors">Simpan</button>
+                                                        <button type="button" @click="uploading = false" class="px-2.5 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400 text-[11px] font-semibold rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors">Batal</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -151,34 +151,34 @@
                                 <td class="py-4 px-5 min-w-[200px]">
                                     @if($session->status === 'completed')
                                         @if($session->is_absent)
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60">
                                                 Tidak Hadir (Absen)
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
                                                 Telah Hadir
                                             </span>
                                         @endif
                                     @elseif($session->status === 'rejected')
-                                        <span class="text-slate-400 dark:text-slate-500 text-xs italic">-</span>
+                                        <span class="text-slate-500 dark:text-slate-400 text-xs italic">-</span>
                                     @else
                                         @if($session->student_attendance_status === 'pending')
                                             <div class="space-y-2">
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/80 text-[10px] font-black uppercase tracking-wider animate-pulse">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/80 text-[11px] font-black uppercase tracking-wider animate-pulse">
                                                     Belum Konfirmasi
                                                 </span>
                                                 <div class="flex items-center gap-1.5">
                                                     <form action="{{ route('mentoring-sessions.confirm-attendance', $session->id) }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="status" value="attending">
-                                                        <button type="submit" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 cursor-pointer" title="Konfirmasi Akan Hadir">
+                                                        <button type="submit" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 cursor-pointer" title="Konfirmasi Akan Hadir">
                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                             <span>Akan Hadir</span>
                                                         </button>
                                                     </form>
                                                     <button type="button" 
                                                             @click="openPermissionModal({{ json_encode($session) }})" 
-                                                            class="px-2.5 py-1 bg-slate-100 hover:bg-rose-50 dark:bg-slate-800 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 cursor-pointer" title="Ajukan Izin dengan Alasan">
+                                                            class="px-2.5 py-1 bg-slate-100 hover:bg-rose-50 dark:bg-slate-800 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 cursor-pointer" title="Ajukan Izin dengan Alasan">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                                         <span>Izin</span>
                                                     </button>
@@ -187,37 +187,37 @@
                                         @elseif($session->student_attendance_status === 'attending')
                                             <div class="space-y-1">
                                                 <div class="flex items-center gap-1">
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 text-[10px] font-black uppercase tracking-wider">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 text-[11px] font-black uppercase tracking-wider">
                                                         <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                         <span>Akan Hadir</span>
                                                     </span>
                                                 </div>
                                                 @if($session->student_confirmed_at)
-                                                    <p class="text-[9px] text-slate-400 dark:text-slate-500 font-medium">Dikonfirmasi: {{ $session->student_confirmed_at->format('d/m H:i') }} WIB</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Dikonfirmasi: {{ $session->student_confirmed_at->format('d/m H:i') }} WIB</p>
                                                 @endif
                                                 <button type="button" 
                                                         @click="openPermissionModal({{ json_encode($session) }})" 
-                                                        class="text-[10px] font-bold text-slate-400 hover:text-rose-600 dark:text-slate-500 dark:hover:text-rose-400 underline decoration-dotted transition-colors cursor-pointer">
+                                                        class="text-[11px] font-bold text-slate-400 hover:text-rose-600 dark:text-slate-500 dark:hover:text-rose-400 underline decoration-dotted transition-colors cursor-pointer">
                                                     Ubah ke Izin
                                                 </button>
                                             </div>
                                         @elseif($session->student_attendance_status === 'permission')
                                             <div class="space-y-1">
                                                 <div class="flex items-center gap-1">
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/80 text-[10px] font-black uppercase tracking-wider">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/80 text-[11px] font-black uppercase tracking-wider">
                                                         <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"></path></svg>
                                                         <span>Izin / Berhalangan</span>
                                                     </span>
                                                 </div>
                                                 @if($session->student_attendance_reason)
-                                                    <p class="text-[10px] text-slate-600 dark:text-slate-400 italic line-clamp-2" title="{{ $session->student_attendance_reason }}">
+                                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 italic line-clamp-2" title="{{ $session->student_attendance_reason }}">
                                                         "{{ $session->student_attendance_reason }}"
                                                     </p>
                                                 @endif
                                                 <form action="{{ route('mentoring-sessions.confirm-attendance', $session->id) }}" method="POST" class="inline-block">
                                                     @csrf
                                                     <input type="hidden" name="status" value="attending">
-                                                    <button type="submit" class="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 underline decoration-dotted transition-colors cursor-pointer">
+                                                    <button type="submit" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 underline decoration-dotted transition-colors cursor-pointer">
                                                         Ubah Siap Hadir
                                                     </button>
                                                 </form>
@@ -231,7 +231,7 @@
                                         <div class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-0.5">Catatan Pembimbing:</div>
                                         <div class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">{{ $session->feedback }}</div>
                                     @elseif($session->notes)
-                                        <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 mb-0.5">Catatan Pengajuan:</div>
+                                        <div class="text-[11px] uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400 mb-0.5">Catatan Pengajuan:</div>
                                         <div class="text-slate-600 dark:text-slate-400 text-xs italic leading-relaxed">{{ $session->notes }}</div>
                                     @else
                                         @if(!$session->feedback_document_url)
@@ -253,7 +253,7 @@
                                 </td>
                                 <td class="py-4 px-5 whitespace-nowrap">
                                     @if($session->is_absent)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-800 border border-red-200">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-red-100 text-red-800 border border-red-200">
                                             Tidak Hadir
                                         </span>
                                     @else
@@ -266,7 +266,7 @@
                                                 default => strtoupper($session->status),
                                             };
                                         @endphp
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider
                                             {{ $session->status === 'pending' ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800' : '' }}
                                             {{ $session->status === 'approved' ? 'bg-orange-600 text-white' : '' }}
                                             {{ $session->status === 'rejected' ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800' : '' }}
@@ -284,7 +284,7 @@
                                                         data-dosen-name="{{ $session->dosen?->name ?? 'Dosen Pembimbing' }}"
                                                         data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
                                                         data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
-                                                        class="text-[10px] font-bold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline cursor-pointer flex items-center gap-1">
+                                                        class="text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline cursor-pointer flex items-center gap-1">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                     <span>Batalkan</span>
                                                 </button>

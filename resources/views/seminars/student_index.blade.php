@@ -132,7 +132,7 @@
                         <!-- Progress Bar & Percentage Pill -->
                         <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/60 p-3.5 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shrink-0">
                             <div class="text-right">
-                                <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none mb-1">Status Kesiapan</p>
+                                <p class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-none mb-1">Status Kesiapan</p>
                                 <p class="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ $percentMet }}%</p>
                             </div>
                             <div class="w-16 sm:w-20 bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
@@ -143,10 +143,10 @@
 
                     <!-- Criteria Subtitle -->
                     <div class="flex items-center justify-between my-5 pt-1">
-                        <span class="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        <span class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                             Checklist Prasyarat Pendaftaran
                         </span>
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                             Lengkapi seluruh poin di bawah untuk membuka form
                         </span>
                     </div>
@@ -168,14 +168,14 @@
                                     <div>
                                         <div class="flex items-center gap-2 flex-wrap">
                                             @if(!empty($c['tag']))
-                                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' }}">
+                                                <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' }}">
                                                     {{ $c['tag'] }}
                                                 </span>
                                             @endif
                                             <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
                                                 {{ $c['title'] }}
                                             </h4>
-                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300' }}">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300' }}">
                                                 {{ $c['status_text'] }}
                                             </span>
                                         </div>
@@ -217,7 +217,7 @@
                             <span class="font-bold">Status Periode Gelombang:</span>
                             <span>{{ $hasActiveWave ? "{$activeWave->name} (Sedang Dibuka)" : 'Belum Ada Gelombang Seminar yang Dibuka' }}</span>
                         </div>
-                        <span class="text-[10px] uppercase font-black tracking-wider px-2 py-0.5 rounded-md bg-white/70 dark:bg-slate-800/70 border border-slate-200/50 dark:border-slate-700/50">
+                        <span class="text-[11px] uppercase font-black tracking-wider px-2 py-0.5 rounded-md bg-white/70 dark:bg-slate-800/70 border border-slate-200/50 dark:border-slate-700/50">
                             {{ $hasActiveWave ? 'Aktif' : 'Tutup' }}
                         </span>
                     </div>
@@ -239,7 +239,7 @@
                         </div>
 
                         <div class="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
-                            <button type="button" disabled class="w-full sm:w-auto px-5 py-2.5 bg-slate-200 dark:bg-slate-700/60 text-slate-400 dark:text-slate-500 rounded-xl text-xs font-black uppercase tracking-wider cursor-not-allowed flex items-center justify-center gap-2 shadow-2xs">
+                            <button type="button" disabled class="w-full sm:w-auto px-5 py-2.5 bg-slate-200 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 rounded-xl text-xs font-black uppercase tracking-wider cursor-not-allowed flex items-center justify-center gap-2 shadow-2xs">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                 <span>Daftar Terkunci</span>
                             </button>
@@ -282,7 +282,7 @@
                         <div>
                             <div class="flex items-center gap-2.5">
                                 <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100">Detail Berkas Persyaratan</h4>
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60">
                                     5 Berkas Terlampir
                                 </span>
                             </div>
@@ -400,7 +400,7 @@
                                                 </svg>
                                             </div>
                                             <div class="min-w-0">
-                                                <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                                <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                                     {{ $info['category'] }}
                                                 </span>
                                                 <h5 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-snug truncate">
@@ -412,17 +412,17 @@
                                         <!-- Status Pill -->
                                         <div class="shrink-0">
                                             @if($isApproved)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                                                     <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                                     <span>Valid</span>
                                                 </span>
                                             @elseif($isRejected)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
                                                     <svg class="w-3 h-3 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                                                     <span>Revisi</span>
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-600/60">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-slate-600/60">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
                                                     <span>Diproses</span>
                                                 </span>
@@ -437,7 +437,7 @@
                                     <!-- Rejection Note if any -->
                                     @if($isRejected && !empty($review['note']))
                                         <div class="mb-3 p-2.5 bg-rose-100/70 dark:bg-rose-900/40 rounded-xl border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-300">
-                                            <div class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider">
+                                            <div class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider">
                                                 <svg class="w-3.5 h-3.5 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                                                 <span>Catatan Validator:</span>
                                             </div>
@@ -448,7 +448,7 @@
 
                                 <!-- Footer: Action link to Google Drive -->
                                 <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2 mt-auto">
-                                    <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
                                         <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                                         <span>Google Drive</span>
                                     </span>
@@ -460,7 +460,7 @@
                                             <svg class="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                         </a>
                                     @else
-                                        <span class="text-[11px] text-slate-400 italic">Belum diunggah</span>
+                                        <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">Belum diunggah</span>
                                     @endif
                                 </div>
                             </div>
@@ -473,7 +473,7 @@
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 </div>
                                 <div>
-                                    <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                    <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                         Panduan Akses
                                     </span>
                                     <h5 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 leading-snug">
@@ -484,7 +484,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="pt-3 border-t border-slate-200/60 dark:border-slate-700/60 mt-3 flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500">
+                            <div class="pt-3 border-t border-slate-200/60 dark:border-slate-700/60 mt-3 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
                                 <span>Status Sinkronisasi</span>
                                 <span class="inline-flex items-center gap-1 font-bold text-emerald-600 dark:text-emerald-400">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -510,11 +510,11 @@
                                         @if(isset($application->file_reviews[$field]['status']) && $application->file_reviews[$field]['status'] === 'rejected')
                                             <div class="space-y-2">
                                                 <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">{{ $info['label'] }} <span class="text-red-500">*</span></label>
-                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-semibold tracking-wide mb-2">
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold tracking-wide mb-2">
                                                     Masukkan link dari Google Drive.
                                                 </p>
                                                 <input type="url" name="{{ $field }}" value="{{ old($field, $application->$field ?? '') }}" placeholder="https://drive.google.com/..." required class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 shadow-sm py-2 px-3">
-                                                @error($field) <p class="text-red-500 text-[10px] mt-1">{{ $message }}</p> @enderror
+                                                @error($field) <p class="text-red-500 text-[11px] mt-1">{{ $message }}</p> @enderror
                                             </div>
                                         @endif
                                     @endforeach
@@ -587,11 +587,11 @@
                             <div class="flex items-center gap-2">
                                 <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Form Pengajuan Seminar</h3>
                                 @if($activeWave)
-                                    <span class="px-2.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-[10px] font-black rounded-lg uppercase tracking-widest border border-indigo-200 dark:border-indigo-800/50">
+                                    <span class="px-2.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-[11px] font-black rounded-lg uppercase tracking-widest border border-indigo-200 dark:border-indigo-800/50">
                                         {{ $activeWave->name }}
                                     </span>
                                 @else
-                                    <span class="px-2.5 py-0.5 bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 text-[10px] font-black rounded-lg uppercase tracking-widest border border-rose-200 dark:border-rose-800/80">
+                                    <span class="px-2.5 py-0.5 bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 text-[11px] font-black rounded-lg uppercase tracking-widest border border-rose-200 dark:border-rose-800/80">
                                         Gelombang Belum Dibuka
                                     </span>
                                 @endif
@@ -605,7 +605,7 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                 </div>
                                 <div>
-                                    <div class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Unduh Formulir</div>
+                                    <div class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Unduh Formulir</div>
                                     <a href="{{ route('download.private', ['path' => $template->file_path]) }}" target="_blank" class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline">
                                         {{ $template->title }}
                                     </a>
@@ -708,7 +708,7 @@
                                     :class="activeTab === 'all' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40'">
                                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                                 <span>Semua Kategori</span>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors" 
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold transition-colors" 
                                       :class="totalFilled === totalCount ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-200/80 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
                                       x-text="totalFilled + '/' + totalCount"></span>
                             </button>
@@ -724,7 +724,7 @@
                                         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
                                     @endif
                                     <span>{{ $cat['title'] }}</span>
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors"
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold transition-colors"
                                           :class="countFilled({{ json_encode($cat['keys']) }}) === {{ count($cat['keys']) }} ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-200/80 text-slate-600 dark:bg-slate-700 dark:text-slate-300'"
                                           x-text="countFilled({{ json_encode($cat['keys']) }}) + '/{{ count($cat['keys']) }}'"></span>
                                 </button>
@@ -761,13 +761,13 @@
                                                 </label>
                                                 <button type="button" 
                                                         @click="pasteSingle('{{ $field }}')" 
-                                                        class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 rounded-md text-[10px] font-bold transition-all shadow-2xs cursor-pointer active:scale-95 shrink-0"
+                                                        class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 border border-slate-200 dark:border-slate-700 hover:border-orange-200 rounded-md text-[11px] font-bold transition-all shadow-2xs cursor-pointer active:scale-95 shrink-0"
                                                         title="Tempel tautan dari clipboard">
                                                     Tempel
                                                 </button>
                                             </div>
                                             
-                                            <p class="text-[11px] text-slate-400 dark:text-slate-500 leading-tight">{{ $info['desc'] }}</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">{{ $info['desc'] }}</p>
 
                                             <div class="relative">
                                                 <input type="url" 
@@ -782,28 +782,28 @@
                                             <!-- Live Status Indicator -->
                                             <div class="flex items-center justify-between pt-1">
                                                 <template x-if="isDrive(files['{{ $field }}'])">
-                                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                         <span>Google Drive Valid</span>
                                                     </span>
                                                 </template>
                                                 <template x-if="files['{{ $field }}'] && !isDrive(files['{{ $field }}'])">
-                                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 dark:text-amber-400">
                                                         <span>Link Terisi</span>
                                                     </span>
                                                 </template>
                                                 <template x-if="!files['{{ $field }}']">
-                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500 italic">Belum diisi</span>
+                                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">Belum diisi</span>
                                                 </template>
 
                                                 <template x-if="files['{{ $field }}']">
-                                                    <a :href="files['{{ $field }}']" target="_blank" class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-0.5">
+                                                    <a :href="files['{{ $field }}']" target="_blank" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-0.5">
                                                         <span>Buka Link</span>
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                     </a>
                                                 </template>
                                             </div>
-                                            @error($field) <p class="text-rose-500 text-[10px] mt-1 font-bold">{{ $message }}</p> @enderror
+                                            @error($field) <p class="text-rose-500 text-[11px] mt-1 font-bold">{{ $message }}</p> @enderror
                                         </div>
                                     @endforeach
                                 </div>
@@ -821,7 +821,7 @@
                             </button>
                         @else
                             <div class="flex items-center gap-2 w-full sm:w-auto">
-                                <button type="button" disabled class="w-full sm:w-auto px-8 py-3 bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 text-xs font-black uppercase tracking-widest rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
+                                <button type="button" disabled class="w-full sm:w-auto px-8 py-3 bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                     <span>Pendaftaran Belum Dibuka</span>
                                 </button>

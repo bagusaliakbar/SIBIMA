@@ -11,9 +11,9 @@
             <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-red-50 dark:bg-red-500/5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-110"></div>
                 <div class="relative">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Mahasiswa Kritikal</p>
+                    <p class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Total Mahasiswa Kritikal</p>
                     <h3 class="text-3xl font-black text-slate-800 dark:text-slate-100">{{ $students->total() }}</h3>
-                    <p class="text-[10px] text-red-500 font-bold mt-2 flex items-center">
+                    <p class="text-[11px] text-red-500 font-bold mt-2 flex items-center">
                         <span class="w-1.5 h-1.5 bg-red-500 rounded-full mr-2 animate-pulse"></span>
                         MEMERLUKAN INTERVENSI
                     </p>
@@ -27,7 +27,7 @@
                 </div>
                 <div class="hidden lg:flex gap-3">
                     <div class="px-4 py-2 bg-red-50 dark:bg-red-500/10 rounded-xl border border-red-100 dark:border-red-500/20 text-center">
-                        <p class="text-[10px] font-black text-red-600 dark:text-red-400 uppercase tracking-tighter">Batas Maksimal</p>
+                        <p class="text-[11px] font-black text-red-600 dark:text-red-400 uppercase tracking-tighter">Batas Maksimal</p>
                         <p class="text-sm font-black text-red-700 dark:text-red-300">14 Semester</p>
                     </div>
                 </div>
@@ -73,12 +73,12 @@
                 <table class="w-full text-left text-sm">
                     <thead>
                         <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30">
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase">Mahasiswa</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase text-center">Angkatan</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase text-center">Semester</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase">Tahapan Terakhir</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase">Dosen Pembimbing</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest whitespace-nowrap uppercase text-center">Tingkat Risiko</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest whitespace-nowrap uppercase">Mahasiswa</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest whitespace-nowrap uppercase text-center">Angkatan</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest whitespace-nowrap uppercase text-center">Semester</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest whitespace-nowrap uppercase">Tahapan Terakhir</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest whitespace-nowrap uppercase">Dosen Pembimbing</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest whitespace-nowrap uppercase text-center">Tingkat Risiko</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -92,7 +92,7 @@
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors align-middle">
                                 <td class="py-5 px-6">
                                     <div class="font-bold text-slate-800 dark:text-slate-100">{{ $student->name }}</div>
-                                    <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 tracking-tight uppercase font-black">{{ $student->identifier }}</div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 tracking-tight uppercase font-black">{{ $student->identifier }}</div>
                                 </td>
                                 <td class="py-5 px-6 text-center">
                                     <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-black uppercase">
@@ -112,30 +112,30 @@
                                             @else Pengerjaan Bab 1-3
                                             @endif
                                         </div>
-                                        <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 truncate max-w-[200px] italic">"{{ $thesis->final_title ?? $thesis->title }}"</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate max-w-[200px] italic">"{{ $thesis->final_title ?? $thesis->title }}"</p>
                                     @else
-                                        <span class="text-[10px] text-slate-400 italic">Belum Mengajukan Judul</span>
+                                        <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">Belum Mengajukan Judul</span>
                                     @endif
                                 </td>
                                 <td class="py-5 px-6">
                                     <div class="space-y-1.5">
                                         <div class="flex items-center gap-2">
-                                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20">P1</span>
+                                            <span class="text-[11px] font-black px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20">P1</span>
                                             <span class="text-xs text-slate-700 dark:text-slate-300 font-bold tracking-tight">{{ $student->thesis->pembimbing1->name ?? '-' }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">P2</span>
+                                            <span class="text-[11px] font-black px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">P2</span>
                                             <span class="text-xs text-slate-600 dark:text-slate-400 font-medium tracking-tight">{{ $student->thesis->pembimbing2->name ?? '-' }}</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="py-5 px-6 text-center">
                                     <div class="flex flex-col items-center gap-1">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $riskBadgeClass }} text-[9px] font-black uppercase tracking-widest border shadow-sm">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $riskBadgeClass }} text-[11px] font-black uppercase tracking-widest border shadow-sm">
                                             {{ $sem >= 14 ? 'Sangat Tinggi' : 'Tinggi' }}
                                         </span>
                                         @if($sem >= 14)
-                                            <span class="text-[8px] text-rose-600 dark:text-rose-400 font-black animate-pulse">DROP OUT RISK</span>
+                                            <span class="text-[11px] text-rose-600 dark:text-rose-400 font-black animate-pulse">DROP OUT RISK</span>
                                         @endif
                                     </div>
                                 </td>
@@ -176,7 +176,7 @@
                                 </div>
                             </div>
                             <div class="flex flex-col items-end gap-1 shrink-0">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full {{ $riskBadgeClass }} text-[10px] font-black uppercase tracking-wider border">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full {{ $riskBadgeClass }} text-[11px] font-black uppercase tracking-wider border">
                                     {{ $sem >= 14 ? 'Sangat Tinggi' : 'Tinggi' }}
                                 </span>
                                 <span class="text-[11px] font-black text-slate-700 dark:text-slate-200">Semester {{ $sem }}</span>
@@ -184,7 +184,7 @@
                         </div>
 
                         <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/80 space-y-1">
-                            <div class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tahapan Terakhir</div>
+                            <div class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tahapan Terakhir</div>
                             @if($thesis)
                                 <div class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase">
                                     @if($thesis->status === 'completed') Lulus
@@ -201,11 +201,11 @@
 
                         <div class="grid grid-cols-1 gap-1.5 text-xs">
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-black px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20 shrink-0">P1</span>
+                                <span class="text-[11px] font-black px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20 shrink-0">P1</span>
                                 <span class="text-slate-700 dark:text-slate-200 font-semibold truncate">{{ $student->thesis->pembimbing1->name ?? '-' }}</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-black px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 shrink-0">P2</span>
+                                <span class="text-[11px] font-black px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 shrink-0">P2</span>
                                 <span class="text-slate-600 dark:text-slate-300 font-medium truncate">{{ $student->thesis->pembimbing2->name ?? '-' }}</span>
                             </div>
                         </div>

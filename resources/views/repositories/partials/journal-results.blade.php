@@ -31,7 +31,7 @@
         @elseif(empty($results['data']))
             <!-- Zero Results Found -->
             <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 sm:p-12 border border-slate-200/80 dark:border-slate-700/80 text-center space-y-4">
-                <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center mx-auto">
+                <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center mx-auto">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
                 <h4 class="text-base font-bold text-slate-800 dark:text-slate-100">
@@ -129,7 +129,7 @@
                                         <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                                         <span>Jurnal GLOBAL FASILKOM UNSUB</span>
                                         @if(!empty($item['volume']))
-                                            <span class="text-[10px] font-semibold text-amber-700 dark:text-amber-300">Vol. {{ $item['volume'] }}{{ !empty($item['issue']) ? ' No. ' . $item['issue'] : '' }}</span>
+                                            <span class="text-[11px] font-semibold text-amber-700 dark:text-amber-300">Vol. {{ $item['volume'] }}{{ !empty($item['issue']) ? ' No. ' . $item['issue'] : '' }}</span>
                                         @endif
                                     </span>
                                 @elseif(($item['source'] ?? '') === 'garuda')
@@ -137,7 +137,7 @@
                                         <svg class="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                         <span>Jurnal Nasional GARUDA (SINTA)</span>
                                         @if(!empty($item['publisher']))
-                                            <span class="text-[10px] font-semibold text-rose-700 dark:text-rose-300">({{ $item['publisher'] }})</span>
+                                            <span class="text-[11px] font-semibold text-rose-700 dark:text-rose-300">({{ $item['publisher'] }})</span>
                                         @endif
                                     </span>
                                 @elseif(($item['source'] ?? '') === 'doaj')
@@ -312,7 +312,7 @@
                                             AI Quick Summary <span class="text-orange-600 dark:text-orange-400 font-bold">(Poin Kunci Penelitian)</span>
                                         </h4>
                                     </div>
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80">
+                                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/80">
                                         Ekstraksi Instan
                                     </span>
                                 </div>
@@ -357,7 +357,7 @@
                         <!-- Concepts / Keywords Chips -->
                         @if(!empty($item['concepts']))
                             <div class="flex flex-wrap items-center gap-1.5 pt-1">
-                                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mr-1">Topik:</span>
+                                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-1">Topik:</span>
                                 @foreach($item['concepts'] as $concept)
                                     <span class="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-slate-100 dark:bg-slate-700/70 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600">
                                         {{ $concept['name'] }}

@@ -459,9 +459,9 @@
                                             <div class="flex items-center justify-between gap-2 flex-wrap">
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase" x-text="t.name"></span>
-                                                    <span class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700" x-text="t.npm"></span>
+                                                    <span class="text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700" x-text="t.npm"></span>
                                                 </div>
-                                                <span class="text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"
+                                                <span class="text-[11px] font-bold px-2 py-0.5 rounded uppercase tracking-wider"
                                                       :class="getStudentRoleBadge(t).class"
                                                       x-text="getStudentRoleBadge(t).text">
                                                 </span>
@@ -504,7 +504,7 @@
                                 <option value="{{ $thesis->pembimbing2->id }}">Pembimbing 2: {{ $thesis->pembimbing2->name }}</option>
                             @endif
                         </select>
-                        <p class="mt-1 text-xs text-slate-400 dark:text-slate-500 italic">Jadwal bimbingan akan dikirimkan secara spesifik ke dosen yang dipilih.</p>
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400 italic">Jadwal bimbingan akan dikirimkan secara spesifik ke dosen yang dipilih.</p>
                     </div>
                     @endif
 
@@ -519,7 +519,7 @@
                                @change="onDateChange()"
                                required 
                                class="mt-2 block w-full md:w-1/2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                        <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">Pilih tanggal bimbingan. Tanggal sebelum hari ini otomatis dinonaktifkan.</p>
+                        <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Pilih tanggal bimbingan. Tanggal sebelum hari ini otomatis dinonaktifkan.</p>
                     </div>
 
                     <!-- Visual Time Slot Selector -->
@@ -532,7 +532,7 @@
                                 </label>
                                 <span class="inline-flex items-center gap-1 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/15 px-2.5 py-1 rounded-lg border border-orange-200/60 dark:border-orange-500/25 whitespace-nowrap shadow-xs">
                                     <span x-text="selectedTime"></span>
-                                    <span class="text-[10px] text-orange-500/90 font-bold">WIB</span>
+                                    <span class="text-[11px] text-orange-500/90 font-bold">WIB</span>
                                 </span>
                             </div>
                             <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 inline-flex items-center gap-1 transition-colors self-start sm:self-auto">
@@ -578,7 +578,7 @@
                             <div class="pt-3 border-t border-slate-200/70 dark:border-slate-800 flex flex-wrap items-center gap-4 sm:gap-6 text-[11px] text-slate-600 dark:text-slate-300">
                                 <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-orange-600 inline-block shadow-sm"></span> <span class="font-medium">Terpilih</span></span>
                                 <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 inline-block shadow-sm"></span> <span class="font-medium text-slate-700 dark:text-slate-200">Tersedia</span></span>
-                                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-slate-200 dark:bg-slate-700/80 border border-slate-300 dark:border-slate-600 inline-block"></span> <span class="font-medium text-slate-400 dark:text-slate-400 line-through">Terlewat</span></span>
+                                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-slate-200 dark:bg-slate-700/80 border border-slate-300 dark:border-slate-600 inline-block"></span> <span class="font-medium text-slate-500 dark:text-slate-400 line-through">Terlewat</span></span>
                             </div>
                         </div>
 
@@ -712,10 +712,10 @@
                         <span>{{ in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) ? 'Simpan Jadwal Bimbingan' : 'Kirim Permintaan' }}</span>
                         @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']))
                             <template x-if="selectionMode === 'multiple' && selectedThesisIds.length > 0">
-                                <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black" x-text="selectedThesisIds.length + ' Mhs'"></span>
+                                <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[11px] font-black" x-text="selectedThesisIds.length + ' Mhs'"></span>
                             </template>
                             <template x-if="selectionMode === 'all'">
-                                <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black" x-text="'Semua Mhs ({{ count($theses) }})'"></span>
+                                <span class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[11px] font-black" x-text="'Semua Mhs ({{ count($theses) }})'"></span>
                             </template>
                         @endif
                     </button>
@@ -817,7 +817,7 @@
                                     <div class="flex justify-between items-start gap-3 py-1">
                                         <span class="text-slate-500 dark:text-slate-400 shrink-0 font-medium">Tipe & Tempat:</span>
                                         <div class="text-right">
-                                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold" 
+                                            <span class="inline-block px-2 py-0.5 rounded text-[11px] font-bold" 
                                                   :class="type === 'offline' ? 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300' : 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'"
                                                   x-text="type === 'offline' ? 'Tatap Muka (Offline)' : 'Daring (Online)'"></span>
                                             <div class="text-slate-700 dark:text-slate-300 font-medium text-[11px] mt-0.5 break-all line-clamp-2" x-text="location || '-'"></div>

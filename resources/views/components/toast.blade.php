@@ -62,7 +62,7 @@
                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1 leading-relaxed" x-text="n.message"></p>
             </div>
 
-            <button type="button" @click="remove(n.id)" aria-label="Tutup notifikasi" title="Tutup notifikasi" class="shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
+            <button type="button" @click="remove(n.id)" aria-label="Tutup notifikasi" title="Tutup notifikasi" class="shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
                 <svg aria-hidden="true" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>

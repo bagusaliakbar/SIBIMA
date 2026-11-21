@@ -37,7 +37,7 @@
         </svg>
         <span>Daftar Bacaan Saya</span>
         @if($myBookmarksTotal > 0)
-            <span class="px-2 py-0.5 rounded-lg text-[10px] font-black {{ request()->routeIs('repositories.bookmarks') ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">
+            <span class="px-2 py-0.5 rounded-lg text-[11px] font-black {{ request()->routeIs('repositories.bookmarks') ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">
                 {{ $myBookmarksTotal }}
             </span>
         @endif
@@ -51,7 +51,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
         </svg>
         <span>Monitoring Pustaka</span>
-        <span class="px-1.5 py-0.5 rounded-md text-[10px] uppercase tracking-wider font-extrabold {{ request()->routeIs('repositories.monitoring*') ? 'bg-white/20 text-white' : 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300' }}">
+        <span class="px-1.5 py-0.5 rounded-md text-[11px] uppercase tracking-wider font-extrabold {{ request()->routeIs('repositories.monitoring*') ? 'bg-white/20 text-white' : 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300' }}">
             Civitas
         </span>
     </a>

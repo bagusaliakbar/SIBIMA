@@ -20,7 +20,7 @@
     <button type="submit"
             aria-label="Jalankan pencarian"
             title="Cari"
-            class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 group-focus-within:text-orange-500 transition-colors cursor-pointer">
+            class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 group-focus-within:text-orange-500 transition-colors cursor-pointer">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
@@ -36,7 +36,7 @@
         <a href="{{ $actionUrl }}?{{ http_build_query(collect($params)->forget($name)->toArray()) }}"
            aria-label="Hapus pencarian"
            title="Hapus kata kunci"
-           class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+           class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>

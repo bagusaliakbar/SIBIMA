@@ -93,7 +93,7 @@
                                     <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                                     <span>Clean Audit</span>
                                     @if(isset($pendingSummary) && $pendingSummary['total'] > 0)
-                                        <span class="px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-black">
+                                        <span class="px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[11px] font-black">
                                             {{ $pendingSummary['total'] }}
                                         </span>
                                     @endif
@@ -170,12 +170,12 @@
                             <th class="py-3.5 px-6 font-semibold tracking-wider bg-slate-50 dark:bg-slate-900">RENCANA JUDUL SKRIPSI</th>
                             <th class="py-3.5 px-6 font-semibold tracking-wider text-center bg-slate-50 dark:bg-slate-900">
                                 <span class="block">Status &amp; Progres</span>
-                                <span class="block text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-black">PROGRES TARGET BIMBINGAN</span>
+                                <span class="block text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-black">PROGRES TARGET BIMBINGAN</span>
                             </th>
                             <th class="py-3.5 px-6 font-semibold tracking-wider text-right bg-slate-50 dark:bg-slate-900">AKSI</th>
                         </tr>
                     @else
-                        <tr class="bg-slate-50 dark:bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
+                        <tr class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
                             <th class="py-4 px-6">Mahasiswa</th>
                             <th class="py-4 px-6">Rencana Judul Skripsi</th>
                             <th class="py-4 px-6">Deskripsi</th>
@@ -214,11 +214,11 @@
                     @endif
                 @empty
                     <div class="p-8 text-center">
-                        <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400">
+                        <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-500 dark:text-slate-400">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         </div>
                         <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Belum ada data skripsi</p>
-                        <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Tidak ada data skripsi yang sesuai dengan filter aktif.</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Tidak ada data skripsi yang sesuai dengan filter aktif.</p>
                     </div>
                 @endforelse
             </div>

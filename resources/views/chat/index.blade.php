@@ -12,8 +12,8 @@
             <div class="w-full md:w-80 md:border-r border-slate-100 dark:border-slate-700 flex flex-col h-full bg-slate-50/30 dark:bg-slate-900/30">
                 <div class="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Daftar Kontak</h3>
-                        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-full">{{ $users->count() }} Kontak</span>
+                        <h3 class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Daftar Kontak</h3>
+                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-full">{{ $users->count() }} Kontak</span>
                     </div>
                     <div class="relative group">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
@@ -40,14 +40,14 @@
                                             <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs z-10" title="Offline"></span>
                                         @endif
                                         @if(isset($unreadCounts[$u->id]) && $unreadCounts[$u->id] > 0)
-                                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white dark:border-slate-800 rounded-lg flex items-center justify-center text-[8px] font-black text-white z-10">
+                                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-white dark:border-slate-800 rounded-lg flex items-center justify-center text-[11px] font-black text-white z-10">
                                                 {{ $unreadCounts[$u->id] }}
                                             </span>
                                         @endif
                                     </div>
                                     <div class="ml-4 flex-1 min-w-0">
                                         <p class="text-sm font-black text-slate-800 dark:text-slate-100 truncate group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors uppercase tracking-tight">{{ $u->name }}</p>
-                                        <p class="text-[10px] text-slate-400 dark:text-slate-500 truncate font-black uppercase tracking-widest mt-0.5">{{ $u->role }}</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate font-black uppercase tracking-widest mt-0.5">{{ $u->role }}</p>
                                     </div>
                                     <div class="text-slate-300 dark:text-slate-600 group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -59,7 +59,7 @@
                                 <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
                                     <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                 </div>
-                                <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Belum ada kontak tersedia</p>
+                                <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Belum ada kontak tersedia</p>
                             </li>
                         @endforelse
                     </ul>
@@ -67,7 +67,7 @@
                         <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
                             <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Tidak ada kontak ditemukan</p>
+                        <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Tidak ada kontak ditemukan</p>
                     </div>
                 </div>
             </div>

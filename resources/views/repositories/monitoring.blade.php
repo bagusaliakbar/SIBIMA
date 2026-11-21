@@ -133,7 +133,7 @@
                         @endphp
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-600/60">
                             <span>{{ $label }}</span>
-                            <span class="px-1.5 py-0.2 rounded-md bg-white dark:bg-slate-800 text-[10px] font-black text-slate-900 dark:text-white shadow-2xs">
+                            <span class="px-1.5 py-0.2 rounded-md bg-white dark:bg-slate-800 text-[11px] font-black text-slate-900 dark:text-white shadow-2xs">
                                 {{ number_format($count) }}
                             </span>
                         </span>
@@ -148,7 +148,7 @@
                 
                 <!-- Search Box -->
                 <div class="relative flex-1">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                     <input type="text" 
@@ -158,7 +158,7 @@
                            class="w-full pl-10 pr-10 py-2.5 rounded-xl border text-xs sm:text-sm bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
                     @if($search)
                         <a href="{{ route('repositories.monitoring', ['role' => $roleFilter, 'sort' => $sortBy]) }}" 
-                           class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                           class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                            title="Hapus pencarian">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </a>
@@ -254,15 +254,15 @@
                                                         {{ $user->name }}
                                                     </span>
                                                     @if($user->role === 'mahasiswa')
-                                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wide bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 shrink-0">
+                                                        <span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold uppercase tracking-wide bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 shrink-0">
                                                             Mahasiswa
                                                         </span>
                                                     @elseif($user->role === 'dosen')
-                                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wide bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 shrink-0">
+                                                        <span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold uppercase tracking-wide bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 shrink-0">
                                                             Dosen
                                                         </span>
                                                     @else
-                                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wide bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 shrink-0">
+                                                        <span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold uppercase tracking-wide bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 shrink-0">
                                                             {{ ucfirst($user->role) }}
                                                         </span>
                                                     @endif
@@ -284,7 +284,7 @@
                                                     <p class="font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug" title="{{ $user->thesis->judul }}">
                                                         {{ $user->thesis->judul }}
                                                     </p>
-                                                    <div class="flex flex-wrap items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
+                                                    <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
                                                         @if($user->thesis->status)
                                                             <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 font-bold text-slate-700 dark:text-slate-300">
                                                                 {{ ucfirst(str_replace('_', ' ', $user->thesis->status)) }}
@@ -300,7 +300,7 @@
                                                     </div>
                                                 </div>
                                             @else
-                                                <span class="text-slate-400 dark:text-slate-500 italic text-[11px]">Belum mengajukan skripsi</span>
+                                                <span class="text-slate-500 dark:text-slate-400 italic text-[11px]">Belum mengajukan skripsi</span>
                                             @endif
                                         @else
                                             <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
@@ -326,7 +326,7 @@
                                                 <span>{{ $user->folders_count }}</span>
                                             </span>
                                         @else
-                                            <span class="text-slate-400 dark:text-slate-500 text-[11px]">-</span>
+                                            <span class="text-slate-500 dark:text-slate-400 text-[11px]">-</span>
                                         @endif
                                     </td>
 
@@ -337,12 +337,12 @@
                                                 <span class="font-bold text-slate-800 dark:text-slate-200">
                                                     {{ \Carbon\Carbon::parse($user->last_bookmarked_at)->diffForHumans() }}
                                                 </span>
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500">
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400">
                                                     {{ \Carbon\Carbon::parse($user->last_bookmarked_at)->translatedFormat('d M Y, H:i') }}
                                                 </p>
                                             </div>
                                         @else
-                                            <span class="text-slate-400 text-[11px]">-</span>
+                                            <span class="text-slate-500 dark:text-slate-400 text-[11px]">-</span>
                                         @endif
                                     </td>
 
@@ -375,7 +375,7 @@
                                         <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate">{{ $user->identifier ?: $user->email }}</div>
                                     </div>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shrink-0">
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-extrabold uppercase bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shrink-0">
                                     {{ ucfirst($user->role) }}
                                 </span>
                             </div>
@@ -460,7 +460,7 @@
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <h3 class="text-base font-black text-slate-900 dark:text-white truncate" x-text="selectedUser ? selectedUser.name : 'Memuat data...'"></h3>
                                     <template x-if="selectedUser">
-                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider shrink-0"
+                                        <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider shrink-0"
                                               :class="{
                                                 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700': selectedUser.role === 'mahasiswa',
                                                 'bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700': selectedUser.role === 'dosen'
@@ -512,7 +512,7 @@
                             <div class="space-y-3">
                                 <!-- Inner Search Input -->
                                 <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                     </div>
                                     <input type="text" 
@@ -523,7 +523,7 @@
                                             x-show="innerSearch" 
                                             @click="innerSearch = ''" 
                                             aria-label="Hapus filter pencarian"
-                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer">
+                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600 cursor-pointer">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
@@ -555,7 +555,7 @@
                                                 :class="activeFolderId === folder.id ? 'bg-orange-500 text-white shadow-2xs' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'">
                                             <span class="w-2 h-2 rounded-full" :style="{ backgroundColor: folder.color || '#6366f1' }"></span>
                                             <span x-text="folder.name"></span>
-                                            <span class="text-[10px] opacity-75" x-text="'(' + folder.bookmarks_count + ')'"></span>
+                                            <span class="text-[11px] opacity-75" x-text="'(' + folder.bookmarks_count + ')'"></span>
                                         </button>
                                     </template>
                                 </div>
@@ -577,19 +577,19 @@
                                         <div class="flex items-center justify-between gap-2 flex-wrap">
                                             <div class="flex items-center gap-1.5 flex-wrap">
                                                 <!-- Source badge -->
-                                                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wide bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                                                <span class="px-2.5 py-0.5 rounded-md text-[11px] font-extrabold uppercase tracking-wide bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                                                       x-text="item.source_label"></span>
                                                 
                                                 <!-- Folder badge if exists -->
                                                 <template x-if="item.folder">
-                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                                                         <span class="w-1.5 h-1.5 rounded-full" :style="{ backgroundColor: item.folder.color }"></span>
                                                         <span x-text="item.folder.name"></span>
                                                     </span>
                                                 </template>
                                             </div>
 
-                                            <span class="text-[11px] text-slate-400 dark:text-slate-500" :title="item.date_formatted" x-text="'Disimpan ' + item.time_ago"></span>
+                                            <span class="text-[11px] text-slate-500 dark:text-slate-400" :title="item.date_formatted" x-text="'Disimpan ' + item.time_ago"></span>
                                         </div>
 
                                         <!-- Title -->

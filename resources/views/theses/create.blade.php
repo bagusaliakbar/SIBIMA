@@ -78,7 +78,7 @@
                     <input type="text" name="title" id="title" required x-model="title" @input="checkSimilarity()" class="mt-2 block w-full rounded-md bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-colors" placeholder="Masukkan usulan rencana judul skripsi">
                     
                     <!-- Checking Indicator -->
-                    <p x-show="isChecking" class="text-[10px] text-slate-500 mt-2 flex items-center animate-pulse" style="display: none;">
+                    <p x-show="isChecking" class="text-[11px] text-slate-500 mt-2 flex items-center animate-pulse" style="display: none;">
                         <svg class="w-3 h-3 mr-1 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                         Mengecek kemiripan judul...
                     </p>
@@ -104,12 +104,12 @@
                                 <div>
                                     <h4 class="text-xs font-black text-red-900 dark:text-red-300 uppercase tracking-wider flex items-center gap-2">
                                         <span>Analisis Kemiripan Judul</span>
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/50" x-text="similarTitles.length + ' Kemiripan Terdeteksi'"></span>
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/50" x-text="similarTitles.length + ' Kemiripan Terdeteksi'"></span>
                                     </h4>
                                     <p class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">Sistem menemukan beberapa judul yang mirip di database skripsi & alumni.</p>
                                 </div>
                             </div>
-                            <button type="button" @click="similarTitles = []" aria-label="Tutup peringatan kemiripan judul" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer">
+                            <button type="button" @click="similarTitles = []" aria-label="Tutup peringatan kemiripan judul" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer">
                                 <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -123,24 +123,24 @@
                                     <div class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs hover:border-amber-400 dark:hover:border-amber-600 transition-all">
                                         <div class="flex justify-between items-start gap-3 mb-1.5">
                                             <p class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug" x-text="item.title"></p>
-                                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold shrink-0 shadow-2xs flex items-center gap-1"
+                                            <span class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold shrink-0 shadow-2xs flex items-center gap-1"
                                                   :class="item.percentage >= 80 ? 'bg-red-500 text-white' : (item.percentage >= 60 ? 'bg-amber-500 text-white' : 'bg-yellow-500 text-slate-900')">
                                                 <span x-text="item.percentage + '%'"></span>
-                                                <span class="text-[9px] opacity-90 font-normal">Mirip</span>
+                                                <span class="text-[11px] opacity-90 font-normal">Mirip</span>
                                             </span>
                                         </div>
 
                                         <!-- Matched Keywords Pills -->
                                         <div class="flex flex-wrap items-center gap-1.5 mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-                                            <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Kata Kunci Sama:</span>
+                                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Kata Kunci Sama:</span>
                                             <template x-for="word in (item.matched_words || [])">
-                                                <span class="px-2 py-0.5 rounded-md text-[9px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40" x-text="word"></span>
+                                                <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40" x-text="word"></span>
                                             </template>
                                         </div>
 
-                                        <div class="flex items-center justify-between gap-2 mt-2 text-[10px] text-slate-500 dark:text-slate-400">
+                                        <div class="flex items-center justify-between gap-2 mt-2 text-[11px] text-slate-500 dark:text-slate-400">
                                             <span class="font-medium truncate">Milik: <strong class="text-slate-700 dark:text-slate-300" x-text="item.student_name"></strong> (Angkatan <span x-text="item.year"></span>)</span>
-                                            <span class="px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider shrink-0" 
+                                            <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider shrink-0" 
                                                   :class="item.source === 'Skripsi Aktif' ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'"
                                                   x-text="item.source || 'Skripsi Aktif'"></span>
                                         </div>
@@ -170,7 +170,7 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 text-[10px] text-amber-700 dark:text-amber-400 italic font-medium">
+                                <div class="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 text-[11px] text-amber-700 dark:text-amber-400 italic font-medium">
                                     Judul yang spesifik dan scope yang jelas meningkatkan kepastian persetujuan Dosen & Kaprodi.
                                 </div>
                             </div>
@@ -192,7 +192,7 @@
                             <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         </div>
                         <div>
-                            <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Usulan Dosen Pembimbing <span class="text-slate-400 dark:text-slate-500 font-normal">(Opsional)</span></h4>
+                            <h4 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Usulan Dosen Pembimbing <span class="text-slate-500 dark:text-slate-400 font-normal">(Opsional)</span></h4>
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pilih dosen yang Anda usulkan sebagai pembimbing.</p>
                         </div>
                     </div>
@@ -235,7 +235,7 @@
                     <button type="submit" 
                             :disabled="submitting" 
                             :class="{ 'opacity-60 cursor-not-allowed': submitting }" 
-                            class="inline-flex justify-center items-center px-6 py-2.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-orange-500/20 cursor-pointer">
+                            class="inline-flex justify-center items-center px-6 py-2.5 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white text-[11px] font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-orange-500/20 cursor-pointer">
                         <template x-if="!submitting">
                             <span>Submit Pengajuan</span>
                         </template>
@@ -246,7 +246,7 @@
                             </span>
                         </template>
                     </button>
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-[1.02] active:scale-95 shadow-sm duration-300">Batal</a>
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-[1.02] active:scale-95 shadow-sm duration-300">Batal</a>
                 </div>
             </form>
         </div>

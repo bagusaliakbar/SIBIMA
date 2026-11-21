@@ -63,44 +63,44 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             <!-- Total -->
             <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Tiket</div>
+                <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Total Tiket</div>
                 <div class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ $stats['total'] }}</div>
-                <div class="text-[10px] text-slate-400 mt-0.5">Semua waktu</div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Semua waktu</div>
             </div>
 
             <!-- Usulan Fitur Baru -->
             <div class="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-200/80 dark:border-indigo-900/50 shadow-2xs">
-                <div class="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-widest">Usulan Fitur</div>
+                <div class="text-[11px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-widest">Usulan Fitur</div>
                 <div class="text-2xl font-black text-indigo-800 dark:text-indigo-300 mt-1">{{ $stats['feature_requests'] ?? 0 }}</div>
-                <div class="text-[10px] text-indigo-600/80 dark:text-indigo-400/80 mt-0.5">Ide & masukan</div>
+                <div class="text-[11px] text-indigo-600/80 dark:text-indigo-400/80 mt-0.5">Ide & masukan</div>
             </div>
 
             <!-- Menunggu Review (Open) -->
             <div class="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/50 shadow-2xs">
-                <div class="text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">Menunggu Review</div>
+                <div class="text-[11px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">Menunggu Review</div>
                 <div class="text-2xl font-black text-amber-800 dark:text-amber-300 mt-1">{{ $stats['open'] }}</div>
-                <div class="text-[10px] text-amber-600/80 dark:text-amber-400/80 mt-0.5">Perlu ditanggapi</div>
+                <div class="text-[11px] text-amber-600/80 dark:text-amber-400/80 mt-0.5">Perlu ditanggapi</div>
             </div>
 
             <!-- Sedang Ditangani -->
             <div class="p-4 rounded-2xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/50 shadow-2xs">
-                <div class="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-widest">Sedang Diproses</div>
+                <div class="text-[11px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-widest">Sedang Diproses</div>
                 <div class="text-2xl font-black text-blue-800 dark:text-blue-300 mt-1">{{ $stats['in_progress'] }}</div>
-                <div class="text-[10px] text-blue-600/80 dark:text-blue-400/80 mt-0.5">Dalam investigasi</div>
+                <div class="text-[11px] text-blue-600/80 dark:text-blue-400/80 mt-0.5">Dalam investigasi</div>
             </div>
 
             <!-- Selesai (Resolved) -->
             <div class="p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-900/50 shadow-2xs">
-                <div class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Selesai / Teratasi</div>
+                <div class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Selesai / Teratasi</div>
                 <div class="text-2xl font-black text-emerald-800 dark:text-emerald-300 mt-1">{{ $stats['resolved'] }}</div>
-                <div class="text-[10px] text-emerald-600/80 dark:text-emerald-400/80 mt-0.5">Kendala terselesaikan</div>
+                <div class="text-[11px] text-emerald-600/80 dark:text-emerald-400/80 mt-0.5">Kendala terselesaikan</div>
             </div>
 
             <!-- Urgensi Kritis -->
             <div class="p-4 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-900/50 shadow-2xs">
-                <div class="text-[10px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-widest">Prioritas Kritis</div>
+                <div class="text-[11px] font-bold text-rose-700 dark:text-rose-400 uppercase tracking-widest">Prioritas Kritis</div>
                 <div class="text-2xl font-black text-rose-800 dark:text-rose-300 mt-1">{{ $stats['critical'] }}</div>
-                <div class="text-[10px] text-rose-600/80 dark:text-rose-400/80 mt-0.5">Membutuhkan aksi segera</div>
+                <div class="text-[11px] text-rose-600/80 dark:text-rose-400/80 mt-0.5">Membutuhkan aksi segera</div>
             </div>
         </div>
 
@@ -197,7 +197,7 @@
                         <div class="flex items-start justify-between gap-2">
                             <div class="min-w-0">
                                 <div class="flex items-center gap-1.5 flex-wrap">
-                                    <span class="px-1.5 py-0.5 rounded-md text-[9px] font-black {{ $isFeature ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60' }}">{{ $isFeature ? 'FITUR' : 'BUG' }}</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[11px] font-black {{ $isFeature ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60' }}">{{ $isFeature ? 'FITUR' : 'BUG' }}</span>
                                     <span class="font-mono text-xs font-bold {{ $isFeature ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400' }}">{{ $report->ticket_number }}</span>
                                 </div>
                                 <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 mt-1 leading-snug">{{ $report->title }}</h4>
@@ -213,7 +213,7 @@
                             <img src="{{ $report->user->avatar_url }}" alt="{{ $report->user->name }}" class="w-7 h-7 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0">
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ $report->user->name }}</p>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">{{ ucfirst($report->user->role) }} • {{ $report->user->identifier ?? $report->user->email }}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ ucfirst($report->user->role) }} • {{ $report->user->identifier ?? $report->user->email }}</p>
                             </div>
                         </div>
 
@@ -236,7 +236,7 @@
                 @empty
                     <div class="p-8 text-center">
                         <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Tidak ada laporan bug yang cocok.</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Sistem berjalan dengan baik dan lancar.</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Sistem berjalan dengan baik dan lancar.</p>
                     </div>
                 @endforelse
             </div>
@@ -244,12 +244,12 @@
             <table class="hidden sm:table w-full text-left text-sm">
                 <thead>
                     <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-                        <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Tiket & Waktu</th>
-                        <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Pelapor</th>
-                        <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Subjek & Kategori</th>
-                        <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap text-center">Tingkat Urgensi</th>
-                        <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap text-center">Status</th>
-                        <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap text-right">Aksi</th>
+                        <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap">Tiket & Waktu</th>
+                        <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap">Pelapor</th>
+                        <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap">Subjek & Kategori</th>
+                        <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap text-center">Tingkat Urgensi</th>
+                        <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap text-center">Status</th>
+                        <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -260,12 +260,12 @@
                             <td class="py-4 px-6 whitespace-nowrap">
                                 <div class="flex items-center gap-1.5 mb-1">
                                     @if($report->is_feature_request || str_starts_with($report->ticket_number, 'REQ-'))
-                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] font-black bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
                                             <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
                                             <span>FITUR</span>
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] font-black bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
                                             <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                             <span>BUG</span>
                                         </span>
@@ -274,7 +274,7 @@
                                 <div class="font-mono text-xs font-bold {{ ($report->is_feature_request || str_starts_with($report->ticket_number, 'REQ-')) ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400' }}">
                                     {{ $report->ticket_number }}
                                 </div>
-                                <div class="text-[10px] text-slate-400 mt-0.5">
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                                     {{ $report->created_at->locale('id')->diffForHumans() }}
                                 </div>
                             </td>
@@ -288,7 +288,7 @@
                                             {{ $report->user->name }}
                                         </div>
                                         <div class="flex items-center gap-1.5 mt-0.5">
-                                            <span class="text-[10px] font-semibold text-slate-400">
+                                            <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                                                 {{ $report->user->identifier ?? $report->user->email }}
                                             </span>
                                             <span class="text-slate-300 dark:text-slate-700">•</span>
@@ -307,11 +307,11 @@
                                     {{ $report->title }}
                                 </div>
                                 <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                                    <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                                         {{ $report->category_label }}
                                     </span>
                                     @if($report->attachment_path)
-                                        <span class="inline-flex items-center text-[10px] font-bold text-orange-600 dark:text-orange-400 gap-0.5">
+                                        <span class="inline-flex items-center text-[11px] font-bold text-orange-600 dark:text-orange-400 gap-0.5">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
                                             Ada Bukti
                                         </span>
@@ -366,7 +366,7 @@
                                               data-confirm-button="Ya, Hapus">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 transition-colors" title="Hapus Laporan" aria-label="Hapus Laporan">
+                                            <button type="submit" class="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-rose-600 transition-colors" title="Hapus Laporan" aria-label="Hapus Laporan">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                             </button>
                                         </form>
@@ -376,12 +376,12 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-12 text-center text-slate-400">
-                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-2 text-slate-400">
+                            <td colspan="6" class="py-12 text-center text-slate-500 dark:text-slate-400">
+                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-2 text-slate-500 dark:text-slate-400">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </div>
                                 <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Tidak ada laporan bug yang cocok.</p>
-                                <p class="text-xs text-slate-400 mt-0.5">Sistem berjalan dengan baik dan lancar.</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Sistem berjalan dengan baik dan lancar.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -410,17 +410,17 @@
                     <div class="px-6 sm:px-8 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-orange-50/60 to-transparent dark:from-orange-950/20 shrink-0">
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <span id="brm-type-badge" class="px-2 py-0.5 rounded-md text-[10px] font-black"></span>
+                                <span id="brm-type-badge" class="px-2 py-0.5 rounded-md text-[11px] font-black"></span>
                                 <span id="brm-ticket-number" class="text-xs font-mono font-bold text-orange-600 dark:text-orange-400"></span>
                                 <span class="text-slate-300 dark:text-slate-700">•</span>
-                                <span id="brm-created-at" class="text-xs text-slate-400"></span>
+                                <span id="brm-created-at" class="text-xs text-slate-500 dark:text-slate-400"></span>
                             </div>
                             <h3 id="brm-title" class="text-lg font-black text-slate-900 dark:text-white"></h3>
                         </div>
 
                         <button onclick="window.closeBugReviewModal()"
                                 type="button"
-                                class="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+                                class="w-9 h-9 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer"
                                 title="Tutup Modal"
                                 aria-label="Tutup modal detail laporan">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -435,19 +435,19 @@
                                 <img id="brm-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700">
                                 <div>
                                     <div id="brm-user-name" class="font-bold text-xs text-slate-800 dark:text-slate-100"></div>
-                                    <div id="brm-user-meta" class="text-[11px] text-slate-400"></div>
+                                    <div id="brm-user-meta" class="text-[11px] text-slate-500 dark:text-slate-400"></div>
                                 </div>
                             </div>
 
                             <div class="flex items-center gap-2">
-                                <span id="brm-category" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 shadow-2xs"></span>
-                                <span id="brm-severity" class="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider text-white"></span>
+                                <span id="brm-category" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 shadow-2xs"></span>
+                                <span id="brm-severity" class="px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider text-white"></span>
                             </div>
                         </div>
 
                         <!-- URL Lokasi Bug / Halaman Terkait -->
                         <div id="brm-page-url-container" style="display: none;">
-                            <span id="brm-url-label" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Halaman Kejadian (URL):</span>
+                            <span id="brm-url-label" class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Halaman Kejadian (URL):</span>
                             <a id="brm-page-url" href="" target="_blank" class="text-xs font-mono text-orange-600 dark:text-orange-400 hover:underline break-all bg-slate-50 dark:bg-slate-800/80 p-2.5 rounded-xl block border border-slate-100 dark:border-slate-700">
                                 <span class="page-url-text"></span>
                                 <svg class="w-3.5 h-3.5 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -456,19 +456,19 @@
 
                         <!-- Uraian Masalah / Manfaat Fitur -->
                         <div>
-                            <span id="brm-desc-label" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Uraian / Deskripsi Kendala:</span>
+                            <span id="brm-desc-label" class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Uraian / Deskripsi Kendala:</span>
                             <div id="brm-description" class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed"></div>
                         </div>
 
                         <!-- Langkah Reproduksi / Alur Fitur -->
                         <div id="brm-steps-container" style="display: none;">
-                            <span id="brm-steps-label" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Langkah Memicu Masalah:</span>
+                            <span id="brm-steps-label" class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Langkah Memicu Masalah:</span>
                             <div id="brm-steps" class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-200 whitespace-pre-line leading-relaxed font-mono"></div>
                         </div>
 
                         <!-- Lampiran Screenshot / File Bukti / Mockup -->
                         <div id="brm-attachment-container" style="display: none;">
-                            <span id="brm-attachment-label" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Bukti Tangkapan Layar / Dokumen:</span>
+                            <span id="brm-attachment-label" class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">Bukti Tangkapan Layar / Dokumen:</span>
                             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 text-center">
                                 
                                 <!-- Image Preview Wrapper -->
@@ -490,7 +490,7 @@
                                         </div>
                                         <div class="text-left">
                                             <div class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-orange-600 transition-colors" id="brm-pdf-name">Dokumen Lampiran.pdf</div>
-                                            <div class="text-[11px] text-slate-400">Klik untuk membuka atau mengunduh PDF di tab baru</div>
+                                            <div class="text-[11px] text-slate-500 dark:text-slate-400">Klik untuk membuka atau mengunduh PDF di tab baru</div>
                                         </div>
                                         <svg class="w-4 h-4 text-slate-400 group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                     </a>
@@ -504,12 +504,12 @@
                                     </div>
                                 </div>
 
-                                <p id="brm-image-hint" class="text-[11px] text-slate-400 mt-2">Klik gambar untuk membuka ukuran penuh di tab baru.</p>
+                                <p id="brm-image-hint" class="text-[11px] text-slate-500 dark:text-slate-400 mt-2">Klik gambar untuk membuka ukuran penuh di tab baru.</p>
                             </div>
                         </div>
 
                         <!-- Device Info -->
-                        <div id="brm-device-container" style="display: none;" class="text-[10px] text-slate-400 font-mono">
+                        <div id="brm-device-container" style="display: none;" class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                             <span class="font-bold">Info Perangkat:</span> <span id="brm-device"></span>
                         </div>
 
@@ -521,7 +521,7 @@
                             </h4>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                                     Perbarui Status Tiket:
                                 </label>
                                 <select id="brm-status-select" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold focus:ring-2 focus:ring-orange-500">
@@ -533,7 +533,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                                     Catatan Solusi / Tanggapan Balik ke Pelapor:
                                 </label>
                                 <textarea id="brm-admin-notes"
@@ -613,10 +613,10 @@
                 const typeBadge = document.getElementById('brm-type-badge');
                 if (typeBadge) {
                     if (isReq) {
-                        typeBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800';
+                        typeBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800';
                         typeBadge.innerText = 'USULAN FITUR';
                     } else {
-                        typeBadge.className = 'px-2 py-0.5 rounded-md text-[10px] font-black bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800';
+                        typeBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800';
                         typeBadge.innerText = 'BUG SISTEM';
                     }
                 }
@@ -666,7 +666,7 @@
                 
                 const sevEl = document.getElementById('brm-severity');
                 sevEl.innerText = 'Urgensi: ' + (r.severity_label || r.severity || '-');
-                sevEl.className = 'px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider text-white ' + 
+                sevEl.className = 'px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider text-white ' + 
                     (r.severity === 'critical' ? 'bg-rose-600' :
                      r.severity === 'high' ? 'bg-orange-500' :
                      r.severity === 'medium' ? 'bg-amber-500' : 'bg-emerald-600');

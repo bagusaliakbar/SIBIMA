@@ -26,7 +26,7 @@
             <!-- Total Pengajuan -->
             <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex items-center justify-between">
                 <div class="space-y-1">
-                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Pengajuan</p>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Pengajuan</p>
                     <p class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white">{{ $stats['total'] }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center text-slate-600 dark:text-slate-300">
@@ -73,22 +73,22 @@
             <a href="{{ route('graduations.index', ['status' => 'all', 'search' => $search]) }}" 
                class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'all') === 'all' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Semua Pengajuan</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? 'all') === 'all' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">{{ $stats['total'] }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? 'all') === 'all' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">{{ $stats['total'] }}</span>
             </a>
             <a href="{{ route('graduations.index', ['status' => 'pending', 'search' => $search]) }}" 
                class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'all') === 'pending' ? 'border-amber-500 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Menunggu Verifikasi</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? 'all') === 'pending' ? 'bg-amber-500 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300' }}">{{ $stats['pending'] }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? 'all') === 'pending' ? 'bg-amber-500 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300' }}">{{ $stats['pending'] }}</span>
             </a>
             <a href="{{ route('graduations.index', ['status' => 'approved', 'search' => $search]) }}" 
                class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'all') === 'approved' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>SKL Terbit (Disetujui)</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? 'all') === 'approved' ? 'bg-emerald-500 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}">{{ $stats['approved'] }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? 'all') === 'approved' ? 'bg-emerald-500 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}">{{ $stats['approved'] }}</span>
             </a>
             <a href="{{ route('graduations.index', ['status' => 'rejected', 'search' => $search]) }}" 
                class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($status ?? 'all') === 'rejected' ? 'border-rose-500 text-rose-600 dark:text-rose-400 bg-rose-50/50 dark:bg-rose-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Perlu Perbaikan</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? 'all') === 'rejected' ? 'bg-rose-500 text-white' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300' }}">{{ $stats['rejected'] }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? 'all') === 'rejected' ? 'bg-rose-500 text-white' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300' }}">{{ $stats['rejected'] }}</span>
             </a>
         </div>
 
@@ -99,7 +99,7 @@
                     <form action="{{ route('graduations.index') }}" method="GET" class="relative">
                         <input type="hidden" name="status" value="{{ $status ?? 'all' }}">
                         <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500 dark:text-slate-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </span>
                             <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari nama, NPM, judul, No SKL..." 
@@ -159,10 +159,10 @@
 
                         <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/60">
                             <div class="inline-flex items-center gap-1">
-                                <span class="px-2 py-1 rounded-md text-[10px] font-bold {{ $item->hardcover_collected ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}">HC</span>
-                                <span class="px-2 py-1 rounded-md text-[10px] font-bold {{ $item->lab_clearance ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}">LAB</span>
-                                <span class="px-2 py-1 rounded-md text-[10px] font-bold {{ $item->library_clearance ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}">PUS</span>
-                                <span class="px-2 py-1 rounded-md text-[10px] font-bold {{ $item->cd_or_repository_collected ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}">CD</span>
+                                <span class="px-2 py-1 rounded-md text-[11px] font-bold {{ $item->hardcover_collected ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">HC</span>
+                                <span class="px-2 py-1 rounded-md text-[11px] font-bold {{ $item->lab_clearance ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">LAB</span>
+                                <span class="px-2 py-1 rounded-md text-[11px] font-bold {{ $item->library_clearance ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">PUS</span>
+                                <span class="px-2 py-1 rounded-md text-[11px] font-bold {{ $item->cd_or_repository_collected ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">CD</span>
                             </div>
                             <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">{{ $item->clearance_percentage }}% Lengkap</span>
                         </div>
@@ -211,7 +211,7 @@
                         @endphp
                         <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                             <!-- No -->
-                            <td class="py-4 px-4 text-center font-bold text-slate-400">
+                            <td class="py-4 px-4 text-center font-bold text-slate-500 dark:text-slate-400">
                                 {{ $graduations->firstItem() + $index }}
                             </td>
 
@@ -244,27 +244,27 @@
                                 <div class="mt-1 flex items-center gap-1.5 flex-wrap">
                                     @if($item->final_thesis_file)
                                         @php $thesisLink = str_starts_with($item->final_thesis_file, 'http') ? $item->final_thesis_file : route('download.private', ['path' => $item->final_thesis_file]); @endphp
-                                        <a href="{{ $thesisLink }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 text-[10px] font-bold border border-orange-200 dark:border-orange-800" title="Buka Naskah Skripsi di Google Drive">
+                                        <a href="{{ $thesisLink }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 hover:bg-orange-100 text-[11px] font-bold border border-orange-200 dark:border-orange-800" title="Buka Naskah Skripsi di Google Drive">
                                             <svg class="w-3 h-3 text-orange-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
                                             <span>Skripsi G-Drive</span>
                                         </a>
                                     @endif
                                     @if($item->journal_article_file)
                                         @php $journalLink = str_starts_with($item->journal_article_file, 'http') ? $item->journal_article_file : route('download.private', ['path' => $item->journal_article_file]); @endphp
-                                        <a href="{{ $journalLink }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 text-[10px] font-bold border border-blue-200 dark:border-blue-800" title="Buka Artikel Jurnal di Google Drive">
+                                        <a href="{{ $journalLink }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 text-[11px] font-bold border border-blue-200 dark:border-blue-800" title="Buka Artikel Jurnal di Google Drive">
                                             <svg class="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
                                             <span>Jurnal G-Drive</span>
                                         </a>
                                     @endif
                                     @if($item->plagiarism_file)
                                         @php $plagLink = str_starts_with($item->plagiarism_file, 'http') ? $item->plagiarism_file : route('download.private', ['path' => $item->plagiarism_file]); @endphp
-                                        <a href="{{ $plagLink }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-[10px] font-bold border border-emerald-200 dark:border-emerald-800" title="Buka Bukti Cek Plagiasi di Google Drive">
+                                        <a href="{{ $plagLink }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-[11px] font-bold border border-emerald-200 dark:border-emerald-800" title="Buka Bukti Cek Plagiasi di Google Drive">
                                             <svg class="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                                             <span>Turnitin G-Drive</span>
                                         </a>
                                     @endif
                                     @if($item->publication_link)
-                                        <a href="{{ $item->publication_link }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 text-[10px] font-bold hover:underline border border-purple-200 dark:border-purple-800" title="Tautan Publikasi Jurnal">
+                                        <a href="{{ $item->publication_link }}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 text-[11px] font-bold hover:underline border border-purple-200 dark:border-purple-800" title="Tautan Publikasi Jurnal">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                             <span>Link OJS</span>
                                         </a>
@@ -276,23 +276,23 @@
                             <td class="py-4 px-4 text-center">
                                 <div class="inline-flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl">
                                     <!-- Hardcover -->
-                                    <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold {{ $item->hardcover_collected ? 'bg-emerald-500 text-white shadow-xs' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}" title="Hardcover Skripsi: {{ $item->hardcover_collected ? 'Sudah Diserahkan' : 'Belum Diserahkan' }}">
+                                    <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold {{ $item->hardcover_collected ? 'bg-emerald-500 text-white shadow-xs' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}" title="Hardcover Skripsi: {{ $item->hardcover_collected ? 'Sudah Diserahkan' : 'Belum Diserahkan' }}">
                                         HC
                                     </span>
                                     <!-- Lab -->
-                                    <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold {{ $item->lab_clearance ? 'bg-emerald-500 text-white shadow-xs' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}" title="Bebas Lab: {{ $item->lab_clearance ? 'Bebas Tanggungan' : 'Belum Bebas' }}">
+                                    <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold {{ $item->lab_clearance ? 'bg-emerald-500 text-white shadow-xs' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}" title="Bebas Lab: {{ $item->lab_clearance ? 'Bebas Tanggungan' : 'Belum Bebas' }}">
                                         LAB
                                     </span>
                                     <!-- Pustaka -->
-                                    <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold {{ $item->library_clearance ? 'bg-emerald-500 text-white shadow-xs' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}" title="Bebas Pustaka: {{ $item->library_clearance ? 'Bebas Tanggungan' : 'Belum Bebas' }}">
+                                    <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold {{ $item->library_clearance ? 'bg-emerald-500 text-white shadow-xs' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}" title="Bebas Pustaka: {{ $item->library_clearance ? 'Bebas Tanggungan' : 'Belum Bebas' }}">
                                         PUS
                                     </span>
                                     <!-- CD/Repo -->
-                                    <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold {{ $item->cd_or_repository_collected ? 'bg-emerald-500 text-white shadow-xs' : 'bg-slate-200 dark:bg-slate-800 text-slate-400' }}" title="CD & Repositori: {{ $item->cd_or_repository_collected ? 'Sudah Diserahkan' : 'Belum Diserahkan' }}">
+                                    <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold {{ $item->cd_or_repository_collected ? 'bg-emerald-500 text-white shadow-xs' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}" title="CD & Repositori: {{ $item->cd_or_repository_collected ? 'Sudah Diserahkan' : 'Belum Diserahkan' }}">
                                         CD
                                     </span>
                                 </div>
-                                <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-semibold">
                                     {{ $item->clearance_percentage }}% Lengkap
                                 </p>
                             </td>
@@ -301,20 +301,20 @@
                             <td class="py-4 px-4 text-center">
                                 @if($item->status === 'approved')
                                     <div class="space-y-1">
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                             <svg class="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                                             SKL Diterbitkan
                                         </span>
-                                        <p class="font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                                        <p class="font-mono text-[11px] font-bold text-slate-700 dark:text-slate-300">
                                             {{ $item->skl_number }}
                                         </p>
                                     </div>
                                 @elseif($item->status === 'rejected')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800" title="{{ $item->rejection_reason }}">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800" title="{{ $item->rejection_reason }}">
                                         Perlu Perbaikan
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 animate-pulse">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 animate-pulse">
                                         Menunggu Verifikasi
                                     </span>
                                 @endif
@@ -361,7 +361,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-12 text-center text-slate-400 dark:text-slate-500">
+                            <td colspan="6" class="py-12 text-center text-slate-500 dark:text-slate-400">
                                 <div class="max-w-xs mx-auto space-y-2">
                                     <svg class="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     <p class="font-bold text-slate-700 dark:text-slate-300">Tidak ada pengajuan ditemukan</p>
@@ -423,7 +423,7 @@
                             <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
                                 <!-- Student Thesis Title Box -->
                                 <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 space-y-1">
-                                    <p class="text-[10px] font-black uppercase tracking-wider text-slate-400">Judul Skripsi Disahkan</p>
+                                    <p class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Judul Skripsi Disahkan</p>
                                     <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 leading-relaxed" x-text="activeGraduation.thesis_title"></p>
                                 </div>
 
@@ -437,7 +437,7 @@
                                                 <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 flex items-center justify-center font-bold text-xs">GD</div>
                                                 <div>
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Naskah Skripsi Final</p>
-                                                    <p class="text-[10px] text-slate-400">Google Drive Document</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Google Drive Document</p>
                                                 </div>
                                             </div>
                                             <template x-if="activeGraduation.final_thesis_file">
@@ -447,7 +447,7 @@
                                                 </a>
                                             </template>
                                             <template x-if="!activeGraduation.final_thesis_file">
-                                                <span class="text-[10px] text-amber-500 font-semibold">Belum Diisi</span>
+                                                <span class="text-[11px] text-amber-500 font-semibold">Belum Diisi</span>
                                             </template>
                                         </div>
 
@@ -457,7 +457,7 @@
                                                 <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center font-bold text-xs">GD</div>
                                                 <div>
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Artikel Jurnal Ilmiah</p>
-                                                    <p class="text-[10px] text-slate-400">Google Drive Document</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Google Drive Document</p>
                                                 </div>
                                             </div>
                                             <template x-if="activeGraduation.journal_article_file">
@@ -467,7 +467,7 @@
                                                 </a>
                                             </template>
                                             <template x-if="!activeGraduation.journal_article_file">
-                                                <span class="text-[10px] text-slate-400">Opsional/Belum</span>
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400">Opsional/Belum</span>
                                             </template>
                                         </div>
 
@@ -477,7 +477,7 @@
                                                 <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center font-bold text-xs">GD</div>
                                                 <div>
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Bukti Cek Plagiasi</p>
-                                                    <p class="text-[10px] text-slate-400">Similarity Report</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Similarity Report</p>
                                                 </div>
                                             </div>
                                             <template x-if="activeGraduation.plagiarism_file">
@@ -487,7 +487,7 @@
                                                 </a>
                                             </template>
                                             <template x-if="!activeGraduation.plagiarism_file">
-                                                <span class="text-[10px] text-slate-400">Opsional/Belum</span>
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400">Opsional/Belum</span>
                                             </template>
                                         </div>
 
@@ -497,7 +497,7 @@
                                                 <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600 flex items-center justify-center font-bold text-xs">URL</div>
                                                 <div>
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Tautan OJS / Jurnal</p>
-                                                    <p class="text-[10px] text-slate-400">Link Publikasi Online</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Link Publikasi Online</p>
                                                 </div>
                                             </div>
                                             <template x-if="activeGraduation.publication_link">
@@ -507,7 +507,7 @@
                                                 </a>
                                             </template>
                                             <template x-if="!activeGraduation.publication_link">
-                                                <span class="text-[10px] text-slate-400">Tidak Ada</span>
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400">Tidak Ada</span>
                                             </template>
                                         </div>
                                     </div>
@@ -529,7 +529,7 @@
                                             <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                                 Checklist Bebas Tanggungan
                                             </h4>
-                                            <span class="text-[11px] text-slate-400 font-medium">Beri centang jika sudah diserahkan / lunas</span>
+                                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Beri centang jika sudah diserahkan / lunas</span>
                                         </div>
 
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -539,7 +539,7 @@
                                                        class="w-4 h-4 mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500">
                                                 <div class="space-y-0.5">
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Naskah Hardcover Skripsi</p>
-                                                    <p class="text-[11px] text-slate-400">Hardcover asli lengkap tanda tangan pengesahan (3-4 exp)</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Hardcover asli lengkap tanda tangan pengesahan (3-4 exp)</p>
                                                 </div>
                                             </label>
 
@@ -549,7 +549,7 @@
                                                        class="w-4 h-4 mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500">
                                                 <div class="space-y-0.5">
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Bebas Pustaka</p>
-                                                    <p class="text-[11px] text-slate-400">Bebas pinjaman buku & denda perpustakaan</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Bebas pinjaman buku & denda perpustakaan</p>
                                                 </div>
                                             </label>
 
@@ -559,7 +559,7 @@
                                                        class="w-4 h-4 mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500">
                                                 <div class="space-y-0.5">
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Bebas Laboratorium</p>
-                                                    <p class="text-[11px] text-slate-400">Bebas pinjaman alat/komponen laboratorium komputer</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Bebas pinjaman alat/komponen laboratorium komputer</p>
                                                 </div>
                                             </label>
 
@@ -569,7 +569,7 @@
                                                        class="w-4 h-4 mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500">
                                                 <div class="space-y-0.5">
                                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Penyerahan CD & Repositori</p>
-                                                    <p class="text-[11px] text-slate-400">CD softcopy skripsi, source code, dan upload repositori</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">CD softcopy skripsi, source code, dan upload repositori</p>
                                                 </div>
                                             </label>
                                         </div>
@@ -630,7 +630,7 @@
                                         <div>
                                             <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
                                                 Nomor Surat Keterangan Lulus (SKL)
-                                                <span class="text-[10px] font-normal text-slate-400 dark:text-slate-500">(Kosongkan untuk penomoran otomatis berurutan dari sistem)</span>
+                                                <span class="text-[11px] font-normal text-slate-500 dark:text-slate-400">(Kosongkan untuk penomoran otomatis berurutan dari sistem)</span>
                                             </label>
                                             <input type="text" name="skl_number" :value="activeGraduation.skl_number" placeholder="Contoh: 014/SKL/UNSUB/FIK/IX/2026"
                                                    class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-mono font-semibold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">

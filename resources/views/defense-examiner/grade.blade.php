@@ -56,7 +56,7 @@
                     <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Formulir Penilaian</span>
                     @if($myRevision && $myRevision->isGraded())
-                        <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 text-[8px] font-black rounded uppercase">
+                        <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 text-[11px] font-black rounded uppercase">
                             {{ number_format($myRevision->total_score, 1) }}
                         </span>
                     @endif
@@ -75,14 +75,14 @@
             <div class="bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/50 rounded-2xl p-5 shadow-sm">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                     <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-1 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-widest rounded-lg shadow-sm">
+                        <span class="px-2.5 py-1 bg-emerald-600 text-white text-[11px] font-black uppercase tracking-widest rounded-lg shadow-sm">
                             Mode {{ ucfirst(auth()->user()->role) }}
                         </span>
                         <h4 class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider">
                             Pilih Dosen Penelaah Yang Dinilai
                         </h4>
                     </div>
-                    <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium italic">
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium italic">
                         *Klik dosen untuk menginput atau memperbarui nilainya
                     </span>
                 </div>
@@ -98,15 +98,15 @@
                            class="relative p-4 rounded-xl border transition-all flex flex-col justify-between {{ $isSelected ? 'bg-white dark:bg-slate-800 border-emerald-500 shadow-md ring-2 ring-emerald-500/20' : 'bg-white/70 dark:bg-slate-800/50 border-slate-200/80 dark:border-slate-700/60 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300' }}">
                             <div>
                                 <div class="flex items-center justify-between gap-2 mb-2">
-                                    <span class="text-[9px] font-black uppercase tracking-wider {{ $isSelected ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400' }}">
+                                    <span class="text-[11px] font-black uppercase tracking-wider {{ $isSelected ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
                                         {{ $ex['role_label'] }}
                                     </span>
                                     @if($hasScore)
-                                        <span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[8px] font-black rounded-md uppercase">
+                                        <span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[11px] font-black rounded-md uppercase">
                                             Nilai: {{ number_format($calcScore, 1) }}
                                         </span>
                                     @else
-                                        <span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 text-[8px] font-black rounded-md uppercase">
+                                        <span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 text-[11px] font-black rounded-md uppercase">
                                             Belum Diisi
                                         </span>
                                     @endif
@@ -116,7 +116,7 @@
                                 </div>
                             </div>
                             @if($isSelected)
-                                <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tighter">
+                                <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tighter">
                                     <span>Sedang Aktif Dipilih</span>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                 </div>
@@ -136,7 +136,7 @@
                 </div>
                 <div class="flex-1">
                     <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">{{ $detail->thesis?->student?->name ?? 'Mahasiswa' }}</h3>
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ $detail->thesis?->student?->identifier ?? '-' }}</p>
+                    <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">{{ $detail->thesis?->student?->identifier ?? '-' }}</p>
                     <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-2 italic">"{{ $detail->thesis?->title ?? '-' }}"</p>
                 </div>
 
@@ -306,11 +306,11 @@
                                         <h4 class="font-black text-sm sm:text-base text-slate-800 dark:text-slate-100 uppercase tracking-tight">
                                             Presentasi
                                         </h4>
-                                        <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                        <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                             Bobot 25%
                                         </span>
                                     </div>
-                                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                         Sistematika penyajian materi dan penggunaan bahasa saat pemaparan sidang
                                     </p>
                                 </div>
@@ -318,10 +318,10 @@
 
                             <!-- Live Subtotal Calculation -->
                             <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 px-3.5 py-2 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shrink-0 self-start sm:self-auto">
-                                <span class="text-[11px] text-slate-400 font-medium">Subtotal Terbobot:</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Subtotal Terbobot:</span>
                                 <div class="text-xs font-black text-slate-800 dark:text-slate-100 flex items-center gap-1">
                                     <span class="text-emerald-600 dark:text-emerald-400 font-bold" x-text="scores.presentation || 0">0</span>
-                                    <span class="text-slate-400 font-normal">× 25% =</span>
+                                    <span class="text-slate-500 dark:text-slate-400 font-normal">× 25% =</span>
                                     <span class="text-emerald-600 dark:text-emerald-400 font-black text-sm" x-text="weightedPresentation">0.00</span>
                                 </div>
                             </div>
@@ -350,7 +350,7 @@
 
                         <!-- Interactive Pills & Stepper Touch Controls -->
                         <div class="space-y-3 pt-1">
-                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                 Ketuk Skor Pil Cepat:
                             </label>
                             
@@ -370,7 +370,7 @@
 
                             <!-- Stepper & Direct Custom Number Field -->
                             <div class="flex items-center gap-2 pt-2 flex-wrap">
-                                <span class="text-xs text-slate-400 font-medium mr-1">Penyesuaian Manual:</span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium mr-1">Penyesuaian Manual:</span>
                                 <button type="button" 
                                         @click="adjustScore('presentation', -5)" 
                                         title="Kurangi 5"
@@ -426,11 +426,11 @@
                                         <h4 class="font-black text-sm sm:text-base text-slate-800 dark:text-slate-100 uppercase tracking-tight">
                                             Kemampuan Menjelaskan Naskah Skripsi
                                         </h4>
-                                        <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                        <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                             Bobot 40%
                                         </span>
                                     </div>
-                                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                         Penguasaan materi teori, kerangka berpikir, instrumen analisis, dan argumentasi jawaban
                                     </p>
                                 </div>
@@ -438,10 +438,10 @@
 
                             <!-- Live Subtotal Calculation -->
                             <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 px-3.5 py-2 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shrink-0 self-start sm:self-auto">
-                                <span class="text-[11px] text-slate-400 font-medium">Subtotal Terbobot:</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Subtotal Terbobot:</span>
                                 <div class="text-xs font-black text-slate-800 dark:text-slate-100 flex items-center gap-1">
                                     <span class="text-emerald-600 dark:text-emerald-400 font-bold" x-text="scores.explanation || 0">0</span>
-                                    <span class="text-slate-400 font-normal">× 40% =</span>
+                                    <span class="text-slate-500 dark:text-slate-400 font-normal">× 40% =</span>
                                     <span class="text-emerald-600 dark:text-emerald-400 font-black text-sm" x-text="weightedExplanation">0.00</span>
                                 </div>
                             </div>
@@ -482,7 +482,7 @@
 
                         <!-- Interactive Pills & Stepper Touch Controls -->
                         <div class="space-y-3 pt-1">
-                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                 Ketuk Skor Pil Cepat:
                             </label>
                             
@@ -502,7 +502,7 @@
 
                             <!-- Stepper & Direct Custom Number Field -->
                             <div class="flex items-center gap-2 pt-2 flex-wrap">
-                                <span class="text-xs text-slate-400 font-medium mr-1">Penyesuaian Manual:</span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium mr-1">Penyesuaian Manual:</span>
                                 <button type="button" 
                                         @click="adjustScore('explanation', -5)" 
                                         title="Kurangi 5"
@@ -558,11 +558,11 @@
                                         <h4 class="font-black text-sm sm:text-base text-slate-800 dark:text-slate-100 uppercase tracking-tight">
                                             Penulisan Naskah Skripsi
                                         </h4>
-                                        <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                        <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                             Bobot 35%
                                         </span>
                                     </div>
-                                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                         Struktur tata tulis ilmiah, logika penulisan, sitasi standar, dan orisinalitas karya
                                     </p>
                                 </div>
@@ -570,10 +570,10 @@
 
                             <!-- Live Subtotal Calculation -->
                             <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/60 px-3.5 py-2 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shrink-0 self-start sm:self-auto">
-                                <span class="text-[11px] text-slate-400 font-medium">Subtotal Terbobot:</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Subtotal Terbobot:</span>
                                 <div class="text-xs font-black text-slate-800 dark:text-slate-100 flex items-center gap-1">
                                     <span class="text-emerald-600 dark:text-emerald-400 font-bold" x-text="scores.writing || 0">0</span>
-                                    <span class="text-slate-400 font-normal">× 35% =</span>
+                                    <span class="text-slate-500 dark:text-slate-400 font-normal">× 35% =</span>
                                     <span class="text-emerald-600 dark:text-emerald-400 font-black text-sm" x-text="weightedWriting">0.00</span>
                                 </div>
                             </div>
@@ -602,7 +602,7 @@
 
                         <!-- Interactive Pills & Stepper Touch Controls -->
                         <div class="space-y-3 pt-1">
-                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                            <label class="block text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                 Ketuk Skor Pil Cepat:
                             </label>
                             
@@ -622,7 +622,7 @@
 
                             <!-- Stepper & Direct Custom Number Field -->
                             <div class="flex items-center gap-2 pt-2 flex-wrap">
-                                <span class="text-xs text-slate-400 font-medium mr-1">Penyesuaian Manual:</span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium mr-1">Penyesuaian Manual:</span>
                                 <button type="button" 
                                         @click="adjustScore('writing', -5)" 
                                         title="Kurangi 5"
@@ -673,12 +673,12 @@
                             </div>
                             <div class="flex items-center gap-3.5 sm:gap-4">
                                 <div>
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Total Nilai</span>
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Total Nilai</span>
                                     <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight block -mt-0.5" x-text="finalScore">0.00</span>
                                 </div>
                                 <div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
                                 <div>
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block">Nilai Huruf</span>
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Nilai Huruf</span>
                                     <div class="mt-0.5">
                                         <span class="inline-flex items-center justify-center min-w-[34px] h-7 px-2.5 rounded-xl text-xs sm:text-sm font-black uppercase transition-all shadow-xs"
                                               :class="gradeBadgeClass"
@@ -691,24 +691,24 @@
                         <!-- Unified Component Breakdown Chips (Responsive Mobile & Desktop) -->
                         <div class="w-full sm:w-auto justify-center flex items-center gap-2 sm:gap-3 text-xs text-slate-500 dark:text-slate-400 bg-slate-100/80 dark:bg-slate-900/60 px-3.5 py-2 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
                             <div class="flex items-center gap-1">
-                                <span class="text-slate-400 dark:text-slate-500 font-medium hidden sm:inline text-[11px]">Presentasi:</span>
-                                <span class="text-slate-400 dark:text-slate-500 font-medium sm:hidden text-[11px]">P:</span>
+                                <span class="text-slate-500 dark:text-slate-400 font-medium hidden sm:inline text-[11px]">Presentasi:</span>
+                                <span class="text-slate-500 dark:text-slate-400 font-medium sm:hidden text-[11px]">P:</span>
                                 <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.presentation || 0">0</b>
-                                <span class="hidden md:inline text-[10px] text-slate-400 font-normal">(<span x-text="weightedPresentation">0.00</span>)</span>
+                                <span class="hidden md:inline text-[11px] text-slate-500 dark:text-slate-400 font-normal">(<span x-text="weightedPresentation">0.00</span>)</span>
                             </div>
                             <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
                             <div class="flex items-center gap-1">
-                                <span class="text-slate-400 dark:text-slate-500 font-medium hidden sm:inline text-[11px]">Materi:</span>
-                                <span class="text-slate-400 dark:text-slate-500 font-medium sm:hidden text-[11px]">M:</span>
+                                <span class="text-slate-500 dark:text-slate-400 font-medium hidden sm:inline text-[11px]">Materi:</span>
+                                <span class="text-slate-500 dark:text-slate-400 font-medium sm:hidden text-[11px]">M:</span>
                                 <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.explanation || 0">0</b>
-                                <span class="hidden md:inline text-[10px] text-slate-400 font-normal">(<span x-text="weightedExplanation">0.00</span>)</span>
+                                <span class="hidden md:inline text-[11px] text-slate-500 dark:text-slate-400 font-normal">(<span x-text="weightedExplanation">0.00</span>)</span>
                             </div>
                             <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
                             <div class="flex items-center gap-1">
-                                <span class="text-slate-400 dark:text-slate-500 font-medium hidden sm:inline text-[11px]">Naskah:</span>
-                                <span class="text-slate-400 dark:text-slate-500 font-medium sm:hidden text-[11px]">N:</span>
+                                <span class="text-slate-500 dark:text-slate-400 font-medium hidden sm:inline text-[11px]">Naskah:</span>
+                                <span class="text-slate-500 dark:text-slate-400 font-medium sm:hidden text-[11px]">N:</span>
                                 <b class="text-slate-800 dark:text-slate-200 font-bold" x-text="scores.writing || 0">0</b>
-                                <span class="hidden md:inline text-[10px] text-slate-400 font-normal">(<span x-text="weightedWriting">0.00</span>)</span>
+                                <span class="hidden md:inline text-[11px] text-slate-500 dark:text-slate-400 font-normal">(<span x-text="weightedWriting">0.00</span>)</span>
                             </div>
                         </div>
 

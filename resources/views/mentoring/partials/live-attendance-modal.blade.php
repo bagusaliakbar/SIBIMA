@@ -52,7 +52,7 @@
                                 <svg class="w-3.5 h-3.5" :class="isSyncing ? 'animate-spin text-orange-600' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                 <span>Segarkan</span>
                             </button>
-                            <button type="button" @click="liveModalOpen = false" aria-label="Tutup modal kehadiran langsung" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                            <button type="button" @click="liveModalOpen = false" aria-label="Tutup modal kehadiran langsung" class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -70,7 +70,7 @@
                                         : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20 hover:border-emerald-200 dark:hover:border-emerald-800'"
                                     class="p-4 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden group">
                                 <div class="flex items-center justify-between">
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider border border-emerald-200/60 dark:border-emerald-800/60">
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 text-[11px] font-black uppercase tracking-wider border border-emerald-200/60 dark:border-emerald-800/60">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                         Akan Hadir
                                     </span>
@@ -88,7 +88,7 @@
                                         : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 hover:bg-amber-50/40 dark:hover:bg-amber-950/20 hover:border-amber-200 dark:hover:border-amber-800'"
                                     class="p-4 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden group">
                                 <div class="flex items-center justify-between">
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-100/80 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 text-[10px] font-black uppercase tracking-wider border border-amber-200/60 dark:border-amber-800/60">
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-100/80 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 text-[11px] font-black uppercase tracking-wider border border-amber-200/60 dark:border-amber-800/60">
                                         <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                         Izin / Berhalangan
                                     </span>
@@ -106,7 +106,7 @@
                                         : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800/40'"
                                     class="p-4 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden group">
                                 <div class="flex items-center justify-between">
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700">
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
                                         Belum Konfirmasi
                                     </span>
@@ -126,28 +126,28 @@
                                         :class="liveTab === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-2xs font-semibold' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60 font-medium'"
                                         class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     <span>Semua</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] leading-none tabular-nums" :class="liveTab === 'all' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500 dark:text-slate-400'" x-text="attendanceStats.total || 0"></span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[11px] leading-none tabular-nums" :class="liveTab === 'all' ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500 dark:text-slate-400'" x-text="attendanceStats.total || 0"></span>
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'attending'" 
                                         :class="liveTab === 'attending' ? 'bg-emerald-600 text-white shadow-2xs font-semibold' : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 font-medium'"
                                         class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     <span>Akan Hadir</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] leading-none tabular-nums" :class="liveTab === 'attending' ? 'bg-emerald-500/40 text-white' : 'bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'" x-text="attendanceStats.attending || 0"></span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[11px] leading-none tabular-nums" :class="liveTab === 'attending' ? 'bg-emerald-500/40 text-white' : 'bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'" x-text="attendanceStats.attending || 0"></span>
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'permission'" 
                                         :class="liveTab === 'permission' ? 'bg-amber-600 text-white shadow-2xs font-semibold' : 'text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 font-medium'"
                                         class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     <span>Izin</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] leading-none tabular-nums" :class="liveTab === 'permission' ? 'bg-amber-500/40 text-white' : 'bg-amber-100/80 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'" x-text="attendanceStats.permission || 0"></span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[11px] leading-none tabular-nums" :class="liveTab === 'permission' ? 'bg-amber-500/40 text-white' : 'bg-amber-100/80 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'" x-text="attendanceStats.permission || 0"></span>
                                 </button>
                                 <button type="button" 
                                         @click="liveTab = 'pending'" 
                                         :class="liveTab === 'pending' ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-2xs font-semibold' : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800/60 font-medium'"
                                         class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap cursor-pointer">
                                     <span>Belum Konfirmasi</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] leading-none tabular-nums" :class="liveTab === 'pending' ? 'bg-slate-700 dark:bg-slate-600 text-white' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300'" x-text="attendanceStats.pending || 0"></span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[11px] leading-none tabular-nums" :class="liveTab === 'pending' ? 'bg-slate-700 dark:bg-slate-600 text-white' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300'" x-text="attendanceStats.pending || 0"></span>
                                 </button>
                             </div>
 
@@ -197,7 +197,7 @@
                                                 </div>
 
                                                 <template x-if="session.is_today">
-                                                    <span class="px-2 py-0.5 rounded-md bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 text-[10px] font-black uppercase tracking-wider border border-red-200 dark:border-red-800/80 animate-pulse">
+                                                    <span class="px-2 py-0.5 rounded-md bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 text-[11px] font-black uppercase tracking-wider border border-red-200 dark:border-red-800/80 animate-pulse">
                                                         Hari Ini
                                                     </span>
                                                 </template>
@@ -216,7 +216,7 @@
 
                                             <!-- Session Topic -->
                                             <div class="flex items-baseline gap-2 pt-0.5">
-                                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 shrink-0">Topik Sesi:</span>
+                                                <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0">Topik Sesi:</span>
                                                 <h4 class="text-xs font-bold text-slate-900 dark:text-white line-clamp-1" x-text="session.topic"></h4>
                                             </div>
                                         </div>
@@ -225,19 +225,19 @@
                                         <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
                                             <span class="text-[11px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider mr-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" x-text="session.students.length + ' Mahasiswa'"></span>
                                             <template x-if="session.stats.attending > 0">
-                                                <span class="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-bold border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
+                                                <span class="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-bold border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
                                                     <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                     <span x-text="session.stats.attending + ' Hadir'"></span>
                                                 </span>
                                             </template>
                                             <template x-if="session.stats.permission > 0">
-                                                <span class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 text-[10px] font-bold border border-amber-200 dark:border-amber-800/60 flex items-center gap-1">
+                                                <span class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200 text-[11px] font-bold border border-amber-200 dark:border-amber-800/60 flex items-center gap-1">
                                                     <svg class="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01"></path></svg>
                                                     <span x-text="session.stats.permission + ' Izin'"></span>
                                                 </span>
                                             </template>
                                             <template x-if="session.stats.pending > 0">
-                                                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1">
+                                                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                                                     <span x-text="session.stats.pending + ' Belum Respon'"></span>
                                                 </span>
@@ -273,7 +273,7 @@
                                                     <div class="min-w-0 flex-1 space-y-0.5">
                                                         <div class="flex items-center gap-2 flex-wrap">
                                                             <h5 class="text-xs font-black text-slate-900 dark:text-white" x-text="item.student_name"></h5>
-                                                            <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-bold border border-slate-200 dark:border-slate-700" x-text="item.student_identifier"></span>
+                                                            <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[11px] font-bold border border-slate-200 dark:border-slate-700" x-text="item.student_identifier"></span>
                                                         </div>
                                                         <template x-if="item.thesis_title && item.thesis_title !== '-'">
                                                             <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate" x-text="'Skripsi: ' + item.thesis_title"></p>
@@ -282,7 +282,7 @@
                                                         <!-- Permission Reason Callout -->
                                                         <template x-if="item.attendance_status === 'permission' && item.attendance_reason">
                                                             <div class="mt-1.5 p-2 bg-amber-100/70 dark:bg-amber-950/60 rounded-lg border border-amber-200 dark:border-amber-700/80">
-                                                                <span class="text-[9px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-wider block">Alasan Izin:</span>
+                                                                <span class="text-[11px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-wider block">Alasan Izin:</span>
                                                                 <p class="text-xs text-amber-950 dark:text-amber-100 font-medium italic mt-0.5" x-text="'&ldquo;' + item.attendance_reason + '&rdquo;'"></p>
                                                             </div>
                                                         </template>
@@ -292,33 +292,33 @@
                                                 <!-- Status Badge & WhatsApp Action -->
                                                 <div class="flex sm:flex-col items-end justify-between sm:justify-center gap-1.5 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200 dark:border-slate-700">
                                                     <template x-if="item.attendance_status === 'attending'">
-                                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700/80">
+                                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700/80">
                                                             <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                             <span>Akan Hadir</span>
                                                         </span>
                                                     </template>
                                                     <template x-if="item.attendance_status === 'permission'">
-                                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-700/80">
+                                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[11px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-700/80">
                                                             <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                                             <span>Izin / Berhalangan</span>
                                                         </span>
                                                     </template>
                                                     <template x-if="item.attendance_status === 'pending'">
-                                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-600">
+                                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[11px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-600">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
                                                             <span>Belum Respon</span>
                                                         </span>
                                                     </template>
 
                                                     <template x-if="item.confirmed_at_formatted">
-                                                        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium" x-text="item.confirmed_at_formatted"></span>
+                                                        <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium" x-text="item.confirmed_at_formatted"></span>
                                                     </template>
 
                                                     <!-- WhatsApp Reminder Button for Pending / Permission -->
                                                     <template x-if="item.student_phone && (item.attendance_status === 'pending' || item.attendance_status === 'permission')">
                                                         <a :href="getWaLink(item)" 
                                                            target="_blank" 
-                                                           class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/80 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/80 rounded-lg text-[10px] font-bold transition-all shadow-2xs">
+                                                           class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/80 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/80 rounded-lg text-[11px] font-bold transition-all shadow-2xs">
                                                             <span>Chat WA</span>
                                                         </a>
                                                     </template>
@@ -364,9 +364,9 @@
                                         <div class="min-w-0 flex-1 space-y-1">
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <h4 class="text-xs font-black text-slate-900 dark:text-white" x-text="item.student_name"></h4>
-                                                <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-bold border border-slate-200/80 dark:border-slate-700" x-text="item.student_identifier"></span>
+                                                <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[11px] font-bold border border-slate-200/80 dark:border-slate-700" x-text="item.student_identifier"></span>
                                                 <template x-if="item.is_today">
-                                                    <span class="px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 text-[9px] font-black uppercase border border-red-200 dark:border-red-800/80">Hari Ini</span>
+                                                    <span class="px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 text-[11px] font-black uppercase border border-red-200 dark:border-red-800/80">Hari Ini</span>
                                                 </template>
                                             </div>
                                             <p class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate" x-text="item.topic"></p>
@@ -381,7 +381,7 @@
                                             <!-- Permission Reason Callout -->
                                             <template x-if="item.attendance_status === 'permission' && item.attendance_reason">
                                                 <div class="mt-2 p-2.5 bg-amber-100/70 dark:bg-amber-950/60 rounded-xl border border-amber-200 dark:border-amber-700/80">
-                                                    <span class="text-[9px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-wider block">Alasan Izin Mahasiswa:</span>
+                                                    <span class="text-[11px] font-black text-amber-800 dark:text-amber-300 uppercase tracking-wider block">Alasan Izin Mahasiswa:</span>
                                                     <p class="text-xs text-amber-950 dark:text-amber-100 font-medium italic mt-0.5" x-text="'&ldquo;' + item.attendance_reason + '&rdquo;'"></p>
                                                 </div>
                                             </template>
@@ -391,33 +391,33 @@
                                     <!-- Status Badge & Quick Actions -->
                                     <div class="flex sm:flex-col items-end justify-between sm:justify-center gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200 dark:border-slate-700">
                                         <template x-if="item.attendance_status === 'attending'">
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700/80">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700/80">
                                                 <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                 <span>Akan Hadir</span>
                                             </span>
                                         </template>
                                         <template x-if="item.attendance_status === 'permission'">
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-700/80">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[11px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-700/80">
                                                 <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                                 <span>Izin / Berhalangan</span>
                                             </span>
                                         </template>
                                         <template x-if="item.attendance_status === 'pending'">
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-600">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[11px] font-black uppercase tracking-wider border border-slate-200 dark:border-slate-600">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
                                                 <span>Belum Respon</span>
                                             </span>
                                         </template>
 
                                         <template x-if="item.confirmed_at_formatted">
-                                            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium" x-text="item.confirmed_at_formatted"></span>
+                                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium" x-text="item.confirmed_at_formatted"></span>
                                         </template>
 
                                         <!-- WhatsApp Reminder Button for Pending / Permission -->
                                         <template x-if="item.student_phone && (item.attendance_status === 'pending' || item.attendance_status === 'permission')">
                                             <a :href="getWaLink(item)" 
                                                target="_blank" 
-                                               class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/80 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/80 rounded-lg text-[10px] font-bold transition-all shadow-2xs">
+                                               class="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/80 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/80 rounded-lg text-[11px] font-bold transition-all shadow-2xs">
                                                 <span>Chat WA</span>
                                             </a>
                                         </template>

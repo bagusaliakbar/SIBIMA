@@ -54,7 +54,7 @@
                        class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         <span class="w-2 h-2 rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-orange-500 animate-pulse' : 'bg-slate-400' }}"></span>
                         Mendatang
-                        <span class="px-2 py-0.5 text-[10px] rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['upcoming'] }}</span>
+                        <span class="px-2 py-0.5 text-[11px] rounded-full {{ ($filterDate ?? 'upcoming') === 'upcoming' ? 'bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['upcoming'] }}</span>
                     </a>
 
                     <!-- Today Tab -->
@@ -62,21 +62,21 @@
                        class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'today' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         <span class="w-2 h-2 rounded-full {{ $filterDate === 'today' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400' }}"></span>
                         Hari Ini
-                        <span class="px-2 py-0.5 text-[10px] rounded-full {{ $filterDate === 'today' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['today'] }}</span>
+                        <span class="px-2 py-0.5 text-[11px] rounded-full {{ $filterDate === 'today' ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }}">{{ $counts['today'] }}</span>
                     </a>
 
                     <!-- Past Tab -->
                     <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'past', 'wave_id' => $selectedWaveId])) }}"
                        class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'past' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         Riwayat
-                        <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['past'] }}</span>
+                        <span class="px-2 py-0.5 text-[11px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['past'] }}</span>
                     </a>
 
                     <!-- All Tab -->
                     <a href="{{ route('seminar-schedules.index', array_merge(request()->except(['page', 'filter_date', 'date', 'date_from', 'date_to']), ['filter_date' => 'all', 'wave_id' => $selectedWaveId])) }}"
                        class="px-4 sm:px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ $filterDate === 'all' && !$mySchedules ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         Semua Agenda
-                        <span class="px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['all'] }}</span>
+                        <span class="px-2 py-0.5 text-[11px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">{{ $counts['all'] }}</span>
                     </a>
                 </div>
 
@@ -87,7 +87,7 @@
                        title="Klik untuk {{ $mySchedules ? 'menampilkan semua jadwal' : 'hanya menampilkan jadwal bimbingan & uji Anda' }}">
                         <svg class="w-3.5 h-3.5 {{ $mySchedules ? 'fill-current' : 'fill-none' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
                         <span>{{ $mySchedules ? 'Jadwal Saya (Aktif)' : 'Hanya Jadwal Saya' }}</span>
-                        <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $mySchedules ? 'bg-slate-950/20 text-slate-950 font-black' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold' }}">{{ $counts['mySchedules'] }}</span>
+                        <span class="px-1.5 py-0.2 rounded-full text-[11px] {{ $mySchedules ? 'bg-slate-950/20 text-slate-950 font-black' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold' }}">{{ $counts['mySchedules'] }}</span>
                     </a>
                 </div>
             </div>
@@ -104,7 +104,7 @@
 
                     <!-- Search Input -->
                     <div class="relative w-full sm:flex-1 sm:min-w-[200px] sm:max-w-md">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </span>
                         <input type="text" name="search" value="{{ $searchQuery }}" placeholder="Cari mahasiswa, judul, dosen, ruangan..."
@@ -126,10 +126,10 @@
 
                     <!-- Compact Inline Date Range -->
                     <div class="flex items-center justify-between sm:justify-start gap-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1 w-full sm:w-auto">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Tgl:</span>
+                        <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Tgl:</span>
                         <input type="date" name="date_from" value="{{ $dateFrom }}" title="Dari Tanggal"
                                class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 w-[125px] sm:w-[130px] [color-scheme:light] dark:[color-scheme:dark]">
-                        <span class="text-slate-400 dark:text-slate-500 text-xs font-bold">-</span>
+                        <span class="text-slate-500 dark:text-slate-400 text-xs font-bold">-</span>
                         <input type="date" name="date_to" value="{{ $dateTo }}" title="Sampai Tanggal"
                                class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 w-[125px] sm:w-[130px] [color-scheme:light] dark:[color-scheme:dark]">
                     </div>
@@ -142,7 +142,7 @@
                         </button>
 
                         @if(request()->hasAny(['search', 'wave_id', 'date', 'date_from', 'date_to', 'my_schedules']) || ($filterDate && $filterDate !== 'upcoming'))
-                            <a href="{{ route('seminar-schedules.index') }}" class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl transition-all" title="Reset Filter">
+                            <a href="{{ route('seminar-schedules.index') }}" class="p-2 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-xl transition-all" title="Reset Filter">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </a>
                         @endif
@@ -273,19 +273,19 @@
                             <!-- Meta Info Chips Bar (Clear & Readable) -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 mt-3 border-t border-slate-200 dark:border-slate-700 text-xs">
                                 <div class="px-2.5 sm:px-3 py-2 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 min-w-0">
-                                    <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Ketua Sidang</span>
+                                    <span class="block text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Ketua Sidang</span>
                                     <span class="font-bold text-slate-800 dark:text-slate-200 truncate block text-xs" title="{{ $schedule->chairman?->name ?? '-' }}">{{ $schedule->chairman?->name ?? '-' }}</span>
                                 </div>
                                 <div class="px-2.5 sm:px-3 py-2 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 min-w-0">
-                                    <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Moderator</span>
+                                    <span class="block text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Moderator</span>
                                     <span class="font-bold text-slate-800 dark:text-slate-200 truncate block text-xs" title="{{ $schedule->moderator?->name ?? '-' }}">{{ $schedule->moderator?->name ?? '-' }}</span>
                                 </div>
                                 <div class="px-2.5 sm:px-3 py-2 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 min-w-0">
-                                    <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Ruangan</span>
+                                    <span class="block text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Ruangan</span>
                                     <span class="font-bold text-slate-800 dark:text-slate-200 truncate block text-xs" title="{{ $schedule->location ?: 'BELUM DIATUR' }}">{{ $schedule->location ?: 'BELUM DIATUR' }}</span>
                                 </div>
                                 <div class="px-2.5 sm:px-3 py-2 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 min-w-0">
-                                    <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Virtual Meeting</span>
+                                    <span class="block text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Virtual Meeting</span>
                                     @if($schedule->meeting_link)
                                         <a href="{{ $schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 truncate text-xs transition-colors group mt-0.5" title="Buka Google Meet: {{ $schedule->meeting_link }}">
                                             <x-google-meet-icon class="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" />
@@ -293,7 +293,7 @@
                                             <svg class="w-3 h-3 text-slate-400 dark:text-slate-500 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                         </a>
                                     @else
-                                        <span class="font-bold text-slate-400 truncate block text-xs mt-0.5">-</span>
+                                        <span class="font-bold text-slate-500 dark:text-slate-400 truncate block text-xs mt-0.5">-</span>
                                     @endif
                                 </div>
                             </div>
@@ -316,12 +316,12 @@
                                                     <span class="inline-flex items-center justify-center w-6 h-6 {{ ($isMyStudent || $isMyExam) ? 'bg-amber-500 text-white font-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold' }} rounded-lg text-xs shrink-0">
                                                         {{ $mobileStudentNo++ }}
                                                     </span>
-                                                    <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-black text-[10px] rounded uppercase tracking-wider shrink-0">
+                                                    <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-black text-[11px] rounded uppercase tracking-wider shrink-0">
                                                         {{ $detail->thesis->student->identifier }}
                                                     </span>
                                                     <span class="font-bold text-slate-800 dark:text-slate-100 text-xs truncate">{{ $detail->thesis->student->name }}</span>
                                                 </div>
-                                                <span class="inline-flex items-center px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/40 rounded-lg font-bold text-[10px] whitespace-nowrap shrink-0">
+                                                <span class="inline-flex items-center px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/40 rounded-lg font-bold text-[11px] whitespace-nowrap shrink-0">
                                                     {{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}
                                                 </span>
                                             </div>
@@ -329,14 +329,14 @@
                                             @if($isMyExam || $isMyStudent)
                                                 <div class="flex flex-wrap items-center gap-1.5">
                                                     @if($isMyExam)
-                                                        <span class="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[9px] rounded-full uppercase tracking-wider">Anda Menguji</span>
-                                                        <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/15 hover:bg-amber-500 text-amber-700 hover:text-slate-950 dark:text-amber-300 dark:hover:text-slate-950 border border-amber-500/30 font-black text-[10px] rounded-full uppercase tracking-wider transition-all">
+                                                        <span class="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[11px] rounded-full uppercase tracking-wider">Anda Menguji</span>
+                                                        <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/15 hover:bg-amber-500 text-amber-700 hover:text-slate-950 dark:text-amber-300 dark:hover:text-slate-950 border border-amber-500/30 font-black text-[11px] rounded-full uppercase tracking-wider transition-all">
                                                             <span>Catatan & Revisi</span>
                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                                                         </a>
                                                     @endif
                                                     @if($isMyStudent)
-                                                        <span class="px-2 py-0.5 bg-indigo-500 text-white font-black text-[9px] rounded-full uppercase tracking-wider">Bimbingan Anda</span>
+                                                        <span class="px-2 py-0.5 bg-indigo-500 text-white font-black text-[11px] rounded-full uppercase tracking-wider">Bimbingan Anda</span>
                                                     @endif
                                                 </div>
                                             @endif
@@ -347,24 +347,24 @@
 
                                             <div class="grid grid-cols-1 gap-1.5 text-[11px] pt-0.5">
                                                 <div class="flex items-start gap-1.5">
-                                                    <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[9px] rounded border border-amber-500/20 shrink-0">P1</span>
+                                                    <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[11px] rounded border border-amber-500/20 shrink-0">P1</span>
                                                     <span class="{{ $detail->thesis->pembimbing1_id === $currentUserId ? 'font-black text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300' }}">{{ $detail->thesis->pembimbing1?->name ?? '-' }}</span>
                                                 </div>
                                                 @if($detail->thesis->pembimbing2)
                                                     <div class="flex items-start gap-1.5">
-                                                        <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[9px] rounded border border-amber-500/20 shrink-0">P2</span>
+                                                        <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[11px] rounded border border-amber-500/20 shrink-0">P2</span>
                                                         <span class="{{ $detail->thesis->pembimbing2_id === $currentUserId ? 'font-black text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300' }}">{{ $detail->thesis->pembimbing2?->name ?? '-' }}</span>
                                                     </div>
                                                 @endif
                                                 @if($detail->examiner1)
                                                     <div class="flex items-start gap-1.5">
-                                                        <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[9px] rounded border border-indigo-500/20 shrink-0">U1</span>
+                                                        <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[11px] rounded border border-indigo-500/20 shrink-0">U1</span>
                                                         <span class="{{ $detail->examiner1_id === $currentUserId ? 'font-black text-amber-600 dark:text-amber-400' : 'text-slate-700 dark:text-slate-300' }}">{{ $detail->examiner1->name }}</span>
                                                     </div>
                                                 @endif
                                                 @if($detail->examiner2)
                                                     <div class="flex items-start gap-1.5">
-                                                        <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[9px] rounded border border-indigo-500/20 shrink-0">U2</span>
+                                                        <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[11px] rounded border border-indigo-500/20 shrink-0">U2</span>
                                                         <span class="{{ $detail->examiner2_id === $currentUserId ? 'font-black text-amber-600 dark:text-amber-400' : 'text-slate-700 dark:text-slate-300' }}">{{ $detail->examiner2->name }}</span>
                                                     </div>
                                                 @endif
@@ -372,23 +372,23 @@
                                         </div>
                                     @else
                                         <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/60 p-3 flex items-center justify-between gap-2">
-                                            <span class="inline-flex items-center text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+                                            <span class="inline-flex items-center text-[11px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                                                 {{ $detail->activity_name }}
                                             </span>
-                                            <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-bold text-[10px] text-slate-600 dark:text-slate-400 whitespace-nowrap border border-slate-200 dark:border-slate-700">
+                                            <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-bold text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap border border-slate-200 dark:border-slate-700">
                                                 {{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}
                                             </span>
                                         </div>
                                     @endif
                                 @empty
-                                    <p class="py-6 text-center text-xs text-slate-400 italic">Belum ada rincian peserta untuk jadwal ini.</p>
+                                    <p class="py-6 text-center text-xs text-slate-500 dark:text-slate-400 italic">Belum ada rincian peserta untuk jadwal ini.</p>
                                 @endforelse
                             </div>
 
                             <div class="hidden sm:block overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs custom-scrollbar">
                                 <table class="w-full min-w-[650px] text-xs text-left border-collapse">
                                     <thead>
-                                        <tr class="bg-slate-50 dark:bg-slate-900/80 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700">
+                                        <tr class="bg-slate-50 dark:bg-slate-900/80 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-700">
                                             <th class="py-3 px-3 w-12 text-center border-r border-slate-200 dark:border-slate-700">NO</th>
                                             <th class="py-3 px-3 w-32 text-center border-r border-slate-200 dark:border-slate-700">WAKTU</th>
                                             <th class="py-3 px-5 border-r border-slate-200 dark:border-slate-700">PESERTA & JUDUL SKRIPSI</th>
@@ -419,20 +419,20 @@
                                                     <td class="py-3.5 px-5 border-r border-slate-200 dark:border-slate-700">
                                                         <div class="space-y-1.5">
                                                             <div class="flex items-center flex-wrap gap-2">
-                                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-black text-[10px] rounded uppercase tracking-wider">
+                                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-black text-[11px] rounded uppercase tracking-wider">
                                                                     {{ $detail->thesis->student->identifier }}
                                                                 </span>
                                                                 <span class="font-bold text-slate-800 dark:text-slate-100 text-xs">{{ $detail->thesis->student->name }}</span>
                                                                 
                                                                 @if($isMyExam)
-                                                                    <span class="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[9px] rounded-full uppercase tracking-wider">Anda Menguji</span>
-                                                                    <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/15 hover:bg-amber-500 text-amber-700 hover:text-slate-950 dark:text-amber-300 dark:hover:text-slate-950 border border-amber-500/30 font-black text-[10px] rounded-full uppercase tracking-wider transition-all">
+                                                                    <span class="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[11px] rounded-full uppercase tracking-wider">Anda Menguji</span>
+                                                                    <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-500/15 hover:bg-amber-500 text-amber-700 hover:text-slate-950 dark:text-amber-300 dark:hover:text-slate-950 border border-amber-500/30 font-black text-[11px] rounded-full uppercase tracking-wider transition-all">
                                                                         <span>Catatan & Revisi</span>
                                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                                                                     </a>
                                                                 @endif
                                                                 @if($isMyStudent)
-                                                                    <span class="px-2 py-0.5 bg-indigo-500 text-white font-black text-[9px] rounded-full uppercase tracking-wider">Bimbingan Anda</span>
+                                                                    <span class="px-2 py-0.5 bg-indigo-500 text-white font-black text-[11px] rounded-full uppercase tracking-wider">Bimbingan Anda</span>
                                                                 @endif
                                                             </div>
                                                             <p class="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
@@ -443,12 +443,12 @@
                                                     <td class="py-3.5 px-4 border-r border-slate-200 dark:border-slate-700">
                                                         <div class="space-y-1.5 text-xs">
                                                             <div class="flex items-start gap-1.5 {{ $detail->thesis->pembimbing1_id === $currentUserId ? 'font-black text-indigo-600 dark:text-indigo-400' : '' }}">
-                                                                <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[9px] rounded border border-amber-500/20 shrink-0 mt-0.5">P1</span>
+                                                                <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[11px] rounded border border-amber-500/20 shrink-0 mt-0.5">P1</span>
                                                                 <span class="leading-tight">{{ $detail->thesis->pembimbing1?->name ?? '-' }}</span>
                                                             </div>
                                                             @if($detail->thesis->pembimbing2)
                                                                 <div class="flex items-start gap-1.5 {{ $detail->thesis->pembimbing2_id === $currentUserId ? 'font-black text-indigo-600 dark:text-indigo-400' : '' }}">
-                                                                    <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[9px] rounded border border-amber-500/20 shrink-0 mt-0.5">P2</span>
+                                                                    <span class="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[11px] rounded border border-amber-500/20 shrink-0 mt-0.5">P2</span>
                                                                     <span class="leading-tight">{{ $detail->thesis->pembimbing2?->name ?? '-' }}</span>
                                                                 </div>
                                                             @endif
@@ -458,13 +458,13 @@
                                                         <div class="space-y-1.5 text-xs">
                                                             @if($detail->examiner1)
                                                                 <div class="flex items-start gap-1.5 {{ $detail->examiner1_id === $currentUserId ? 'font-black text-amber-600 dark:text-amber-400' : '' }}">
-                                                                    <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[9px] rounded border border-indigo-500/20 shrink-0 mt-0.5">U1</span>
+                                                                    <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[11px] rounded border border-indigo-500/20 shrink-0 mt-0.5">U1</span>
                                                                     <span class="leading-tight">{{ $detail->examiner1->name }}</span>
                                                                 </div>
                                                             @endif
                                                             @if($detail->examiner2)
                                                                 <div class="flex items-start gap-1.5 {{ $detail->examiner2_id === $currentUserId ? 'font-black text-amber-600 dark:text-amber-400' : '' }}">
-                                                                    <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[9px] rounded border border-indigo-500/20 shrink-0 mt-0.5">U2</span>
+                                                                    <span class="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[11px] rounded border border-indigo-500/20 shrink-0 mt-0.5">U2</span>
                                                                     <span class="leading-tight">{{ $detail->examiner2->name }}</span>
                                                                 </div>
                                                             @endif
@@ -473,14 +473,14 @@
                                                 </tr>
                                             @else
                                                 <tr class="bg-slate-50/80 dark:bg-slate-900/60">
-                                                    <td class="py-2.5 px-3 text-center border-r border-slate-200 dark:border-slate-700 font-bold text-slate-400">#</td>
+                                                    <td class="py-2.5 px-3 text-center border-r border-slate-200 dark:border-slate-700 font-bold text-slate-500 dark:text-slate-400">#</td>
                                                     <td class="py-2.5 px-3 text-center border-r border-slate-200 dark:border-slate-700">
                                                         <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-bold text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap border border-slate-200 dark:border-slate-700">
                                                             {{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}
                                                         </span>
                                                     </td>
                                                     <td colspan="3" class="py-2.5 px-5">
-                                                        <span class="inline-flex items-center text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest bg-slate-200/50 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
+                                                        <span class="inline-flex items-center text-[11px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest bg-slate-200/50 dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
                                                             <svg class="w-3.5 h-3.5 mr-1.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                                             {{ $detail->activity_name }}
                                                         </span>
@@ -489,7 +489,7 @@
                                             @endif
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="py-6 text-center text-xs text-slate-400 italic">Belum ada rincian peserta untuk jadwal ini.</td>
+                                                <td colspan="5" class="py-6 text-center text-xs text-slate-500 dark:text-slate-400 italic">Belum ada rincian peserta untuk jadwal ini.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -636,7 +636,7 @@
                             <div class="flex items-start justify-between gap-2.5">
                                 <div class="min-w-0">
                                     <p class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $schedule->title }}</p>
-                                    <p class="text-[10px] text-slate-500 mt-0.5 uppercase font-bold tracking-wider">Oleh: {{ $schedule->creator->name }}</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5 uppercase font-bold tracking-wider">Oleh: {{ $schedule->creator->name }}</p>
                                 </div>
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold rounded-lg text-[11px] shrink-0">
                                     {{ $participantCount }} / {{ $totalSlots }}
@@ -647,14 +647,14 @@
                                 <span class="font-bold text-slate-700 dark:text-slate-200">
                                     {{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('l, d F Y') }}
                                 </span>
-                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold text-slate-600 dark:text-slate-400">
+                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-600 dark:text-slate-400">
                                     {{ $schedule->location ?: 'BELUM DIATUR' }}
                                 </span>
                             </div>
 
                             <div class="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5 bg-slate-50/70 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/60">
-                                <p><span class="text-[10px] font-bold uppercase text-slate-400">Ketua:</span> {{ $schedule->chairman?->name ?? '-' }}</p>
-                                <p><span class="text-[10px] font-bold uppercase text-slate-400">Moderator:</span> {{ $schedule->moderator?->name ?? '-' }}</p>
+                                <p><span class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400">Ketua:</span> {{ $schedule->chairman?->name ?? '-' }}</p>
+                                <p><span class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400">Moderator:</span> {{ $schedule->moderator?->name ?? '-' }}</p>
                             </div>
 
                             <div class="flex flex-wrap items-center justify-between gap-2 pt-0.5">
@@ -703,7 +703,7 @@
 
                 <table class="hidden sm:table w-full text-sm text-left">
                     <thead>
-                        <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-200 dark:border-slate-700">
+                        <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest border-b border-slate-200 dark:border-slate-700">
                             <th class="py-4 px-6">Informasi Sesi</th>
                             <th class="py-4 px-6">Waktu & Tanggal</th>
                             <th class="py-4 px-6">Pimpinan Sidang</th>
@@ -717,33 +717,33 @@
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-colors group">
                                 <td class="py-4 px-6">
                                     <p class="text-[11px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $schedule->title }}</p>
-                                    <p class="text-[9px] text-slate-500 dark:text-slate-500 mt-1 uppercase font-black tracking-widest">Oleh: {{ $schedule->creator->name }}</p>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 uppercase font-black tracking-widest">Oleh: {{ $schedule->creator->name }}</p>
                                 </td>
                                 <td class="py-4 px-6">
                                     <div class="flex flex-col">
                                         <span class="text-[11px] font-black text-slate-800 dark:text-slate-100 uppercase tracking-tighter">{{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('d F Y') }}</span>
-                                        <span class="text-[9px] text-orange-600 dark:text-orange-400 uppercase font-black tracking-[0.2em] mt-0.5">{{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('l') }}</span>
+                                        <span class="text-[11px] text-orange-600 dark:text-orange-400 uppercase font-black tracking-[0.2em] mt-0.5">{{ \Carbon\Carbon::parse($schedule->date)->locale('id')->translatedFormat('l') }}</span>
                                     </div>
                                 </td>
                                 <td class="py-4 px-6">
                                     <div class="space-y-1.5">
                                         <div class="flex items-center gap-2">
-                                            <span class="w-14 text-[8px] text-slate-400 uppercase font-black tracking-widest">Ketua</span>
-                                            <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black uppercase tracking-tighter">{{ $schedule->chairman?->name ?? '-' }}</span>
+                                            <span class="w-14 text-[11px] text-slate-500 dark:text-slate-400 uppercase font-black tracking-widest">Ketua</span>
+                                            <span class="text-[11px] text-slate-700 dark:text-slate-300 font-black uppercase tracking-tighter">{{ $schedule->chairman?->name ?? '-' }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="w-14 text-[8px] text-slate-400 uppercase font-black tracking-widest">Moderator</span>
-                                            <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black uppercase tracking-tighter">{{ $schedule->moderator?->name ?? '-' }}</span>
+                                            <span class="w-14 text-[11px] text-slate-500 dark:text-slate-400 uppercase font-black tracking-widest">Moderator</span>
+                                            <span class="text-[11px] text-slate-700 dark:text-slate-300 font-black uppercase tracking-tighter">{{ $schedule->moderator?->name ?? '-' }}</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="py-4 px-6">
                                     <div class="flex flex-col gap-2 items-start">
-                                        <span class="px-2 py-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[9px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest">
+                                        <span class="px-2 py-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest">
                                             {{ $schedule->location ?: 'BELUM DIATUR' }}
                                         </span>
                                         @if($schedule->meeting_link)
-                                            <a href="{{ $schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 text-[9px] font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-700 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-2xs group">
+                                            <a href="{{ $schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-orange-300 dark:hover:border-orange-700 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-2xs group">
                                                 <x-google-meet-icon class="w-3 h-3 shrink-0 transition-transform group-hover:scale-110" />
                                                 <span>Google Meet</span>
                                                 <svg class="w-2.5 h-2.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
@@ -758,21 +758,21 @@
                                     @endphp
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold rounded-lg text-xs">
                                         <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                                        <span>{{ $participantCount }} <span class="text-slate-400 font-normal">/ {{ $totalSlots }}</span></span>
+                                        <span>{{ $participantCount }} <span class="text-slate-500 dark:text-slate-400 font-normal">/ {{ $totalSlots }}</span></span>
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-right">
                                     <div class="flex justify-end items-center gap-1">
-                                        <a href="{{ route('seminar-schedules.export-pdf', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 transition-all group/pdf" title="Export PDF">
+                                        <a href="{{ route('seminar-schedules.export-pdf', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 hover:text-rose-600 transition-all group/pdf" title="Export PDF">
                                             <svg class="w-5 h-5 group-hover/pdf:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                         </a>
-                                        <a href="{{ route('seminar-schedules.export-word', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-600 transition-all group/word" title="Export Word (.docx)">
+                                        <a href="{{ route('seminar-schedules.export-word', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all group/word" title="Export Word (.docx)">
                                             <svg class="w-5 h-5 group-hover/word:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                         </a>
-                                        <a href="{{ route('seminar-schedules.show', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-indigo-600 transition-all group/view" title="Detail">
+                                        <a href="{{ route('seminar-schedules.show', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 hover:text-indigo-600 transition-all group/view" title="Detail">
                                             <svg class="w-5 h-5 group-hover/view:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                         </a>
-                                        <a href="{{ route('seminar-schedules.edit', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-amber-600 transition-all group/edit" title="Edit">
+                                        <a href="{{ route('seminar-schedules.edit', $schedule) }}" class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 hover:text-amber-600 transition-all group/edit" title="Edit">
                                             <svg class="w-5 h-5 group-hover/edit:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </a>
                                         <form id="delete-seminar-schedule-{{ $schedule->id }}" action="{{ route('seminar-schedules.destroy', $schedule) }}" method="POST" class="hidden">
@@ -785,7 +785,7 @@
                                                 data-confirm-title="Hapus Jadwal Seminar"
                                                 data-confirm-type="danger"
                                                 data-confirm-button="Ya, Hapus"
-                                                class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-600 transition-all group/del cursor-pointer"
+                                                class="w-9 h-9 inline-flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 hover:text-rose-600 transition-all group/del cursor-pointer"
                                                 title="Hapus" aria-label="Hapus">
                                             <svg class="w-5 h-5 group-hover/del:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
@@ -825,7 +825,7 @@
                                 <p class="text-xs text-slate-500 dark:text-slate-400">Unggah berkas spreadsheet Excel (.xlsx, .xls, .csv)</p>
                             </div>
                         </div>
-                        <button type="button" @click="openImportModal = false" aria-label="Tutup modal impor jadwal seminar" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                        <button type="button" @click="openImportModal = false" aria-label="Tutup modal impor jadwal seminar" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
@@ -874,12 +874,12 @@
                                     <input type="file" name="file" required accept=".xlsx,.xls,.csv"
                                            class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-600 file:text-white hover:file:bg-orange-700 file:cursor-pointer transition-all bg-slate-50 dark:bg-slate-900 rounded-2xl p-2 border border-dashed border-slate-300 dark:border-slate-700 focus:outline-none">
                                 </div>
-                                <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Ukuran maksimal file: 5 MB</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Ukuran maksimal file: 5 MB</p>
                             </div>
 
                             <!-- Petunjuk Pengisian Singkat -->
                             <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 text-[11px] text-slate-600 dark:text-slate-400 space-y-1">
-                                <p class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px]">Petunjuk Format:</p>
+                                <p class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px]">Petunjuk Format:</p>
                                 <ul class="list-disc list-inside space-y-0.5 text-[10.5px]">
                                     <li>Baris dengan <b>Nama Sesi, Tanggal, dan Lokasi</b> yang sama otomatis digabung menjadi 1 kelompok jadwal.</li>
                                     <li>Format tanggal: <b>YYYY-MM-DD</b> (cth: 2026-10-25). Jam: <b>HH:mm</b> (cth: 08:00).</li>

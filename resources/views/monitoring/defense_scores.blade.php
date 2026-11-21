@@ -58,7 +58,7 @@
                            placeholder="Cari mahasiswa atau judul..." 
                            class="w-full pl-10 pr-9 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all shadow-sm placeholder:text-slate-400/85">
                     @if($search)
-                        <a href="{{ route('monitoring.defense-scores', ['wave_id' => $selectedWaveId]) }}" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-rose-500 transition-colors">
+                        <a href="{{ route('monitoring.defense-scores', ['wave_id' => $selectedWaveId]) }}" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 dark:text-slate-400 hover:text-rose-500 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </a>
                     @endif
@@ -105,20 +105,20 @@
                         <th rowspan="2" class="py-5 px-3 text-center border-r border-slate-200/60 dark:border-slate-700 w-10">
                             <input type="checkbox" @click="toggleAll()" :checked="selectedIds.length === allIds.length && allIds.length > 0" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 transition-all cursor-pointer">
                         </th>
-                        <th rowspan="2" class="py-5 px-3 text-center font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-12">NO</th>
-                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-32">NPM</th>
-                        <th rowspan="2" class="py-5 px-6 text-left font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em]">NAMA MAHASISWA & JUDUL</th>
-                        <th rowspan="2" class="py-5 px-6 text-left font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-56">TIM PENELAAH</th>
-                        <th colspan="3" class="py-3 px-4 text-center font-black text-[10px] border-b border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] bg-slate-100/50 dark:bg-slate-800/50">KOMPONEN PENILAIAN SIDANG</th>
-                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-24">JML NILAI</th>
-                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-20">TOTAL</th>
-                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-24">NILAI AKHIR</th>
-                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[10px] uppercase tracking-[0.2em] w-20">NILAI HURUF</th>
+                        <th rowspan="2" class="py-5 px-3 text-center font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-12">NO</th>
+                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-32">NPM</th>
+                        <th rowspan="2" class="py-5 px-6 text-left font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em]">NAMA MAHASISWA & JUDUL</th>
+                        <th rowspan="2" class="py-5 px-6 text-left font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-56">TIM PENELAAH</th>
+                        <th colspan="3" class="py-3 px-4 text-center font-black text-[11px] border-b border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] bg-slate-100/50 dark:bg-slate-800/50">KOMPONEN PENILAIAN SIDANG</th>
+                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-24">JML NILAI</th>
+                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-20">TOTAL</th>
+                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] w-24">NILAI AKHIR</th>
+                        <th rowspan="2" class="py-5 px-4 text-center font-black text-[11px] uppercase tracking-[0.2em] w-20">NILAI HURUF</th>
                     </tr>
-                    <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 dark:text-slate-500 border-b border-slate-200 dark:border-slate-700">
-                        <th class="py-3 px-3 text-center font-black text-[9px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PRESENTASI (25%)</th>
-                        <th class="py-3 px-3 text-center font-black text-[9px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PENJELASAN NASKAH (40%)</th>
-                        <th class="py-3 px-3 text-center font-black text-[9px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PENULISAN NASKAH (35%)</th>
+                    <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                        <th class="py-3 px-3 text-center font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PRESENTASI (25%)</th>
+                        <th class="py-3 px-3 text-center font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PENJELASAN NASKAH (40%)</th>
+                        <th class="py-3 px-3 text-center font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-tighter">PENULISAN NASKAH (35%)</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -165,31 +165,31 @@
                             <td rowspan="3" class="py-4 px-3 text-center font-bold text-xs border-r border-slate-100 dark:border-slate-700 align-middle bg-slate-50/30 dark:bg-slate-900/20">
                                 {{ ($defenseDetails->currentPage() - 1) * $defenseDetails->perPage() + $index + 1 }}
                             </td>
-                            <td rowspan="3" class="py-4 px-4 text-center font-bold text-[11px] border-r border-slate-100 dark:border-slate-700 align-middle text-slate-400 group-hover:text-emerald-600 transition-colors">
+                            <td rowspan="3" class="py-4 px-4 text-center font-bold text-[11px] border-r border-slate-100 dark:border-slate-700 align-middle text-slate-500 dark:text-slate-400 group-hover:text-emerald-600 transition-colors">
                                 {{ $detail->thesis->student->identifier }}
                             </td>
                             <td rowspan="3" class="py-4 px-6 border-r border-slate-100 dark:border-slate-700 align-middle">
                                 <div class="flex items-start justify-between gap-2">
                                     <div>
                                         <div class="font-black text-xs text-slate-800 dark:text-slate-100 uppercase tracking-tight group-hover:text-emerald-600 transition-colors">{{ $detail->thesis->student->name }}</div>
-                                        <div class="text-[10px] text-slate-400 mt-1 line-clamp-2 font-medium leading-relaxed">"{{ $detail->thesis->title }}"</div>
+                                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 font-medium leading-relaxed">"{{ $detail->thesis->title }}"</div>
                                     </div>
                                     <a href="{{ route('monitoring.defense-scores.berita-acara', $detail->id) }}" 
-                                       class="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-white text-slate-400 rounded-lg transition-all shadow-sm group/btn"
+                                       class="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-white text-slate-500 dark:text-slate-400 rounded-lg transition-all shadow-sm group/btn"
                                        title="Cetak Berita Acara">
                                         <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                                     </a>
                                 </div>
                             </td>
-                            <td class="py-3 px-5 text-[10px] font-bold border-r border-slate-100 dark:border-slate-700 bg-indigo-50/20 dark:bg-indigo-900/10">
+                            <td class="py-3 px-5 text-[11px] font-bold border-r border-slate-100 dark:border-slate-700 bg-indigo-50/20 dark:bg-indigo-900/10">
                                 <div class="flex items-center justify-between gap-2">
                                     <div class="flex items-center gap-2 min-w-0">
-                                        <span class="w-5 h-5 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black uppercase shrink-0">1.</span>
+                                        <span class="w-5 h-5 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[11px] font-black uppercase shrink-0">1.</span>
                                         <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->thesis->pembimbing1?->name }}">{{ $detail->thesis->pembimbing1?->name ?? '-' }}</span>
                                     </div>
                                     @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->thesis?->pembimbing1_id)
                                         <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $detail->thesis->pembimbing1_id, 'redirect_to' => 'monitoring']) }}" 
-                                           class="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all shrink-0" 
+                                           class="p-1 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all shrink-0" 
                                            title="Input / Ubah Nilai Pembimbing 1">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                         </a>
@@ -215,15 +215,15 @@
 
                         <!-- Row Penguji 1 -->
                         <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors">
-                            <td class="py-3 px-5 text-[10px] font-bold border-r border-slate-100 dark:border-slate-700 bg-rose-50/20 dark:bg-rose-900/10">
+                            <td class="py-3 px-5 text-[11px] font-bold border-r border-slate-100 dark:border-slate-700 bg-rose-50/20 dark:bg-rose-900/10">
                                 <div class="flex items-center justify-between gap-2">
                                     <div class="flex items-center gap-2 min-w-0">
-                                        <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase shrink-0">2.</span>
+                                        <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[11px] font-black uppercase shrink-0">2.</span>
                                         <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->examiner1?->name }}">{{ $detail->examiner1?->name ?? '-' }}</span>
                                     </div>
                                     @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
                                         <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring']) }}" 
-                                           class="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all shrink-0" 
+                                           class="p-1 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all shrink-0" 
                                            title="Input / Ubah Nilai Penguji 1">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                         </a>
@@ -240,15 +240,15 @@
 
                         <!-- Row Penguji 2 -->
                         <tr class="group hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors border-b-2 border-slate-100 dark:border-slate-700">
-                            <td class="py-3 px-5 text-[10px] font-bold border-r border-slate-100 dark:border-slate-700 bg-rose-50/20 dark:bg-rose-900/10">
+                            <td class="py-3 px-5 text-[11px] font-bold border-r border-slate-100 dark:border-slate-700 bg-rose-50/20 dark:bg-rose-900/10">
                                 <div class="flex items-center justify-between gap-2">
                                     <div class="flex items-center gap-2 min-w-0">
-                                        <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[8px] font-black uppercase shrink-0">3.</span>
+                                        <span class="w-5 h-5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[11px] font-black uppercase shrink-0">3.</span>
                                         <span class="text-slate-600 dark:text-slate-300 truncate" title="{{ $detail->examiner2?->name }}">{{ $detail->examiner2?->name ?? '-' }}</span>
                                     </div>
                                     @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
                                         <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring']) }}" 
-                                           class="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all shrink-0" 
+                                           class="p-1 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all shrink-0" 
                                            title="Input / Ubah Nilai Penguji 2">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                         </a>
@@ -269,8 +269,8 @@
                                     <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-4 border border-slate-100 dark:border-slate-700 shadow-inner">
                                         <svg class="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                                     </div>
-                                    <h3 class="text-slate-400 font-bold text-sm uppercase tracking-widest">Belum Ada Data Nilai</h3>
-                                    <p class="text-[11px] text-slate-400 mt-1 italic">Data nilai mahasiswa akan muncul setelah diinput oleh dosen penelaah.</p>
+                                    <h3 class="text-slate-500 dark:text-slate-400 font-bold text-sm uppercase tracking-widest">Belum Ada Data Nilai</h3>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 italic">Data nilai mahasiswa akan muncul setelah diinput oleh dosen penelaah.</p>
                                 </div>
                             </td>
                         </tr>
@@ -343,7 +343,7 @@
                                 <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/80 flex items-center justify-between gap-2">
                                     <div class="min-w-0 flex-1">
                                         <div class="flex items-center gap-1.5">
-                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shrink-0">{{ $ev['code'] }}</span>
+                                            <span class="px-1.5 py-0.5 rounded text-[11px] font-black bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shrink-0">{{ $ev['code'] }}</span>
                                             <span class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">{{ $ev['name'] }}</span>
                                         </div>
                                         <div class="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">

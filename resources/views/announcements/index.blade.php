@@ -68,11 +68,11 @@
                 <table class="hidden sm:table w-full text-left text-sm">
                     <thead>
                         <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Tanggal</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap">Judul Pengumuman</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap text-center">Tipe</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap text-center">Status</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase whitespace-nowrap text-right">Aksi</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap">Tanggal</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap">Judul Pengumuman</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap text-center">Tipe</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap text-center">Status</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase whitespace-nowrap text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -83,7 +83,7 @@
                                 </td>
                                 <td class="py-4 px-6">
                                     <div class="font-bold text-slate-800 dark:text-slate-100">{{ $announcement->title }}</div>
-                                    <div class="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5 uppercase font-medium">{{ Str::limit($announcement->content, 80) }}</div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5 uppercase font-medium">{{ Str::limit($announcement->content, 80) }}</div>
                                 </td>
                                 <td class="py-4 px-6 text-center">
                                     <x-status-badge 
@@ -104,7 +104,7 @@
                                 </td>
                                 <td class="py-4 px-6 text-right">
                                     <div class="flex justify-end gap-2">
-                                        <button type="button" @click="openModal = true; editMode = true; currentAnnouncement = {{ json_encode($announcement) }}" aria-label="Edit pengumuman {{ $announcement->title }}" title="Edit Pengumuman" class="p-2 text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">
+                                        <button type="button" @click="openModal = true; editMode = true; currentAnnouncement = {{ json_encode($announcement) }}" aria-label="Edit pengumuman {{ $announcement->title }}" title="Edit Pengumuman" class="p-2 text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </button>
                                         <form action="{{ route('announcements.destroy', $announcement->id) }}"
@@ -115,7 +115,7 @@
                                               data-confirm-button="Ya, Hapus">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" aria-label="Hapus pengumuman {{ $announcement->title }}" title="Hapus Pengumuman" class="p-2 text-slate-400 hover:text-red-600 transition-colors cursor-pointer">
+                                            <button type="submit" aria-label="Hapus pengumuman {{ $announcement->title }}" title="Hapus Pengumuman" class="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 transition-colors cursor-pointer">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
@@ -148,17 +148,17 @@
                             <div class="px-8 py-8">
                                 <div class="mb-8">
                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest" x-text="editMode ? 'Edit Pengumuman' : 'Buat Pengumuman Baru'"></h3>
-                                    <p class="text-[10px] text-slate-500 uppercase font-black mt-1">Informasi ini akan ditampilkan kepada seluruh pengguna</p>
+                                    <p class="text-[11px] text-slate-500 uppercase font-black mt-1">Informasi ini akan ditampilkan kepada seluruh pengguna</p>
                                 </div>
 
                                 <div class="space-y-6">
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Judul Pengumuman</label>
+                                        <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Judul Pengumuman</label>
                                         <input type="text" name="title" x-model="currentAnnouncement.title" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all">
                                     </div>
 
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Tipe</label>
+                                        <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Tipe</label>
                                         <select name="type" x-model="currentAnnouncement.type" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all">
                                             <option value="info">Informasi (Biru)</option>
                                             <option value="warning">Penting (Oranye)</option>
@@ -167,7 +167,7 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Isi Pengumuman</label>
+                                        <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Isi Pengumuman</label>
                                         <textarea name="content" x-model="currentAnnouncement.content" rows="6" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all" placeholder="Tuliskan detail informasi di sini..."></textarea>
                                     </div>
 
@@ -179,8 +179,8 @@
                             </div>
 
                             <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                                <button type="button" @click="openModal = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest hover:text-slate-800 dark:hover:text-slate-200 transition-colors">Batal</button>
-                                <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all" x-text="editMode ? 'Simpan Perubahan' : 'Terbitkan Sekarang'"></button>
+                                <button type="button" @click="openModal = false" class="px-6 py-2.5 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest hover:text-slate-800 dark:hover:text-slate-200 transition-colors">Batal</button>
+                                <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[11px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all" x-text="editMode ? 'Simpan Perubahan' : 'Terbitkan Sekarang'"></button>
                             </div>
                         </form>
                     </div>

@@ -45,7 +45,7 @@
                                     </div>
                                     @if(isset($unreadCounts[$u->id]) && $unreadCounts[$u->id] > 0 && $u->id !== $user->id)
                                         <div class="ml-2">
-                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                                            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
                                                 {{ $unreadCounts[$u->id] }}
                                             </span>
                                         </div>
@@ -54,7 +54,7 @@
                             </li>
                         @endforeach
                     </ul>
-                    <p id="no-contacts-msg-show" class="hidden text-center text-sm text-slate-400 py-8 px-4">Tidak ada kontak yang cocok.</p>
+                    <p id="no-contacts-msg-show" class="hidden text-center text-sm text-slate-500 dark:text-slate-400 py-8 px-4">Tidak ada kontak yang cocok.</p>
                 </div>
             </div>
 
@@ -89,7 +89,7 @@
                                         Online
                                     </span>
                                 @else
-                                    <span class="text-slate-400 dark:text-slate-500">Offline</span>
+                                    <span class="text-slate-500 dark:text-slate-400">Offline</span>
                                 @endif
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                 <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chat-messages" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'#9C92AC\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');">
                     
                     <div class="text-center my-4">
-                        <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-[10px] font-bold px-3 py-1 rounded-full shadow-sm border border-blue-200 dark:border-blue-800/50">
+                        <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-[11px] font-bold px-3 py-1 rounded-full shadow-sm border border-blue-200 dark:border-blue-800/50">
                             Percakapan diamankan dengan enkripsi end-to-end
                         </span>
                     </div>
@@ -112,7 +112,7 @@
                                 <div class="bg-[#d9fdd3] dark:bg-emerald-900/30 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tr-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-emerald-200/50 dark:border-emerald-800/50">
                                     <p class="text-sm leading-relaxed pr-10 whitespace-pre-wrap">{{ $message->message }}</p>
                                     <div class="absolute bottom-1 right-2 flex items-center space-x-1">
-                                        <span class="text-[9px] text-slate-500 dark:text-slate-400">{{ $message->created_at->format('H:i') }}</span>
+                                        <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ $message->created_at->format('H:i') }}</span>
                                         @if($message->is_read)
                                             <!-- Double Blue Checkmark -->
                                             <span id="check-msg-{{ $message->id }}" class="inline-flex text-blue-500 font-bold" title="Dibaca">
@@ -121,7 +121,7 @@
                                             </span>
                                         @else
                                             <!-- Double Grey Checkmark -->
-                                            <span id="check-msg-{{ $message->id }}" class="inline-flex text-slate-400 dark:text-slate-500" title="Terkirim">
+                                            <span id="check-msg-{{ $message->id }}" class="inline-flex text-slate-500 dark:text-slate-400" title="Terkirim">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                 <svg class="w-3.5 h-3.5 -ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                             </span>
@@ -134,7 +134,7 @@
                             <div class="flex justify-start">
                                 <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tl-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-slate-100 dark:border-slate-700">
                                     <p class="text-sm leading-relaxed pr-8 whitespace-pre-wrap">{{ $message->message }}</p>
-                                    <span class="absolute bottom-1 right-2 text-[9px] text-slate-400 dark:text-slate-500">{{ $message->created_at->format('H:i') }}</span>
+                                    <span class="absolute bottom-1 right-2 text-[11px] text-slate-500 dark:text-slate-400">{{ $message->created_at->format('H:i') }}</span>
                                 </div>
                             </div>
                         @endif
@@ -176,7 +176,7 @@
                                     <span class="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Konfirmasi Bimbingan</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, mohon izin mengonfirmasi...</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, mohon izin mengonfirmasi...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, draf revisi skripsi telah saya perbarui. Mohon berkenan meninjau kembali.'); showTemplates = false" 
@@ -184,7 +184,7 @@
                                     <span class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Update Revisi</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, draf revisi skripsi telah...</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, draf revisi skripsi telah...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, apakah ada waktu luang minggu ini untuk jadwal bimbingan tatap muka?'); showTemplates = false" 
@@ -192,7 +192,7 @@
                                     <span class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Jadwal Bimbingan</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, apakah ada waktu luang...</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, apakah ada waktu luang...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Yth. Bapak/Ibu, terima kasih atas bimbingan dan arahan yang telah diberikan.'); showTemplates = false" 
@@ -200,7 +200,7 @@
                                     <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Ucapan Terima Kasih</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, terima kasih atas bimbingan...</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">Yth. Bapak/Ibu, terima kasih atas bimbingan...</p>
                                     </div>
                                 </button>
                             @else
@@ -209,7 +209,7 @@
                                     <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Bimbingan Disetujui</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Baik, permohonan bimbingan disetujui...</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">Baik, permohonan bimbingan disetujui...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Draf sudah saya periksa. Silakan cek catatan revisi lengkap yang telah saya tambahkan di Logbook.'); showTemplates = false" 
@@ -217,7 +217,7 @@
                                     <span class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Cek Revisi Logbook</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Draf sudah saya periksa. Silakan cek...</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">Draf sudah saya periksa. Silakan cek...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Silakan temui saya di ruang dosen FASILKOM pada jam operasional kerja untuk konsultasi.'); showTemplates = false" 
@@ -225,7 +225,7 @@
                                     <span class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Jadwal Tatap Muka</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Silakan temui saya di ruang dosen FASILKOM...</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">Silakan temui saya di ruang dosen FASILKOM...</p>
                                     </div>
                                 </button>
                                 <button type="button" @click="useTemplate('Progres bimbingan bagus. Silakan lanjutkan pengerjaan ke bab berikutnya.'); showTemplates = false" 
@@ -233,7 +233,7 @@
                                     <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path></svg></span>
                                     <div class="min-w-0">
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-orange-600 dark:group-hover:text-orange-400">Lanjutkan Bab</p>
-                                        <p class="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">Progres bimbingan bagus. Silakan lanjutkan...</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">Progres bimbingan bagus. Silakan lanjutkan...</p>
                                     </div>
                                 </button>
                             @endif
@@ -336,14 +336,14 @@
                 const msgIdAttr = safeId ? `id="msg-box-${safeId}"` : '';
                 
                 if (side === 'right') {
-                    const checkColor = message.is_read ? 'text-blue-500 font-bold' : 'text-slate-400 dark:text-slate-500';
+                    const checkColor = message.is_read ? 'text-blue-500 font-bold' : 'text-slate-500 dark:text-slate-400';
                     const checkIdAttr = safeId ? `id="check-msg-${safeId}"` : '';
                     html = `
                         <div class="flex justify-end" ${msgIdAttr}>
                             <div class="bg-[#d9fdd3] dark:bg-emerald-900/30 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tr-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-emerald-200/50 dark:border-emerald-800/50">
                                 <p class="text-sm leading-relaxed pr-10 whitespace-pre-wrap">${safeBody}</p>
                                 <div class="absolute bottom-1 right-2 flex items-center space-x-1">
-                                    <span class="text-[9px] text-slate-500 dark:text-slate-400">${time}</span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400">${time}</span>
                                     <span ${checkIdAttr} class="inline-flex ${checkColor}">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                         <svg class="w-3.5 h-3.5 -ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
@@ -357,7 +357,7 @@
                         <div class="flex justify-start" ${msgIdAttr}>
                             <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-2.5 rounded-lg rounded-tl-none max-w-[85%] md:max-w-[70%] shadow-sm relative border border-slate-100 dark:border-slate-700">
                                 <p class="text-sm leading-relaxed pr-8 whitespace-pre-wrap">${safeBody}</p>
-                                <span class="absolute bottom-1 right-2 text-[9px] text-slate-400 dark:text-slate-500">${time}</span>
+                                <span class="absolute bottom-1 right-2 text-[11px] text-slate-500 dark:text-slate-400">${time}</span>
                             </div>
                         </div>
                     `;
@@ -481,7 +481,7 @@
                         if (headerText) headerText.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Online</span>';
                     } else {
                         if (headerBadge) headerBadge.className = "absolute bottom-0 right-0 w-3 h-3 bg-slate-300 dark:bg-slate-600 border-2 border-white dark:border-slate-800 rounded-full shadow-xs";
-                        if (headerText) headerText.innerHTML = '<span class="text-slate-400 dark:text-slate-500">Offline</span>';
+                        if (headerText) headerText.innerHTML = '<span class="text-slate-500 dark:text-slate-400">Offline</span>';
                     }
 
                     // 2. Update Sent Message Checkmarks to Double Blue

@@ -49,7 +49,7 @@
                                             class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono font-bold transition-all shadow-sm group">
                                         <span class="text-emerald-500 font-extrabold">+</span>
                                         <span>{<span>{{ $varKey }}</span>}</span>
-                                        <span class="text-[10px] font-sans text-slate-400 dark:text-slate-500 ml-1 font-normal">({{ $varDesc }})</span>
+                                        <span class="text-[11px] font-sans text-slate-500 dark:text-slate-400 ml-1 font-normal">({{ $varDesc }})</span>
                                     </button>
                                 @endforeach
                             @endif
@@ -62,7 +62,7 @@
                             <label for="content" class="text-xs font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                                 Isi Template Pesan WhatsApp
                             </label>
-                            <span class="text-[11px] text-slate-400 dark:text-slate-500">
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">
                                 Gunakan <code class="font-bold">*kata*</code> untuk menebalkan teks
                             </span>
                         </div>
@@ -127,7 +127,7 @@
                              x-html="formattedPreview">
                         </div>
 
-                        <div class="text-right text-[10px] text-slate-400 font-mono pt-1">
+                        <div class="text-right text-[11px] text-slate-400 font-mono pt-1">
                             <span>12:00 WIB</span> • <span class="text-emerald-400">✓✓</span>
                         </div>
                     </div>

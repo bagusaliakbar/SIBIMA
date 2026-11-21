@@ -350,8 +350,8 @@ window.fetchMyReportsDirect = async function() {
                 listContainer.innerHTML = data.reports.map(item => {
                     const isFeature = item.is_feature_request || (item.ticket_number && item.ticket_number.startsWith('REQ-'));
                     const typeBadge = isFeature
-                        ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60">USULAN FITUR</span>`
-                        : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">BUG SISTEM</span>`;
+                        ? `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60">USULAN FITUR</span>`
+                        : `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">BUG SISTEM</span>`;
                     const ticketColor = isFeature ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400';
 
                     const safeTicket = escapeBugHtml(item.ticket_number);
@@ -369,11 +369,11 @@ window.fetchMyReportsDirect = async function() {
                                     <span class="text-[11px] font-mono font-bold ${ticketColor}">${safeTicket}</span>
                                     ${typeBadge}
                                     <span class="text-slate-300 dark:text-slate-700">&bull;</span>
-                                    <span class="text-[10px] text-slate-400">${safeCreated}</span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400">${safeCreated}</span>
                                 </div>
                                 <h4 class="text-sm font-bold text-slate-900 dark:text-white">${safeTitle}</h4>
                             </div>
-                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                            <span class="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider shrink-0 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                                 ${safeStatus}
                             </span>
                         </div>

@@ -70,7 +70,7 @@
                 @if(count($chartData['labels']) > 0)
                     <canvas id="monitoringSupervisorChart"></canvas>
                 @else
-                    <div class="h-full w-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 py-12">
+                    <div class="h-full w-full flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 py-12">
                         <svg class="w-12 h-12 mb-3 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         <p class="text-xs font-semibold">Tidak ada data bimbingan aktif yang sesuai dengan filter.</p>
                     </div>
@@ -140,7 +140,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </div>
                     @if(($accStatus ?? 'all') === 'ready_seminar')
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white shadow-2xs">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-600 text-white shadow-2xs">
                             Aktif
                         </span>
                     @endif
@@ -151,7 +151,7 @@
                         <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">mhs</span>
                     </div>
                     <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mt-0.5">Siap Seminar UP</p>
-                    <p class="text-[11px] text-slate-400 dark:text-slate-500">ACC Lengkap (P1 & P2)</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">ACC Lengkap (P1 & P2)</p>
                 </div>
             </a>
 
@@ -163,7 +163,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                     </div>
                     @if(($accStatus ?? 'all') === 'ready_defense')
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-600 text-white shadow-2xs">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-indigo-600 text-white shadow-2xs">
                             Aktif
                         </span>
                     @endif
@@ -174,7 +174,7 @@
                         <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">mhs</span>
                     </div>
                     <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mt-0.5">Siap Sidang Akhir</p>
-                    <p class="text-[11px] text-slate-400 dark:text-slate-500">ACC Lengkap (P1 & P2)</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">ACC Lengkap (P1 & P2)</p>
                 </div>
             </a>
 
@@ -186,7 +186,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     @if(($accStatus ?? 'all') === 'partial_acc')
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-600 text-white shadow-2xs">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-amber-600 text-white shadow-2xs">
                             Aktif
                         </span>
                     @endif
@@ -197,7 +197,7 @@
                         <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">mhs</span>
                     </div>
                     <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mt-0.5">ACC Parsial (1/2)</p>
-                    <p class="text-[11px] text-slate-400 dark:text-slate-500">Menunggu 1 Pembimbing</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Menunggu 1 Pembimbing</p>
                 </div>
             </a>
 
@@ -209,7 +209,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     </div>
                     @if(($accStatus ?? 'all') === 'in_mentoring')
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-700 dark:bg-slate-600 text-white shadow-2xs">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-slate-700 dark:bg-slate-600 text-white shadow-2xs">
                             Aktif
                         </span>
                     @endif
@@ -220,7 +220,7 @@
                         <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">mhs</span>
                     </div>
                     <p class="text-xs font-bold text-slate-700 dark:text-slate-200 mt-0.5">Dalam Bimbingan</p>
-                    <p class="text-[11px] text-slate-400 dark:text-slate-500">Belum di-ACC Ujian</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Belum di-ACC Ujian</p>
                 </div>
             </a>
         </div>
@@ -237,18 +237,18 @@
                            class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 {{ ($graduationStatus ?? 'active') === 'active' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-2xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                             <span>Belum Lulus</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($graduationStatus ?? 'active') === 'active' ? 'bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500' }}">{{ $graduationCounts['active'] ?? 0 }}</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] {{ ($graduationStatus ?? 'active') === 'active' ? 'bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500' }}">{{ $graduationCounts['active'] ?? 0 }}</span>
                         </a>
                         <a href="{{ route('monitoring.index', array_merge(request()->query(), ['graduation_status' => 'graduated'])) }}"
                            class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 {{ ($graduationStatus ?? 'active') === 'graduated' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-2xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                             <span>Sudah Lulus</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($graduationStatus ?? 'active') === 'graduated' ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500' }}">{{ $graduationCounts['graduated'] ?? 0 }}</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] {{ ($graduationStatus ?? 'active') === 'graduated' ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500' }}">{{ $graduationCounts['graduated'] ?? 0 }}</span>
                         </a>
                         <a href="{{ route('monitoring.index', array_merge(request()->query(), ['graduation_status' => 'all'])) }}"
                            class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 {{ ($graduationStatus ?? 'active') === 'all' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-2xs font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                             <span>Semua</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ ($graduationStatus ?? 'active') === 'all' ? 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500' }}">{{ $graduationCounts['all'] ?? 0 }}</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] {{ ($graduationStatus ?? 'active') === 'all' ? 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-500' }}">{{ $graduationCounts['all'] ?? 0 }}</span>
                         </a>
                     </div>
 
@@ -348,13 +348,13 @@
                                             {{ ucwords(strtolower($thesis->student->name)) }}
                                         </div>
                                         @if($thesis->isGraduated())
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 shrink-0">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 shrink-0">
                                                 <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                                 <span>Lulus</span>
                                             </span>
                                         @endif
                                     </div>
-                                    <div class="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
+                                    <div class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
                                         <span class="font-mono">{{ $thesis->student->identifier }}</span>
                                         @if($thesis->student->entry_year)
                                             <span class="text-slate-300 dark:text-slate-700">•</span>
@@ -374,7 +374,7 @@
                                         <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl font-bold text-xs {{ $thesis->total_sessions >= 8 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : ($thesis->total_sessions >= 4 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400') }}">
                                             {{ $thesis->total_sessions }}
                                         </span>
-                                        <div class="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                                        <div class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                                             <span class="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80">P1: {{ $thesis->sessions_p1 }}x</span>
                                             <span class="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800/80">P2: {{ $thesis->sessions_p2 }}x</span>
                                         </div>
@@ -383,18 +383,18 @@
                                 <td class="py-4 px-6">
                                     <div class="space-y-1.5">
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 shrink-0">1</span>
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 shrink-0">1</span>
                                             <span class="text-xs font-semibold text-slate-800 dark:text-slate-100 tracking-tight">{{ $thesis->pembimbing1 ? ($thesis->pembimbing1->name === strtoupper($thesis->pembimbing1->name) ? ucwords(strtolower($thesis->pembimbing1->name)) : $thesis->pembimbing1->name) : 'Belum Ditugaskan' }}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-400 shrink-0">2</span>
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 shrink-0">2</span>
                                             <span class="text-xs font-semibold text-slate-800 dark:text-slate-100 tracking-tight">{{ $thesis->pembimbing2 ? ($thesis->pembimbing2->name === strtoupper($thesis->pembimbing2->name) ? ucwords(strtolower($thesis->pembimbing2->name)) : $thesis->pembimbing2->name) : 'Belum Ditugaskan' }}</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="py-4 px-4 text-center">
                                     @if($thesis->isGraduated())
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/50">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/50">
                                             <svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                             <span>Selesai</span>
                                         </span>
@@ -402,11 +402,11 @@
                                         <div class="flex flex-col items-center gap-1.5">
                                             <!-- Dual Micro-Pill Status -->
                                             <div class="inline-flex items-center p-0.5 rounded-full {{ $thesis->isAccUpFinal() ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800/80' }} gap-0.5">
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_up_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 1: {{ $thesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold {{ $thesis->acc_up_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400' }}" title="Pembimbing 1: {{ $thesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
                                                     <svg class="w-2.5 h-2.5 {{ $thesis->acc_up_p1 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_up_p1 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
                                                     <span>P1</span>
                                                 </span>
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_up_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 2: {{ $thesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold {{ $thesis->acc_up_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400' }}" title="Pembimbing 2: {{ $thesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
                                                     <svg class="w-2.5 h-2.5 {{ $thesis->acc_up_p2 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_up_p2 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
                                                     <span>P2</span>
                                                 </span>
@@ -415,14 +415,14 @@
                                             <!-- Overall Badge & Action Trigger -->
                                             <div class="inline-flex items-center gap-1">
                                                 @if($thesis->isAccUpFinal())
-                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                                         Siap Seminar
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold {{ ($thesis->acc_up_p1 || $thesis->acc_up_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold {{ ($thesis->acc_up_p1 || $thesis->acc_up_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
                                                         <span>Progres</span>
-                                                        <span class="font-bold text-[9px]">({{ ($thesis->acc_up_p1 ? 1 : 0) + ($thesis->acc_up_p2 ? 1 : 0) }}/2)</span>
+                                                        <span class="font-bold text-[11px]">({{ ($thesis->acc_up_p1 ? 1 : 0) + ($thesis->acc_up_p2 ? 1 : 0) }}/2)</span>
                                                     </span>
                                                 @endif
 
@@ -440,7 +440,7 @@
                                                                 p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
                                                                 p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
                                                             })"
-                                                            class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
+                                                            class="w-5 h-5 rounded-md flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
                                                             title="Aksi Cepat Kaprodi: Kelola ACC Seminar" aria-label="Aksi Cepat Kaprodi: Kelola ACC Seminar">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                     </button>
@@ -459,11 +459,11 @@
                                         <div class="flex flex-col items-center gap-1.5">
                                             <!-- Dual Micro-Pill Status -->
                                             <div class="inline-flex items-center p-0.5 rounded-full {{ $thesis->isAccSidangFinal() ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/50' : 'bg-slate-100 dark:bg-slate-800/80' }} gap-0.5">
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_sidang_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 1: {{ $thesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold {{ $thesis->acc_sidang_p1 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400' }}" title="Pembimbing 1: {{ $thesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
                                                     <svg class="w-2.5 h-2.5 {{ $thesis->acc_sidang_p1 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_sidang_p1 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
                                                     <span>P1</span>
                                                 </span>
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $thesis->acc_sidang_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-400 dark:text-slate-500' }}" title="Pembimbing 2: {{ $thesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold {{ $thesis->acc_sidang_p2 ? 'bg-emerald-500 text-white shadow-2xs' : 'text-slate-500 dark:text-slate-400' }}" title="Pembimbing 2: {{ $thesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
                                                     <svg class="w-2.5 h-2.5 {{ $thesis->acc_sidang_p2 ? 'text-white' : 'text-slate-300 dark:text-slate-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="{{ $thesis->acc_sidang_p2 ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/></svg>
                                                     <span>P2</span>
                                                 </span>
@@ -472,14 +472,14 @@
                                             <!-- Overall Badge & Action Trigger -->
                                             <div class="inline-flex items-center gap-1">
                                                 @if($thesis->isAccSidangFinal())
-                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                                                         Siap Sidang
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold {{ ($thesis->acc_sidang_p1 || $thesis->acc_sidang_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
+                                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold {{ ($thesis->acc_sidang_p1 || $thesis->acc_sidang_p2) ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
                                                         <span>Progres</span>
-                                                        <span class="font-bold text-[9px]">({{ ($thesis->acc_sidang_p1 ? 1 : 0) + ($thesis->acc_sidang_p2 ? 1 : 0) }}/2)</span>
+                                                        <span class="font-bold text-[11px]">({{ ($thesis->acc_sidang_p1 ? 1 : 0) + ($thesis->acc_sidang_p2 ? 1 : 0) }}/2)</span>
                                                     </span>
                                                 @endif
 
@@ -497,7 +497,7 @@
                                                                 p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
                                                                 p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
                                                             })"
-                                                            class="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
+                                                            class="w-5 h-5 rounded-md flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors cursor-pointer" 
                                                             title="Aksi Cepat Kaprodi: Kelola ACC Sidang" aria-label="Aksi Cepat Kaprodi: Kelola ACC Sidang">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                     </button>
@@ -531,7 +531,7 @@
                                         {{ ucwords(strtolower($thesis->student->name)) }}
                                     </div>
                                     @if($thesis->isGraduated())
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
                                             Lulus
                                         </span>
                                     @endif
@@ -547,7 +547,7 @@
                                 <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-xl font-black text-xs {{ $thesis->total_sessions >= 8 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : ($thesis->total_sessions >= 4 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300') }}">
                                     {{ $thesis->total_sessions }} Sesi
                                 </span>
-                                <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
+                                <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
                                     P1: {{ $thesis->sessions_p1 }}x &bull; P2: {{ $thesis->sessions_p2 }}x
                                 </span>
                             </div>
@@ -559,11 +559,11 @@
 
                         <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/80 space-y-1.5 text-xs">
                             <div class="flex items-center gap-2">
-                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-[10px] font-bold text-orange-700 dark:text-orange-300 shrink-0">1</span>
+                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-[11px] font-bold text-orange-700 dark:text-orange-300 shrink-0">1</span>
                                 <span class="font-semibold text-slate-800 dark:text-slate-100 truncate">{{ $thesis->pembimbing1 ? ($thesis->pembimbing1->name === strtoupper($thesis->pembimbing1->name) ? ucwords(strtolower($thesis->pembimbing1->name)) : $thesis->pembimbing1->name) : 'Belum Ditugaskan' }}</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-[10px] font-bold text-slate-700 dark:text-slate-300 shrink-0">2</span>
+                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-[11px] font-bold text-slate-700 dark:text-slate-300 shrink-0">2</span>
                                 <span class="font-semibold text-slate-700 dark:text-slate-200 truncate">{{ $thesis->pembimbing2 ? ($thesis->pembimbing2->name === strtoupper($thesis->pembimbing2->name) ? ucwords(strtolower($thesis->pembimbing2->name)) : $thesis->pembimbing2->name) : 'Belum Ditugaskan' }}</span>
                             </div>
                         </div>
@@ -572,7 +572,7 @@
                             <!-- ACC UP -->
                             <div class="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/70 space-y-1.5">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">ACC UP</span>
+                                    <span class="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400">ACC UP</span>
                                     @if(!$thesis->isGraduated() && in_array(Auth::user()->role, ['admin', 'kaprodi']))
                                         <button type="button"
                                                 @click="openModal({
@@ -594,11 +594,11 @@
                                     @endif
                                 </div>
                                 @if($thesis->isGraduated())
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Selesai</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Selesai</span>
                                 @elseif($thesis->isAccUpFinal())
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Siap Seminar (2/2)</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Siap Seminar (2/2)</span>
                                 @else
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold {{ ($thesis->acc_up_p1 || $thesis->acc_up_p2) ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold {{ ($thesis->acc_up_p1 || $thesis->acc_up_p2) ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                         Progres ({{ ($thesis->acc_up_p1 ? 1 : 0) + ($thesis->acc_up_p2 ? 1 : 0) }}/2)
                                     </span>
                                 @endif
@@ -607,7 +607,7 @@
                             <!-- ACC Sidang -->
                             <div class="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/70 space-y-1.5">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">ACC Sidang</span>
+                                    <span class="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400">ACC Sidang</span>
                                     @if(!$thesis->isGraduated() && in_array(Auth::user()->role, ['admin', 'kaprodi']))
                                         <button type="button"
                                                 @click="openModal({
@@ -629,11 +629,11 @@
                                     @endif
                                 </div>
                                 @if($thesis->isGraduated())
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Lulus Sidang</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Lulus Sidang</span>
                                 @elseif($thesis->isAccSidangFinal())
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Siap Sidang (2/2)</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Siap Sidang (2/2)</span>
                                 @else
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold {{ ($thesis->acc_sidang_p1 || $thesis->acc_sidang_p2) ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold {{ ($thesis->acc_sidang_p1 || $thesis->acc_sidang_p2) ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                         Progres ({{ ($thesis->acc_sidang_p1 ? 1 : 0) + ($thesis->acc_sidang_p2 ? 1 : 0) }}/2)
                                     </span>
                                 @endif
@@ -695,10 +695,10 @@
                 </span>
                 <div>
                   <h3 class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-100" x-text="'Kelola ACC ' + modalData.typeName"></h3>
-                  <p class="text-[11px] text-slate-400">Persetujuan Seminar & Sidang Mahasiswa</p>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400">Persetujuan Seminar & Sidang Mahasiswa</p>
                 </div>
               </div>
-              <button @click="isOpen = false" type="button" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 text-lg font-bold transition-colors cursor-pointer">&times;</button>
+              <button @click="isOpen = false" type="button" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 text-lg font-bold transition-colors cursor-pointer">&times;</button>
             </div>
 
             <!-- Modal Body -->
@@ -706,18 +706,18 @@
               <!-- Student Info Box -->
               <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
                 <div class="text-xs font-bold text-slate-900 dark:text-white" x-text="modalData.studentName"></div>
-                <div class="text-[11px] text-slate-400 mt-0.5" x-text="modalData.studentNpm"></div>
+                <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5" x-text="modalData.studentNpm"></div>
                 
                 <div class="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-xs">
                   <span class="text-slate-500 dark:text-slate-400 text-[11px]">Status Saat Ini:</span>
                   <template x-if="modalData.isFinal">
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                       <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                       Siap <span x-text="modalData.type === 'up' ? 'Seminar' : 'Sidang'"></span> (Lengkap)
                     </span>
                   </template>
                   <template x-if="!modalData.isFinal">
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-200/60 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200/60 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                       Belum Lengkap
                     </span>
                   </template>
@@ -747,7 +747,7 @@
 
                 <!-- Secondary Actions: Individual Slots -->
                 <div class="pt-2 border-t border-slate-100 dark:border-slate-700/60">
-                  <p class="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 mb-1.5">Atau Ubah per Pembimbing:</p>
+                  <p class="text-[11px] uppercase font-bold text-slate-500 dark:text-slate-400 mb-1.5">Atau Ubah per Pembimbing:</p>
                   <div class="grid grid-cols-2 gap-2">
                     <button type="button" 
                             @click="submitAcc('p1')"

@@ -14,18 +14,18 @@
                             @if(($cohortFilter ?? 'all') === 'new')
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                                 <span>Angkatan Baru</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
                                     {{ $cohortCounts['new'] ?? 0 }}
                                 </span>
                             @elseif(($cohortFilter ?? 'all') === 'old')
                                 <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                 <span>Angkatan Lama</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
                                     {{ $cohortCounts['old'] ?? 0 }}
                                 </span>
                             @else
                                 <span>Angkatan: Semua</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                                     {{ $cohortCounts['all'] ?? 0 }}
                                 </span>
                             @endif
@@ -45,7 +45,7 @@
                              class="absolute left-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-700 p-1.5 z-50 text-left"
                              style="display: none;">
                             
-                            <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                            <div class="px-3 py-2 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
                                 <span>Filter Angkatan</span>
                                 @if(($cohortFilter ?? 'all') !== 'all')
                                     <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '', 'cohort_filter' => 'all', 'entry_year' => $entryYear ?? '', 'mentoring_health' => $mentoringHealth ?? 'all']) }}" 
@@ -64,7 +64,7 @@
                                         <span>Semua Mahasiswa</span>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'all' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($cohortFilter ?? 'all') === 'all' ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                             {{ $cohortCounts['all'] ?? 0 }}
                                         </span>
                                         @if(($cohortFilter ?? 'all') === 'all')
@@ -80,11 +80,11 @@
                                         <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                                         <div>
                                             <span>Angkatan Baru</span>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Semester Normal / Baru Mengajukan</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Semester Normal / Baru Mengajukan</p>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'new' ? 'bg-emerald-200/80 dark:bg-emerald-500/30 text-emerald-800 dark:text-emerald-200' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}">
+                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($cohortFilter ?? 'all') === 'new' ? 'bg-emerald-200/80 dark:bg-emerald-500/30 text-emerald-800 dark:text-emerald-200' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}">
                                             {{ $cohortCounts['new'] ?? 0 }}
                                         </span>
                                         @if(($cohortFilter ?? 'all') === 'new')
@@ -100,11 +100,11 @@
                                         <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                         <div>
                                             <span>Angkatan Lama</span>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Masa Studi Lanjut (Semester 9+)</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Masa Studi Lanjut (Semester 9+)</p>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($cohortFilter ?? 'all') === 'old' ? 'bg-amber-200/80 dark:bg-amber-500/30 text-amber-800 dark:text-amber-200' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300' }}">
+                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($cohortFilter ?? 'all') === 'old' ? 'bg-amber-200/80 dark:bg-amber-500/30 text-amber-800 dark:text-amber-200' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300' }}">
                                             {{ $cohortCounts['old'] ?? 0 }}
                                         </span>
                                         @if(($cohortFilter ?? 'all') === 'old')
@@ -128,19 +128,19 @@
                             @if(($mentoringHealth ?? 'all') === 'active')
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                                 <span>Lancar (≤7h)</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
                                     {{ $mentoringHealthCounts['active'] ?? 0 }}
                                 </span>
                             @elseif(($mentoringHealth ?? 'all') === 'warning')
                                 <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                 <span>Pasif (>7h)</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
                                     {{ $mentoringHealthCounts['warning'] ?? 0 }}
                                 </span>
                             @elseif(($mentoringHealth ?? 'all') === 'critical')
                                 <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0 animate-pulse"></span>
                                 <span>Macet (>14h)</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300">
                                     {{ $mentoringHealthCounts['critical'] ?? 0 }}
                                 </span>
                             @else
@@ -162,7 +162,7 @@
                              class="absolute left-0 mt-2 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-700 p-1.5 z-50 text-left"
                              style="display: none;">
                             
-                            <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                            <div class="px-3 py-2 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
                                 <span>Keaktifan Bimbingan</span>
                                 @if(($mentoringHealth ?? 'all') !== 'all')
                                     <a href="{{ route('theses.index', ['status' => $status ?? ($user->role === 'dosen' ? 'active' : 'all'), 'search' => $search, 'role_filter' => $roleFilter ?? '', 'cohort_filter' => $cohortFilter ?? 'all', 'entry_year' => $entryYear ?? '', 'mentoring_health' => 'all']) }}" 
@@ -192,11 +192,11 @@
                                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
                                         <div>
                                             <span class="font-bold text-emerald-800 dark:text-emerald-300">Lancar (≤ 7 hari)</span>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Bimbingan aktif dalam seminggu</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Bimbingan aktif dalam seminggu</p>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($mentoringHealth ?? 'all') === 'active' ? 'bg-emerald-200/80 dark:bg-emerald-500/30 text-emerald-800 dark:text-emerald-200' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}">
+                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($mentoringHealth ?? 'all') === 'active' ? 'bg-emerald-200/80 dark:bg-emerald-500/30 text-emerald-800 dark:text-emerald-200' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}">
                                             {{ $mentoringHealthCounts['active'] ?? 0 }}
                                         </span>
                                         @if(($mentoringHealth ?? 'all') === 'active')
@@ -212,11 +212,11 @@
                                         <span class="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
                                         <div>
                                             <span class="font-bold text-amber-800 dark:text-amber-300">Pasif (8 - 14 hari)</span>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Peringatan: Belum bimbingan > 1 minggu</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Peringatan: Belum bimbingan > 1 minggu</p>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($mentoringHealth ?? 'all') === 'warning' ? 'bg-amber-200/80 dark:bg-amber-500/30 text-amber-800 dark:text-amber-200' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300' }}">
+                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($mentoringHealth ?? 'all') === 'warning' ? 'bg-amber-200/80 dark:bg-amber-500/30 text-amber-800 dark:text-amber-200' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300' }}">
                                             {{ $mentoringHealthCounts['warning'] ?? 0 }}
                                         </span>
                                         @if(($mentoringHealth ?? 'all') === 'warning')
@@ -232,11 +232,11 @@
                                         <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0 animate-pulse"></span>
                                         <div>
                                             <span class="font-bold text-rose-800 dark:text-rose-300">Macet (> 14 hari)</span>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Kritis: Tidak bimbingan > 2 minggu</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Kritis: Tidak bimbingan > 2 minggu</p>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ ($mentoringHealth ?? 'all') === 'critical' ? 'bg-rose-200/80 dark:bg-rose-500/30 text-rose-800 dark:text-rose-200' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300' }}">
+                                        <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ ($mentoringHealth ?? 'all') === 'critical' ? 'bg-rose-200/80 dark:bg-rose-500/30 text-rose-800 dark:text-rose-200' : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300' }}">
                                             {{ $mentoringHealthCounts['critical'] ?? 0 }}
                                         </span>
                                         @if(($mentoringHealth ?? 'all') === 'critical')
@@ -260,31 +260,31 @@
                             @if(($accStatus ?? 'all') === 'ready_seminar')
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                                 <span>Siap Seminar</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
                                     {{ $accCounts['ready_seminar'] ?? 0 }}
                                 </span>
                             @elseif(($accStatus ?? 'all') === 'ready_defense')
                                 <span class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span>
                                 <span>Siap Sidang</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300">
                                     {{ $accCounts['ready_defense'] ?? 0 }}
                                 </span>
                             @elseif(($accStatus ?? 'all') === 'partial_acc')
                                 <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                 <span>ACC 1/2</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
                                     {{ $accCounts['partial_acc'] ?? 0 }}
                                 </span>
                             @elseif(($accStatus ?? 'all') === 'my_acc_pending')
                                 <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0 animate-pulse"></span>
                                 <span>Menunggu ACC Saya</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300">
                                     {{ $accCounts['my_acc_pending'] ?? 0 }}
                                 </span>
                             @elseif(($accStatus ?? 'all') === 'waiting_partner')
                                 <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                 <span>Tunggu Rekan</span>
-                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
                                     {{ $accCounts['waiting_partner'] ?? 0 }}
                                 </span>
                             @else
@@ -306,7 +306,7 @@
                              class="absolute left-0 mt-2 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-700 p-1.5 z-50 text-left"
                              style="display: none;">
                             
-                            <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                            <div class="px-3 py-2 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
                                 <span>Kelayakan Ujian & ACC</span>
                                 @if(($accStatus ?? 'all') !== 'all')
                                     <a href="{{ route('theses.index', array_merge(request()->query(), ['acc_status' => 'all'])) }}" 
@@ -324,7 +324,7 @@
                                         <span class="w-2 h-2 rounded-full {{ ($accStatus ?? 'all') === 'all' ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-600' }} shrink-0"></span>
                                         <span>Semua Status ACC</span>
                                     </div>
-                                    <span class="text-[10px] font-black text-slate-400">{{ $accCounts['all'] ?? 0 }}</span>
+                                    <span class="text-[11px] font-black text-slate-500 dark:text-slate-400">{{ $accCounts['all'] ?? 0 }}</span>
                                 </a>
 
                                 <!-- 2. Siap Seminar UP -->
@@ -334,10 +334,10 @@
                                         <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                                         <div>
                                             <span>Siap Seminar UP</span>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">ACC Lengkap (P1 & P2)</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">ACC Lengkap (P1 & P2)</p>
                                         </div>
                                     </div>
-                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
+                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
                                         {{ $accCounts['ready_seminar'] ?? 0 }}
                                     </span>
                                 </a>
@@ -349,10 +349,10 @@
                                         <span class="w-2 h-2 rounded-full bg-indigo-500 shrink-0"></span>
                                         <div>
                                             <span>Siap Sidang Akhir</span>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">ACC Lengkap (P1 & P2)</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">ACC Lengkap (P1 & P2)</p>
                                         </div>
                                     </div>
-                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300">
+                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-indigo-100 dark:bg-indigo-950/80 text-indigo-800 dark:text-indigo-300">
                                         {{ $accCounts['ready_defense'] ?? 0 }}
                                     </span>
                                 </a>
@@ -364,10 +364,10 @@
                                         <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                         <div>
                                             <span>ACC Parsial (1/2)</span>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Baru 1 Pembimbing ACC</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Baru 1 Pembimbing ACC</p>
                                         </div>
                                     </div>
-                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
                                         {{ $accCounts['partial_acc'] ?? 0 }}
                                     </span>
                                 </a>
@@ -381,10 +381,10 @@
                                                 <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0 animate-pulse"></span>
                                                 <div>
                                                     <span class="font-bold text-rose-700 dark:text-rose-300">Menunggu ACC Saya</span>
-                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Belum Anda berikan ACC</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Belum Anda berikan ACC</p>
                                                 </div>
                                             </div>
-                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300">
                                                 {{ $accCounts['my_acc_pending'] ?? 0 }}
                                             </span>
                                         </a>
@@ -396,10 +396,10 @@
                                                 <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                                 <div>
                                                     <span>Tunggu Rekan Pembimbing</span>
-                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-normal">Anda sudah ACC, rekan belum</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Anda sudah ACC, rekan belum</p>
                                                 </div>
                                             </div>
-                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300">
                                                 {{ $accCounts['waiting_partner'] ?? 0 }}
                                             </span>
                                         </a>

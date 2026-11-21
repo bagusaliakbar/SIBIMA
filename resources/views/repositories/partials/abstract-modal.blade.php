@@ -20,43 +20,43 @@
                     <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative z-10">
                         <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
                             <div class="flex items-center gap-2">
-                                <span class="px-2.5 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-lg" x-text="'Angkatan ' + abstractData.year"></span>
-                                <span class="px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg border" :class="abstractData.badge?.bg" x-text="abstractData.badge?.label"></span>
+                                <span class="px-2.5 py-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-black uppercase tracking-widest rounded-lg" x-text="'Angkatan ' + abstractData.year"></span>
+                                <span class="px-2.5 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-lg border" :class="abstractData.badge?.bg" x-text="abstractData.badge?.label"></span>
                             </div>
-                            <button type="button" @click="abstractModalOpen = false" aria-label="Tutup modal detail abstrak" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold p-1 cursor-pointer">&times;</button>
+                            <button type="button" @click="abstractModalOpen = false" aria-label="Tutup modal detail abstrak" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold p-1 cursor-pointer">&times;</button>
                         </div>
                         
                         <div class="p-8 space-y-5 max-h-[70vh] overflow-y-auto">
                             <!-- Judul -->
                             <div>
-                                <p class="text-[10px] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 mb-1">Judul Skripsi</p>
+                                <p class="text-[11px] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400 mb-1">Judul Skripsi</p>
                                 <h3 class="text-base font-black text-slate-800 dark:text-slate-100 leading-snug uppercase" x-text="abstractData.title"></h3>
                             </div>
 
                             <!-- Meta Mahasiswa & Pembimbing -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
                                 <div>
-                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Mahasiswa Alumni</p>
+                                    <p class="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Mahasiswa Alumni</p>
                                     <p class="text-xs font-bold text-slate-800 dark:text-slate-100 mt-0.5" x-text="abstractData.name"></p>
-                                    <p class="text-[10px] font-mono text-slate-500 dark:text-slate-400" x-text="'NPM: ' + (abstractData.identifier || '-')"></p>
+                                    <p class="text-[11px] font-mono text-slate-500 dark:text-slate-400" x-text="'NPM: ' + (abstractData.identifier || '-')"></p>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Dosen Pembimbing</p>
+                                    <p class="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">Dosen Pembimbing</p>
                                     <div class="space-y-1">
                                         <template x-if="abstractData.pembimbing1">
                                             <div class="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-200">
-                                                <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-bold text-[9px] rounded border border-indigo-200/80 dark:border-indigo-800/80 shrink-0">P1</span>
+                                                <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 font-bold text-[11px] rounded border border-indigo-200/80 dark:border-indigo-800/80 shrink-0">P1</span>
                                                 <span class="font-bold truncate" x-text="abstractData.pembimbing1"></span>
                                             </div>
                                         </template>
                                         <template x-if="abstractData.pembimbing2">
                                             <div class="flex items-center gap-1.5 text-xs text-slate-700 dark:text-slate-200">
-                                                <span class="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold text-[9px] rounded border border-purple-200/80 dark:border-purple-800/80 shrink-0">P2</span>
+                                                <span class="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold text-[11px] rounded border border-purple-200/80 dark:border-purple-800/80 shrink-0">P2</span>
                                                 <span class="font-bold truncate" x-text="abstractData.pembimbing2"></span>
                                             </div>
                                         </template>
                                         <template x-if="!abstractData.pembimbing1 && !abstractData.pembimbing2">
-                                            <span class="text-xs text-slate-400 italic">-</span>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400 italic">-</span>
                                         </template>
                                     </div>
                                 </div>
@@ -64,7 +64,7 @@
 
                             <!-- Abstrak -->
                             <div>
-                                <p class="text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">Abstrak / Rangkuman</p>
+                                <p class="text-[11px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-2">Abstrak / Rangkuman</p>
                                 <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line text-justify font-medium" 
                                      x-text="abstractData.abstract || 'Tidak ada teks abstrak yang tersedia untuk arsip ini.'"></div>
                             </div>
@@ -181,7 +181,7 @@
                                     </div>
                                 </template>
                                 <template x-if="!abstractData.file_path && !abstractData.file_path_bab2 && !abstractData.file_path_bab3 && !abstractData.file_path_bab4 && !abstractData.file_path_bab5 && !abstractData.file_path_bab6">
-                                    <span class="text-xs text-slate-400 italic">File naskah PDF belum terhubung</span>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 italic">File naskah PDF belum terhubung</span>
                                 </template>
                             </div>
                             <button type="button" @click="abstractModalOpen = false" class="px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-orange-600 dark:hover:bg-orange-500 dark:hover:text-white transition-all shadow-sm cursor-pointer">

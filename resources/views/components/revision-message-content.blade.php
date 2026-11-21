@@ -28,7 +28,7 @@
 
 @if($isPointList && count($points) > 0)
     <div class="space-y-2.5 my-0.5">
-        <div class="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider {{ $isMe ? 'text-white/80' : ($theme === 'rose' ? 'text-rose-600 dark:text-rose-400' : ($theme === 'orange' ? 'text-orange-600 dark:text-orange-400' : 'text-indigo-600 dark:text-indigo-400')) }}">
+        <div class="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider {{ $isMe ? 'text-white/80' : ($theme === 'rose' ? 'text-rose-600 dark:text-rose-400' : ($theme === 'orange' ? 'text-orange-600 dark:text-orange-400' : 'text-indigo-600 dark:text-indigo-400')) }}">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
             </svg>
@@ -40,7 +40,7 @@
                 <div class="flex items-start gap-2.5 p-2.5 rounded-xl transition-all {{ $isMe 
                     ? 'bg-white/10 border border-white/15' 
                     : 'bg-slate-50/80 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/60' }}">
-                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-black shrink-0 mt-0.5 shadow-xs {{ $isMe 
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[11px] font-black shrink-0 mt-0.5 shadow-xs {{ $isMe 
                         ? ($theme === 'rose' ? 'bg-white text-rose-700' : ($theme === 'orange' ? 'bg-white text-orange-700' : 'bg-white text-indigo-700')) 
                         : ($theme === 'rose' ? 'bg-rose-600 text-white' : ($theme === 'orange' ? 'bg-orange-600 text-white' : 'bg-indigo-600 text-white')) }}">
                         {{ $p['num'] }}

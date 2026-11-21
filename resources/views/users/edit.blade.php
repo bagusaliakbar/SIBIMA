@@ -45,7 +45,7 @@
                                                 };
                                                 reader.readAsDataURL($refs.avatar.files[0]);
                                            " />
-                                    <button type="button" x-on:click.prevent="$refs.avatar.click()" class="inline-flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-[10px] text-slate-600 dark:text-slate-400 uppercase tracking-widest hover:bg-slate-100 transition-all shadow-sm">
+                                    <button type="button" x-on:click.prevent="$refs.avatar.click()" class="inline-flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl font-black text-[11px] text-slate-600 dark:text-slate-400 uppercase tracking-widest hover:bg-slate-100 transition-all shadow-sm">
                                         Ganti Foto
                                     </button>
                                     <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Format: JPG, PNG, JPEG. Max 2MB.</p>
@@ -83,10 +83,10 @@
 
                         <!-- Tahun Angkatan (Khusus Mahasiswa) -->
                         <div>
-                            <label for="entry_year" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tahun Angkatan <span class="text-[10px] text-slate-400 font-normal italic">(Khusus Mahasiswa)</span></label>
+                            <label for="entry_year" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tahun Angkatan <span class="text-[11px] text-slate-400 font-normal italic">(Khusus Mahasiswa)</span></label>
                             <input id="entry_year" type="number" name="entry_year" value="{{ old('entry_year', $user->entry_year) }}" 
                                 class="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 transition-colors" placeholder="Cth: 2020">
-                            <p class="mt-1 text-[10px] text-slate-500">Digunakan untuk monitoring masa studi kritikal.</p>
+                            <p class="mt-1 text-[11px] text-slate-500">Digunakan untuk monitoring masa studi kritikal.</p>
                             <x-input-error :messages="$errors->get('entry_year')" class="mt-2" />
                         </div>
 
@@ -103,7 +103,7 @@
                             <label for="phone_number" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Nomor WhatsApp</label>
                             <input id="phone_number" type="text" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}" 
                                 class="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 transition-colors" placeholder="Cth: 08123456789">
-                            <p class="mt-1 text-[10px] text-slate-500 italic">Digunakan untuk pengiriman pengingat jadwal otomatis.</p>
+                            <p class="mt-1 text-[11px] text-slate-500 italic">Digunakan untuk pengiriman pengingat jadwal otomatis.</p>
                             <x-input-error :messages="$errors->get('phone_number')" class="mt-2" />
                         </div>
 
@@ -112,7 +112,7 @@
                             <label for="birth_date" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tanggal Lahir</label>
                             <input id="birth_date" type="date" name="birth_date" value="{{ old('birth_date', $user->birth_date?->format('Y-m-d')) }}" max="{{ date('Y-m-d') }}"
                                 class="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 transition-colors">
-                            <p class="mt-1 text-[10px] text-slate-500 italic">Untuk ucapan selamat ulang tahun otomatis via WhatsApp & sistem.</p>
+                            <p class="mt-1 text-[11px] text-slate-500 italic">Untuk ucapan selamat ulang tahun otomatis via WhatsApp & sistem.</p>
                             <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
                         </div>
 
@@ -122,7 +122,7 @@
                             <div class="relative mt-1">
                                 <input id="password" :type="showPassword ? 'text' : 'password'" name="password" 
                                     class="block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 pr-10 transition-colors" placeholder="Biarkan kosong jika tidak ingin mengubah password">
-                                <button type="button" @click="showPassword = !showPassword" :aria-label="showPassword ? 'Sembunyikan password' : 'Tampilkan password'" :title="showPassword ? 'Sembunyikan password' : 'Tampilkan password'" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded-md">
+                                <button type="button" @click="showPassword = !showPassword" :aria-label="showPassword ? 'Sembunyikan password' : 'Tampilkan password'" :title="showPassword ? 'Sembunyikan password' : 'Tampilkan password'" class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded-md">
                                     <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     <svg x-show="showPassword" style="display: none;" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
                                 </button>
@@ -133,8 +133,8 @@
                     </div>
 
                     <div class="mt-8 pt-5 border-t border-slate-100 dark:border-slate-700 flex items-center justify-end gap-3">
-                        <a href="{{ route('users.index') }}" class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-widest transition-colors">Batal</a>
-                        <button type="submit" class="inline-flex justify-center items-center px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-orange-500/20">
+                        <a href="{{ route('users.index') }}" class="px-6 py-2.5 text-[11px] font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 uppercase tracking-widest transition-colors">Batal</a>
+                        <button type="submit" class="inline-flex justify-center items-center px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-orange-500/20">
                             Perbarui Data Pengguna
                         </button>
                     </div>

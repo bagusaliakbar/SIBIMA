@@ -18,7 +18,7 @@
                                 <h4 class="text-xs font-black {{ $isCriticalStale ? 'text-rose-950 dark:text-rose-100' : 'text-amber-950 dark:text-amber-100' }} uppercase tracking-wider">
                                     {{ $isCriticalStale ? 'Peringatan Bimbingan Macet (> 2 Minggu)' : 'Peringatan Dini Bimbingan (> 1 Minggu)' }}
                                 </h4>
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase shrink-0 {{ $isCriticalStale ? 'bg-rose-200 text-rose-900 dark:bg-rose-900 dark:text-rose-200' : 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200' }}">
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase shrink-0 {{ $isCriticalStale ? 'bg-rose-200 text-rose-900 dark:bg-rose-900 dark:text-rose-200' : 'bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-200' }}">
                                     {{ $daysSinceLastSession }} Hari Belum Bimbingan
                                 </span>
                             </div>
@@ -44,7 +44,7 @@
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center justify-between sm:justify-start gap-2 flex-wrap">
                                 <h4 class="text-xs font-black uppercase tracking-wider text-rose-950 dark:text-rose-100">Peringatan Masa Studi Kritikal</h4>
-                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-200/80 text-rose-900 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60 shrink-0">Semester {{ Auth::user()->current_semester }}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-rose-200/80 text-rose-900 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60 shrink-0">Semester {{ Auth::user()->current_semester }}</span>
                             </div>
                             <p class="text-xs text-rose-800 dark:text-rose-300/90 font-medium mt-1 leading-relaxed">
                                 Anda telah memasuki semester batas akhir. Harap prioritaskan penyelesaian skripsi untuk menghindari sanksi Drop Out (DO). Hubungi Koordinator Prodi jika butuh asistensi khusus.
@@ -52,7 +52,7 @@
                         </div>
                     </div>
                     <div class="w-full sm:w-auto shrink-0 flex justify-end">
-                        <span class="w-full sm:w-auto text-center px-3 py-1.5 bg-rose-200/60 dark:bg-rose-900/40 text-rose-900 dark:text-rose-200 text-[10px] font-black uppercase tracking-widest rounded-xl border border-rose-300/60 dark:border-rose-700/60">
+                        <span class="w-full sm:w-auto text-center px-3 py-1.5 bg-rose-200/60 dark:bg-rose-900/40 text-rose-900 dark:text-rose-200 text-[11px] font-black uppercase tracking-widest rounded-xl border border-rose-300/60 dark:border-rose-700/60">
                             Perhatian Khusus
                         </span>
                     </div>
@@ -75,7 +75,7 @@
                                 Pembimbing: {{ $thesis->pembimbing1->name ?? 'Belum Ditentukan' }} & {{ $thesis->pembimbing2->name ?? 'Belum Ditentukan' }}
                             </p>
                             @if(!$thesis->isAccSidangFinal())
-                                <button type="button" @click="$dispatch('open-edit-thesis-modal')" onclick="document.getElementById('edit-thesis-modal').classList.remove('hidden'); if(document.getElementById('edit-thesis-modal').__x) { document.getElementById('edit-thesis-modal').__x.$data.open = true; }" class="inline-flex items-center px-3 py-1.5 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-100 dark:hover:bg-orange-900/50 transition-all border border-orange-200/80 dark:border-orange-800/60 shadow-xs cursor-pointer">
+                                <button type="button" @click="$dispatch('open-edit-thesis-modal')" onclick="document.getElementById('edit-thesis-modal').classList.remove('hidden'); if(document.getElementById('edit-thesis-modal').__x) { document.getElementById('edit-thesis-modal').__x.$data.open = true; }" class="inline-flex items-center px-3 py-1.5 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-orange-100 dark:hover:bg-orange-900/50 transition-all border border-orange-200/80 dark:border-orange-800/60 shadow-xs cursor-pointer">
                                     <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                     Revisi Judul / Deskripsi
                                 </button>
@@ -99,7 +99,7 @@
                             <!-- Progress Metric Row -->
                             <div class="flex items-center justify-between gap-5 p-4">
                                 <div>
-                                    <p class="text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest leading-none mb-1.5">Capaian Saat Ini</p>
+                                    <p class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-none mb-1.5">Capaian Saat Ini</p>
                                     <p class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">{{ round($progressPercent) }}%</p>
                                 </div>
                                 <div class="w-px h-10 bg-slate-200 dark:bg-slate-700"></div>
@@ -115,7 +115,7 @@
                             </div>
 
                             <!-- Integrated Action: Lihat Histori -->
-                            <a href="{{ route('student.history') }}" class="flex items-center justify-between gap-2 px-4 py-2.5 bg-white/70 dark:bg-slate-800/50 hover:bg-orange-50/80 dark:hover:bg-orange-950/40 text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-all group/hist cursor-pointer">
+                            <a href="{{ route('student.history') }}" class="flex items-center justify-between gap-2 px-4 py-2.5 bg-white/70 dark:bg-slate-800/50 hover:bg-orange-50/80 dark:hover:bg-orange-950/40 text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-all group/hist cursor-pointer">
                                 <span class="inline-flex items-center gap-1.5">
                                     <svg class="w-3.5 h-3.5 text-slate-400 group-hover/hist:text-orange-600 dark:group-hover/hist:text-orange-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     <span>Lihat Histori Perjalanan</span>
@@ -180,7 +180,7 @@
                                         <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 relative
                                             {{ $isCompleted ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25 ring-2 ring-emerald-500/20' : '' }}
                                             {{ $isCurrent ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30 scale-110 ring-4 ring-orange-500/25 animate-pulse' : '' }}
-                                            {{ $isLocked ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 border border-slate-200/80 dark:border-slate-700/80 group-hover/node:border-slate-300 dark:group-hover/node:border-slate-600' : '' }}">
+                                            {{ $isLocked ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/80 group-hover/node:border-slate-300 dark:group-hover/node:border-slate-600' : '' }}">
                                             
                                             <!-- Step Icons -->
                                             @if($isCompleted)
@@ -223,7 +223,7 @@
                                             <h4 class="text-[11px] font-black uppercase tracking-wider leading-tight transition-colors group-hover/node:text-orange-600 dark:group-hover/node:text-orange-400
                                                 {{ $isCompleted ? 'text-slate-800 dark:text-slate-100' : '' }}
                                                 {{ $isCurrent ? 'text-orange-600 dark:text-orange-400 font-extrabold' : '' }}
-                                                {{ $isLocked ? 'text-slate-400 dark:text-slate-500' : '' }}">
+                                                {{ $isLocked ? 'text-slate-500 dark:text-slate-400' : '' }}">
                                                 {{ $stage['number'] }}. {{ $stage['short_name'] ?? $stage['name'] }}
                                             </h4>
                                         </div>
@@ -231,20 +231,17 @@
                                         <!-- Three Visual Status Badges: Selesai | Sedang Berjalan (Active) | Terkunci (Locked) -->
                                         <div class="mt-2 flex justify-center">
                                             @if($isCompleted)
-                                                <span class="inline-flex items-center gap-1 text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/80 shadow-2xs">
+                                                <span class="inline-flex items-center gap-1 text-[11px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/80 shadow-2xs">
                                                     <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                     <span>Selesai {{ !empty($stage['badge']) ? '(' . $stage['badge'] . ')' : '' }}</span>
                                                 </span>
                                             @elseif($isCurrent)
-                                                <span class="inline-flex items-center gap-1.5 text-[9px] font-black text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-0.5 rounded-full border border-orange-200/80 dark:border-orange-800/80 shadow-2xs">
-                                                    <span class="relative flex h-2 w-2">
-                                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-                                                    </span>
+                                                <span class="inline-flex items-center gap-1.5 text-[11px] font-black text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-0.5 rounded-full border border-orange-200/80 dark:border-orange-800/80 shadow-2xs">
+                                                    <span class="inline-flex rounded-full h-2 w-2 bg-orange-500 shrink-0"></span>
                                                     <span>Sedang Berjalan {{ !empty($stage['badge']) ? '(' . $stage['badge'] . ')' : '' }}</span>
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center gap-1 text-[9px] font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800/60 px-2 py-0.5 rounded-full border border-slate-200/60 dark:border-slate-700/60">
+                                                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/60 px-2 py-0.5 rounded-full border border-slate-200/60 dark:border-slate-700/60">
                                                     <svg class="w-2.5 h-2.5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                                     <span>Terkunci</span>
                                                 </span>
@@ -264,11 +261,11 @@
                 @endphp
                 <div x-show="roadmapMode === '2d'" x-cloak class="block md:hidden mt-4 p-4 rounded-2xl bg-gradient-to-r from-orange-50/90 to-amber-50/40 dark:from-orange-950/30 dark:to-slate-800/40 border border-orange-200/80 dark:border-orange-800/60 shadow-xs">
                     <div class="flex items-center justify-between gap-2 mb-2">
-                        <span class="text-[10px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
+                        <span class="text-[11px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
                             Tahap Aktif Anda Saat Ini
                         </span>
-                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-900/60 text-orange-800 dark:text-orange-200 border border-orange-300/80 dark:border-orange-700/60">
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-900/60 text-orange-800 dark:text-orange-200 border border-orange-300/80 dark:border-orange-700/60">
                             Tahap {{ $activeStageItem['number'] }} dari 6
                         </span>
                     </div>
@@ -277,7 +274,7 @@
                             <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 truncate">{{ $activeStageItem['name'] }}</h4>
                             <p class="text-[11px] text-slate-600 dark:text-slate-400 font-medium leading-tight mt-0.5">{{ $activeStageItem['desc'] }}</p>
                         </div>
-                        <a href="{{ $activeStageItem['url'] }}" class="px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[10px] font-black uppercase tracking-wider shrink-0 transition-all shadow-xs flex items-center gap-1 cursor-pointer">
+                        <a href="{{ $activeStageItem['url'] }}" class="px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[11px] font-black uppercase tracking-wider shrink-0 transition-all shadow-xs flex items-center gap-1 cursor-pointer">
                             <span>Buka</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                         </a>
@@ -323,7 +320,7 @@
                 <div class="relative z-10 flex flex-col md:flex-row items-center gap-10">
                     <div class="flex-1 text-center md:text-left">
                         <h2 class="text-3xl font-black tracking-tight mb-3 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Selamat, {{ Auth::user()->name }}!</h2>
-                        <p class="text-slate-400 font-medium text-base leading-relaxed max-w-2xl">
+                        <p class="text-slate-500 dark:text-slate-400 font-medium text-base leading-relaxed max-w-2xl">
                             Seluruh tahapan skripsi telah Anda selesaikan dengan baik. Anda kini dinyatakan <span class="text-amber-400 font-bold">LULUS</span>. Terima kasih atas dedikasi dan kerja keras Anda selama ini.
                         </p>
                     </div>
@@ -331,7 +328,7 @@
                     <div class="hidden lg:block w-px h-24 bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
 
                     <div class="text-center md:text-right">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Tanggal Yudisium</p>
+                        <p class="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-1">Tanggal Yudisium</p>
                         <p class="text-xl font-black text-white tracking-tighter">{{ now()->locale('id')->translatedFormat('d F Y') }}</p>
                     </div>
                 </div>
@@ -365,18 +362,18 @@
                     <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ $pastSessionsCount ?? 0 }} <span class="text-xs font-medium text-slate-400 lowercase tracking-normal">Sesi</span></h2>
                     @if($thesis && $thesis->pembimbing1 && $thesis->pembimbing2)
                         <x-slot name="subtitle">
-                            <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
                                 <span>P1: {{ Str::limit($thesis->pembimbing1->name, 50) }}</span>
                                 <span class="font-bold text-slate-700 dark:text-slate-300">{{ $pastSessionsCountP1 }} Sesi</span>
                             </p>
-                            <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
                                 <span>P2: {{ Str::limit($thesis->pembimbing2->name, 50) }}</span>
                                 <span class="font-bold text-slate-700 dark:text-slate-300">{{ $pastSessionsCountP2 }} Sesi</span>
                             </p>
                         </x-slot>
                     @else
                         <x-slot name="subtitle">
-                            <p class="text-[10px] font-medium text-slate-400 dark:text-slate-500 italic mt-1">Belum ada pembimbing</p>
+                            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 italic mt-1">Belum ada pembimbing</p>
                         </x-slot>
                     @endif
                 </x-stat-card>

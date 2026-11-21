@@ -87,15 +87,15 @@
                 <div class="grid grid-cols-3 gap-3 shrink-0">
                     <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 text-center">
                         <span class="text-2xl font-black text-slate-900 dark:text-white block">{{ $waBroadcast->total_recipients }}</span>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mt-1">Total Sasaran</span>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mt-1">Total Sasaran</span>
                     </div>
                     <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-center">
                         <span class="text-2xl font-black text-emerald-600 dark:text-emerald-400 block">{{ $waBroadcast->successful_count }}</span>
-                        <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider block mt-1">Berhasil</span>
+                        <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider block mt-1">Berhasil</span>
                     </div>
                     <div class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-center">
-                        <span class="text-2xl font-black {{ $waBroadcast->failed_count > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-400' }} block">{{ $waBroadcast->failed_count }}</span>
-                        <span class="text-[10px] font-bold text-rose-700 dark:text-rose-300 uppercase tracking-wider block mt-1">Gagal / Lewat</span>
+                        <span class="text-2xl font-black {{ $waBroadcast->failed_count > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-500 dark:text-slate-400' }} block">{{ $waBroadcast->failed_count }}</span>
+                        <span class="text-[11px] font-bold text-rose-700 dark:text-rose-300 uppercase tracking-wider block mt-1">Gagal / Lewat</span>
                     </div>
                 </div>
             </div>
@@ -142,7 +142,7 @@
             {{-- Desktop Table View --}}
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[10px]">
+                    <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[11px]">
                         <tr>
                             <th class="px-5 py-3.5 w-12 text-center">No</th>
                             <th class="px-5 py-3.5">Penerima</th>
@@ -155,7 +155,7 @@
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60">
                         @forelse($logs as $index => $log)
                             <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-700/30 transition-colors" x-data="{ showMsg: false }">
-                                <td class="px-5 py-4 text-center text-slate-400 font-medium">
+                                <td class="px-5 py-4 text-center text-slate-500 dark:text-slate-400 font-medium">
                                     {{ $logs->firstItem() + $index }}
                                 </td>
 
@@ -168,7 +168,7 @@
                                     @if($log->recipient_phone)
                                         <span class="inline-flex items-center gap-1 text-slate-700 dark:text-slate-300 font-bold"><svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>{{ $log->recipient_phone }}</span>
                                     @else
-                                        <span class="text-rose-500 font-bold text-[10px] bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded">
+                                        <span class="text-rose-500 font-bold text-[11px] bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded">
                                             Nomor Kosong
                                         </span>
                                     @endif
@@ -176,17 +176,17 @@
 
                                 <td class="px-5 py-4 whitespace-nowrap text-center">
                                     @if($log->status === 'sent')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                             Terkirim
                                         </span>
                                     @elseif($log->status === 'failed')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
                                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                                             Gagal
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                                             Menunggu
                                         </span>
                                     @endif
@@ -218,7 +218,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="p-8 text-center text-slate-400">
+                                <td colspan="6" class="p-8 text-center text-slate-500 dark:text-slate-400">
                                     Belum ada log penerima untuk siaran ini.
                                 </td>
                             </tr>
@@ -239,11 +239,11 @@
                                 </div>
                             </div>
                             @if($log->status === 'sent')
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">Terkirim</span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">Terkirim</span>
                             @elseif($log->status === 'failed')
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 shrink-0">Gagal</span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 shrink-0">Gagal</span>
                             @else
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 shrink-0">Menunggu</span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 shrink-0">Menunggu</span>
                             @endif
                         </div>
 

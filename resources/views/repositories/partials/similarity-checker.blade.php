@@ -19,7 +19,7 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">Ketik calon judul proposal Anda untuk mengecek kemiripan dengan repositori alumni & skripsi aktif secara real-time.</p>
                     </div>
                 </div>
-                <button type="button" @click="showChecker = false" aria-label="Tutup pemeriksa kemiripan judul" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 transition-colors cursor-pointer">
+                <button type="button" @click="showChecker = false" aria-label="Tutup pemeriksa kemiripan judul" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 transition-colors cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -37,7 +37,7 @@
                                 x-cloak
                                 aria-label="Hapus judul yang diuji"
                                 @click="testTitle = ''; errorMessage = ''; hasChecked = false; checkResults = [];" 
-                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
                                 title="Hapus teks judul">
                             <div class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,20 +88,20 @@
                             <p class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                 Ditemukan <span class="text-orange-600 dark:text-orange-400" x-text="checkResults.length"></span> Judul Serupa Terkait:
                             </p>
-                            <span class="text-[10px] text-slate-400 dark:text-slate-500">Batas toleransi kemiripan: &lt; 45%</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">Batas toleransi kemiripan: &lt; 45%</span>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <template x-for="(item, idx) in checkResults" :key="idx">
                                 <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2">
                                     <div class="flex items-center justify-between">
-                                        <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-lg"
+                                        <span class="px-2 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-lg"
                                               :class="item.percentage >= 70 ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border dark:border-rose-800/60' : 'bg-amber-100 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border dark:border-amber-800/60'"
                                               x-text="item.percentage + '% Mirip'"></span>
-                                        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500" x-text="item.source + ' (' + item.year + ')'"></span>
+                                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400" x-text="item.source + ' (' + item.year + ')'"></span>
                                     </div>
                                     <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100 leading-snug" x-text="item.title"></h5>
-                                    <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+                                    <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
                                         <span x-text="'Oleh: ' + item.student_name"></span>
                                         <span class="font-mono text-orange-600 dark:text-orange-400 font-bold" x-text="item.matched_words ? item.matched_words.length + ' kata cocok' : ''"></span>
                                     </div>

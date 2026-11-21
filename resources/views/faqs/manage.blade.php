@@ -53,7 +53,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <div>
-                        <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Total FAQ</div>
+                        <div class="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Total FAQ</div>
                         <div class="text-2xl font-black text-slate-800 dark:text-slate-100 mt-0.5">{{ $stats['total'] }}</div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <div>
-                        <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">FAQ Aktif (Tampil)</div>
+                        <div class="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">FAQ Aktif (Tampil)</div>
                         <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">{{ $stats['active'] }}</div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
                     </div>
                     <div>
-                        <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">FAQ Disembunyikan</div>
+                        <div class="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">FAQ Disembunyikan</div>
                         <div class="text-2xl font-black text-slate-700 dark:text-slate-300 mt-0.5">{{ $stats['inactive'] }}</div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                 
                 <x-slot name="headerActions">
                     <div class="flex items-center gap-2">
-                        <a href="{{ route('faqs.index') }}" target="_blank" class="inline-flex items-center px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-xs" title="Lihat Tampilan Pengguna">
+                        <a href="{{ route('faqs.index') }}" target="_blank" class="inline-flex items-center px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-xs" title="Lihat Tampilan Pengguna">
                             <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                             Lihat Halaman FAQ
                         </a>
@@ -102,7 +102,7 @@
                     <form method="GET" action="{{ route('faqs.manage') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div class="sm:col-span-2">
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500 dark:text-slate-400">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 </span>
                                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pertanyaan atau jawaban..." class="block w-full pl-9 pr-3 py-2 text-xs rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
@@ -136,9 +136,9 @@
                             <div class="flex items-start justify-between gap-2">
                                 <div class="min-w-0">
                                     <div class="flex items-center gap-1.5 flex-wrap mb-1">
-                                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">#{{ $faq->order }}</span>
-                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">{{ $faq->category_label }}</span>
-                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300">{{ $faq->target_role === 'all' ? 'Semua' : ucfirst($faq->target_role) }}</span>
+                                        <span class="text-[11px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">#{{ $faq->order }}</span>
+                                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">{{ $faq->category_label }}</span>
+                                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300">{{ $faq->target_role === 'all' ? 'Semua' : ucfirst($faq->target_role) }}</span>
                                     </div>
                                     <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug">{{ $faq->question }}</h4>
                                 </div>
@@ -179,18 +179,18 @@
                 <table class="hidden sm:table w-full text-left text-sm">
                     <thead>
                         <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-                            <th class="py-4 px-4 font-black text-[10px] tracking-widest uppercase text-center w-12">No</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase">Pertanyaan & Ringkasan Jawaban</th>
-                            <th class="py-4 px-4 font-black text-[10px] tracking-widest uppercase text-center whitespace-nowrap">Kategori</th>
-                            <th class="py-4 px-4 font-black text-[10px] tracking-widest uppercase text-center whitespace-nowrap">Target</th>
-                            <th class="py-4 px-4 font-black text-[10px] tracking-widest uppercase text-center whitespace-nowrap">Status</th>
-                            <th class="py-4 px-6 font-black text-[10px] tracking-widest uppercase text-right whitespace-nowrap">Aksi</th>
+                            <th class="py-4 px-4 font-black text-[11px] tracking-widest uppercase text-center w-12">No</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase">Pertanyaan & Ringkasan Jawaban</th>
+                            <th class="py-4 px-4 font-black text-[11px] tracking-widest uppercase text-center whitespace-nowrap">Kategori</th>
+                            <th class="py-4 px-4 font-black text-[11px] tracking-widest uppercase text-center whitespace-nowrap">Target</th>
+                            <th class="py-4 px-4 font-black text-[11px] tracking-widest uppercase text-center whitespace-nowrap">Status</th>
+                            <th class="py-4 px-6 font-black text-[11px] tracking-widest uppercase text-right whitespace-nowrap">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         @forelse($faqs as $faq)
                             <tr class="bg-white dark:bg-slate-800 hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors">
-                                <td class="py-4 px-4 text-center font-mono text-xs text-slate-400 dark:text-slate-500 font-bold">
+                                <td class="py-4 px-4 text-center font-mono text-xs text-slate-500 dark:text-slate-400 font-bold">
                                     {{ $faq->order }}
                                 </td>
                                 <td class="py-4 px-6">
@@ -201,7 +201,7 @@
                                     @php
                                         $catColor = $categories[$faq->category]['color'] ?? 'slate';
                                     @endphp
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold 
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold 
                                         {{ $catColor === 'orange' ? 'bg-orange-50 text-orange-700 border border-orange-200 dark:bg-orange-950/50 dark:text-orange-300 dark:border-orange-800' : '' }}
                                         {{ $catColor === 'emerald' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800' : '' }}
                                         {{ $catColor === 'indigo' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-300 dark:border-indigo-800' : '' }}
@@ -213,11 +213,11 @@
                                 </td>
                                 <td class="py-4 px-4 text-center whitespace-nowrap">
                                     @if($faq->target_role === 'all')
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">Semua</span>
+                                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">Semua</span>
                                     @elseif($faq->target_role === 'mahasiswa')
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800">Mahasiswa</span>
+                                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800">Mahasiswa</span>
                                     @elseif($faq->target_role === 'dosen')
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300 border border-purple-200 dark:border-purple-800">Dosen</span>
+                                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300 border border-purple-200 dark:border-purple-800">Dosen</span>
                                     @endif
                                 </td>
                                 <td class="py-4 px-4 text-center whitespace-nowrap">
@@ -234,7 +234,7 @@
                                 </td>
                                 <td class="py-4 px-6 text-right whitespace-nowrap">
                                     <div class="flex justify-end items-center gap-1">
-                                        <button type="button" @click="openEditModal({{ json_encode($faq) }})" class="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer" title="Edit FAQ" aria-label="Edit FAQ">
+                                        <button type="button" @click="openEditModal({{ json_encode($faq) }})" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer" title="Edit FAQ" aria-label="Edit FAQ">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </button>
                                         <form action="{{ route('faqs.destroy', $faq->id) }}"
@@ -245,7 +245,7 @@
                                               data-confirm-button="Ya, Hapus">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer" title="Hapus FAQ" aria-label="Hapus FAQ">
+                                            <button type="submit" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer" title="Hapus FAQ" aria-label="Hapus FAQ">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
@@ -281,7 +281,7 @@
                                         <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-wider" x-text="editMode ? 'Edit Pertanyaan & Jawaban FAQ' : 'Tambah FAQ Baru'"></h3>
                                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Kelola panduan dan jawaban bantuan untuk mahasiswa dan dosen</p>
                                     </div>
-                                    <button type="button" @click="openModal = false" aria-label="Tutup modal FAQ" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+                                    <button type="button" @click="openModal = false" aria-label="Tutup modal FAQ" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                     </button>
                                 </div>
@@ -320,7 +320,7 @@
                                     <div>
                                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Jawaban Lengkap <span class="text-red-500">*</span></label>
                                         <textarea name="answer" x-model="currentFaq.answer" rows="7" required class="block w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-sm font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all" placeholder="Tuliskan penjelasan dan langkah-langkah jawaban secara detail..."></textarea>
-                                        <p class="text-[11px] text-slate-400 mt-1">Mendukung format baris baru, penomoran poin, dan tanda bintang ganda (**) untuk cetak tebal.</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Mendukung format baris baru, penomoran poin, dan tanda bintang ganda (**) untuk cetak tebal.</p>
                                     </div>
 
                                     <div class="flex items-center gap-3 p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700">

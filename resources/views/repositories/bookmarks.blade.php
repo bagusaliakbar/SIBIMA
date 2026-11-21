@@ -50,7 +50,7 @@
                     <input type="hidden" name="folder" value="{{ $folderFilter }}">
                     
                     <div class="relative flex-1">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                         <input type="text" 
@@ -60,7 +60,7 @@
                                class="w-full pl-10 pr-10 py-2.5 rounded-xl border text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-500 focus:border-transparent transition-all">
                         @if(!empty($query))
                             <a href="{{ route('repositories.bookmarks', ['source' => $sourceFilter, 'folder' => $folderFilter]) }}" 
-                               class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                               class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                                title="Bersihkan pencarian">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </a>
@@ -98,7 +98,7 @@
                                              ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/25' 
                                              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-800' }}">
                                     <span>{{ $sData['label'] }}</span>
-                                    <span class="px-2 py-0.5 rounded-lg text-[10px] font-black {{ $sourceFilter === $sKey ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">
+                                    <span class="px-2 py-0.5 rounded-lg text-[11px] font-black {{ $sourceFilter === $sKey ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">
                                         {{ $sData['count'] }}
                                     </span>
                                 </a>
@@ -117,7 +117,7 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
                     </div>
                     <span class="text-sm font-bold text-slate-800 dark:text-slate-100">Koleksi Bab Skripsi</span>
-                    <span class="text-xs text-slate-400">({{ $folders->count() }} Folder)</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400">({{ $folders->count() }} Folder)</span>
                 </div>
 
                 <!-- Template Chapters Generator Button -->
@@ -140,7 +140,7 @@
                              : 'bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                     <span>Semua Bacaan</span>
-                    <span class="px-2 py-0.5 rounded-lg text-[10px] font-black {{ $folderFilter === 'all' ? 'bg-white/20 text-white dark:bg-slate-900/20 dark:text-slate-900' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
+                    <span class="px-2 py-0.5 rounded-lg text-[11px] font-black {{ $folderFilter === 'all' ? 'bg-white/20 text-white dark:bg-slate-900/20 dark:text-slate-900' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300' }}">
                         {{ $totalBookmarksCount }}
                     </span>
                 </a>
@@ -155,7 +155,7 @@
                            class="inline-flex items-center gap-2 pl-3.5 pr-2 py-2 text-xs font-bold whitespace-nowrap">
                             <svg class="w-3.5 h-3.5 shrink-0 {{ (string)$folderFilter === (string)$folder->id ? 'text-white' : 'text-orange-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
                             <span>{{ $folder->name }}</span>
-                            <span class="px-2 py-0.5 rounded-lg text-[10px] font-black {{ (string)$folderFilter === (string)$folder->id ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300' }}">
+                            <span class="px-2 py-0.5 rounded-lg text-[11px] font-black {{ (string)$folderFilter === (string)$folder->id ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300' }}">
                                 {{ $folder->bookmarks_count }}
                             </span>
                         </a>
@@ -188,7 +188,7 @@
                                  : 'bg-slate-50 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 border-dashed border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800' }}"
                        title="Artikel yang belum dimasukkan ke dalam folder manapun">
                         <span>Tanpa Folder</span>
-                        <span class="px-2 py-0.5 rounded-lg text-[10px] font-black {{ $folderFilter === 'uncategorized' ? 'bg-white/20 text-white' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300' }}">
+                        <span class="px-2 py-0.5 rounded-lg text-[11px] font-black {{ $folderFilter === 'uncategorized' ? 'bg-white/20 text-white' : 'bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300' }}">
                             {{ $uncategorizedCount }}
                         </span>
                     </a>

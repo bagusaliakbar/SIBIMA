@@ -15,21 +15,21 @@
                         <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                         <span>Daftar Bimbingan</span>
                         @if(($dosenActionCenter['pending_mentoring_count'] ?? 0) > 0)
-                            <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-amber-500 text-white leading-none">{{ $dosenActionCenter['pending_mentoring_count'] }}</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black bg-amber-500 text-white leading-none">{{ $dosenActionCenter['pending_mentoring_count'] }}</span>
                         @endif
                     </a>
                     <a href="{{ route('seminar-examiner.index') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer">
                         <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span>Jadwal Menguji Ujian</span>
                         @if((($dosenActionCenter['need_input_count'] ?? 0) + ($dosenActionCenter['need_review_count'] ?? 0)) > 0)
-                            <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-rose-500 text-white leading-none">{{ ($dosenActionCenter['need_input_count'] ?? 0) + ($dosenActionCenter['need_review_count'] ?? 0) }}</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black bg-rose-500 text-white leading-none">{{ ($dosenActionCenter['need_input_count'] ?? 0) + ($dosenActionCenter['need_review_count'] ?? 0) }}</span>
                         @endif
                     </a>
                     <a href="{{ route('theses.index', ['filter' => 'stalled']) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all shadow-2xs cursor-pointer">
                         <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                         <span>Monitoring Bimbingan Pasif</span>
                         @if(($stalledThesesCount ?? $earlyWarning['stalled_count'] ?? 0) > 0)
-                            <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black bg-rose-600 text-white leading-none">{{ $stalledThesesCount ?? $earlyWarning['stalled_count'] }}</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white leading-none">{{ $stalledThesesCount ?? $earlyWarning['stalled_count'] }}</span>
                         @endif
                     </a>
                 </div>
@@ -42,7 +42,7 @@
                         <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
                         Action Center Dosen: Tugas Memerlukan Tindakan
                     </h3>
-                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                    <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                         {{ ($dosenActionCenter['total_action_needed'] ?? $dosenActionCenter['total_actions'] ?? 0) > 0 ? (($dosenActionCenter['total_action_needed'] ?? $dosenActionCenter['total_actions']) . ' Tindakan Diperlukan') : 'Semua Tugas Selesai' }}
                     </span>
                 </div>
@@ -53,14 +53,14 @@
                             <div class="w-10 h-10 rounded-xl {{ ($dosenActionCenter['pending_mentoring_count'] ?? 0) > 0 ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
-                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ ($dosenActionCenter['pending_mentoring_count'] ?? 0) > 0 ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 border border-amber-300 dark:border-amber-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider {{ ($dosenActionCenter['pending_mentoring_count'] ?? 0) > 0 ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 border border-amber-300 dark:border-amber-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
                                 {{ ($dosenActionCenter['pending_mentoring_count'] ?? 0) > 0 ? 'Perlu Respon' : 'Selesai' }}
                             </span>
                         </div>
                         <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Permintaan Bimbingan</h4>
                         <div class="flex items-baseline gap-2 mt-1 mb-2">
                             <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $dosenActionCenter['pending_mentoring_count'] ?? 0 }}</span>
-                            <span class="text-xs font-semibold text-slate-400">Sesi Menunggu</span>
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Sesi Menunggu</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
                             {{ ($dosenActionCenter['pending_mentoring_count'] ?? 0) > 0 ? 'Mahasiswa bimbingan menunggu persetujuan jadwal Anda.' : 'Semua pengajuan sesi bimbingan telah dikonfirmasi.' }}
@@ -87,14 +87,14 @@
                             <div class="w-10 h-10 rounded-xl {{ $inputCount > 0 ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                             </div>
-                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ $inputCount > 0 ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300 dark:border-rose-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider {{ $inputCount > 0 ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300 dark:border-rose-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
                                 {{ $inputCount > 0 ? 'Segera Lengkapi' : 'Lengkap' }}
                             </span>
                         </div>
                         <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Catatan &amp; Nilai Ujian</h4>
                         <div class="flex items-baseline gap-2 mt-1 mb-2">
                             <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $inputCount }}</span>
-                            <span class="text-xs font-semibold text-slate-400">Ujian Belum Diisi</span>
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Ujian Belum Diisi</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
                             {{ $inputCount > 0 ? 'Ujian telah terlaksana tapi catatan atau nilai penguji belum disubmit.' : 'Seluruh berita acara ujian & penilaian telah Anda selesaikan.' }}
@@ -133,14 +133,14 @@
                             <div class="w-10 h-10 rounded-xl {{ $reviewCount > 0 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                             </div>
-                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ $reviewCount > 0 ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-200 border border-indigo-300 dark:border-indigo-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider {{ $reviewCount > 0 ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-200 border border-indigo-300 dark:border-indigo-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
                                 {{ $reviewCount > 0 ? 'Perlu ACC' : 'Tuntas' }}
                             </span>
                         </div>
                         <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Revisi Mahasiswa Masuk</h4>
                         <div class="flex items-baseline gap-2 mt-1 mb-2">
                             <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $reviewCount }}</span>
-                            <span class="text-xs font-semibold text-slate-400">Berkas Masuk</span>
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Berkas Masuk</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
                             {{ $reviewCount > 0 ? 'Mahasiswa telah mengunggah revisi naskah dan menunggu persetujuan (ACC).' : 'Tidak ada berkas perbaikan naskah yang menunggu ditinjau.' }}
@@ -203,7 +203,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button type="button" @click="showInputModal = false" aria-label="Tutup daftar ujian butuh nilai" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                <button type="button" @click="showInputModal = false" aria-label="Tutup daftar ujian butuh nilai" class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
@@ -213,16 +213,16 @@
                                     <div class="p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 hover:border-rose-300 dark:hover:border-rose-700 bg-slate-50/50 dark:bg-slate-900/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                         <div class="space-y-1">
                                             <div class="flex items-center gap-2">
-                                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider {{ ($item['type'] ?? '') === 'defense' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' }}">
+                                                <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider {{ ($item['type'] ?? '') === 'defense' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' }}">
                                                     {{ $item['category'] ?? 'Ujian' }}
                                                 </span>
                                                 <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $item['student_name'] }}</span>
-                                                <span class="text-[10px] text-slate-400">({{ $item['student_identifier'] }})</span>
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400">({{ $item['student_identifier'] }})</span>
                                             </div>
                                             <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-1 italic">
                                                 {{ $item['thesis_title'] ?? '-' }}
                                             </p>
-                                            <div class="flex items-center gap-3 text-[10px] text-slate-400 pt-0.5">
+                                            <div class="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">
                                                 <span>{{ \Carbon\Carbon::parse($item['date'])->locale('id')->translatedFormat('d M Y') }}</span>
                                                 @if(!empty($item['time']))
                                                     <span>• {{ $item['time'] }}</span>
@@ -238,7 +238,7 @@
                                         </a>
                                     </div>
                                 @empty
-                                    <div class="text-center py-8 text-slate-400 text-xs">
+                                    <div class="text-center py-8 text-slate-500 dark:text-slate-400 text-xs">
                                         Tidak ada catatan atau nilai ujian yang tertunda.
                                     </div>
                                 @endforelse
@@ -297,7 +297,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button type="button" @click="showReviewModal = false" aria-label="Tutup daftar revisi masuk" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                <button type="button" @click="showReviewModal = false" aria-label="Tutup daftar revisi masuk" class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
@@ -307,16 +307,16 @@
                                     <div class="p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-300 dark:hover:border-indigo-700 bg-slate-50/50 dark:bg-slate-900/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                         <div class="space-y-1">
                                             <div class="flex items-center gap-2">
-                                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider {{ ($item['type'] ?? '') === 'defense' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' }}">
+                                                <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider {{ ($item['type'] ?? '') === 'defense' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' }}">
                                                     {{ $item['category'] ?? 'Revisi' }}
                                                 </span>
                                                 <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $item['student_name'] }}</span>
-                                                <span class="text-[10px] text-slate-400">({{ $item['student_identifier'] }})</span>
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400">({{ $item['student_identifier'] }})</span>
                                             </div>
                                             <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-1 italic">
                                                 {{ $item['thesis_title'] ?? '-' }}
                                             </p>
-                                            <div class="flex items-center gap-3 text-[10px] text-slate-400 pt-0.5">
+                                            <div class="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">
                                                 <span>Diunggah: {{ \Carbon\Carbon::parse($item['date'])->locale('id')->translatedFormat('d M Y, H:i') }} WIB</span>
                                             </div>
                                         </div>
@@ -326,7 +326,7 @@
                                         </a>
                                     </div>
                                 @empty
-                                    <div class="text-center py-8 text-slate-400 text-xs">
+                                    <div class="text-center py-8 text-slate-500 dark:text-slate-400 text-xs">
                                         Tidak ada berkas perbaikan naskah yang menunggu ditinjau.
                                     </div>
                                 @endforelse
@@ -356,7 +356,7 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-orange-600 text-white">Gelombang Aktif</span>
+                            <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider bg-orange-600 text-white">Gelombang Aktif</span>
                             <h4 class="text-sm font-black text-slate-800 dark:text-white">{{ $activeWaveInfo['name'] }}</h4>
                             <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">({{ $activeWaveInfo['academic_year'] }} - {{ $activeWaveInfo['semester'] }})</span>
                         </div>
@@ -386,11 +386,11 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     </x-slot>
                     <x-slot name="subtitle">
-                        <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
                             <span>Pembimbing 1</span>
                             <span class="font-bold text-slate-700 dark:text-slate-300">{{ $totalActiveStudentsP1 ?? 0 }} Mahasiswa</span>
                         </p>
-                        <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
                             <span>Pembimbing 2</span>
                             <span class="font-bold text-slate-700 dark:text-slate-300">{{ $totalActiveStudentsP2 ?? 0 }} Mahasiswa</span>
                         </p>
@@ -403,11 +403,11 @@
                     </x-slot>
                     <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ $sessionsThisWeek ?? 0 }} <span class="text-xs font-medium text-slate-400 lowercase tracking-normal">Sesi</span></h2>
                     <x-slot name="subtitle">
-                        <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
                             <span>Menunggu</span>
                             <span class="font-bold text-amber-600 dark:text-amber-400">{{ $pendingSessionsThisWeek ?? 0 }}</span>
                         </p>
-                        <p class="text-[10px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
+                        <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between">
                             <span>Disetujui</span>
                             <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ $approvedSessionsThisWeek ?? 0 }}</span>
                         </p>
@@ -418,14 +418,14 @@
                     <x-slot name="icon">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </x-slot>
-                    <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Total seluruh bimbingan</p>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 italic tracking-tight">Total seluruh bimbingan</p>
                 </x-stat-card>
 
                 <x-stat-card title="Progres Rata-rata" :value="($averageStudentProgress ?? 0) . '%'" color="pink">
                     <x-slot name="icon">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </x-slot>
-                    <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Performa bimbingan global</p>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 italic tracking-tight">Performa bimbingan global</p>
                 </x-stat-card>
             </div>
 
@@ -445,8 +445,8 @@
                             <canvas id="distributionChart"></canvas>
                         </div>
                         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700/50 space-y-2">
-                            <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Keterangan Progres:</p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                            <p class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">Keterangan Progres:</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                 <div class="flex items-start gap-2">
                                     <span class="w-2.5 h-2.5 rounded-full bg-amber-500 mt-0.5 flex-shrink-0"></span>
                                     <span><strong>Judul:</strong> Mahasiswa aktif yang belum memulai bimbingan.</span>

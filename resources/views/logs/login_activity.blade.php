@@ -23,7 +23,7 @@
                 </div>
                 <div class="flex items-baseline gap-2">
                     <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ number_format($totalPeriodLogins) }}</span>
-                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500">kali</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">kali</span>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
                     <span class="inline-block w-1.5 h-1.5 rounded-full bg-orange-500"></span>
@@ -45,7 +45,7 @@
                         <span class="text-base sm:text-lg font-black text-slate-900 dark:text-white truncate max-w-[170px]" title="{{ $mostActiveUser->name }}">
                             {{ $mostActiveUser->name }}
                         </span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 shrink-0">
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 shrink-0">
                             {{ $mostActiveCount }}x
                         </span>
                     </div>
@@ -53,8 +53,8 @@
                         {{ ucfirst($mostActiveUser->role) }} • {{ $mostActiveUser->identifier ?: $mostActiveUser->email }}
                     </p>
                 @else
-                    <div class="text-base font-bold text-slate-400 dark:text-slate-500">- Belum ada aktivitas -</div>
-                    <p class="text-xs text-slate-400 mt-2 font-medium">Tidak ada login di periode ini</p>
+                    <div class="text-base font-bold text-slate-500 dark:text-slate-400">- Belum ada aktivitas -</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium">Tidak ada login di periode ini</p>
                 @endif
             </div>
 
@@ -69,7 +69,7 @@
                 </div>
                 <div class="flex items-baseline gap-2">
                     <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ number_format($uniqueActiveUsersCount) }}</span>
-                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500">user</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">user</span>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
                     <span class="inline-block w-1.5 h-1.5 rounded-full bg-blue-500"></span>
@@ -88,7 +88,7 @@
                 </div>
                 <div class="flex items-baseline gap-2">
                     <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ number_format($neverOrInactiveCount) }}</span>
-                    <span class="text-xs font-bold text-slate-400 dark:text-slate-500">user</span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">user</span>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5 font-medium">
                     <span class="inline-block w-1.5 h-1.5 rounded-full bg-rose-500"></span>
@@ -110,7 +110,7 @@
                     <a href="{{ route('admin.logs.login-activity', array_merge(request()->query(), ['tab' => 'inactive', 'page' => 1])) }}"
                        class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition-all {{ $tab === 'inactive' ? 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400' }}">
                         <span>User Belum / Tidak Aktif</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ $tab === 'inactive' ? 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
+                        <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ $tab === 'inactive' ? 'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400' }}">
                             {{ $neverOrInactiveCount }}
                         </span>
                     </a>
@@ -165,7 +165,7 @@
                                    value="{{ $search }}" 
                                    placeholder="Cari nama, email, NIM atau NIDN..." 
                                    class="w-full pl-9 pr-20 text-xs font-medium rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500 shadow-2xs">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
                             <div class="absolute inset-y-0 right-0 pr-1.5 flex items-center gap-1">
@@ -188,7 +188,7 @@
                 <!-- TAB 1: LEADERBOARD USER TERAKTIF (Desktop) -->
                 <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-sm text-left">
-                        <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
+                        <thead class="text-[11px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                             <tr>
                                 <th scope="col" class="py-4 px-6 text-center w-16">Peringkat</th>
                                 <th scope="col" class="py-4 px-6">Pengguna</th>
@@ -220,7 +220,7 @@
                                                 #3
                                             </div>
                                         @else
-                                            <span class="text-xs font-black text-slate-400 dark:text-slate-500">
+                                            <span class="text-xs font-black text-slate-500 dark:text-slate-400">
                                                 #{{ $rank }}
                                             </span>
                                         @endif
@@ -239,12 +239,12 @@
                                                         {{ $user->name }}
                                                     </span>
                                                     @if($user->is_online)
-                                                        <span class="px-1.5 py-0.2 rounded-md text-[9px] font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                                        <span class="px-1.5 py-0.2 rounded-md text-[11px] font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                                                             Online
                                                         </span>
                                                     @endif
                                                 </div>
-                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
                                                     {{ $user->identifier ? $user->identifier . ' • ' : '' }}{{ $user->email }}
                                                 </p>
                                             </div>
@@ -262,16 +262,16 @@
                                                 default => 'bg-slate-100 text-slate-700'
                                             };
                                         @endphp
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border {{ $roleBadgeClass }}">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider border {{ $roleBadgeClass }}">
                                             {{ ucfirst($user->role) }}
                                         </span>
                                     </td>
 
                                     <!-- Login Periode Ini -->
                                     <td class="py-4 px-6 text-center whitespace-nowrap">
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black {{ $user->period_logins_count > 0 ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800/60' : 'bg-slate-100 dark:bg-slate-800 text-slate-400' }}">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black {{ $user->period_logins_count > 0 ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800/60' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
                                             <span>{{ number_format($user->period_logins_count) }}</span>
-                                            <span class="text-[10px] font-bold">kali</span>
+                                            <span class="text-[11px] font-bold">kali</span>
                                         </span>
                                     </td>
 
@@ -288,11 +288,11 @@
                                             <p class="text-xs font-bold text-slate-700 dark:text-slate-200">
                                                 {{ $user->last_login_at->locale('id')->translatedFormat('d M Y, H:i') }}
                                             </p>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                                 {{ $user->last_login_at->locale('id')->diffForHumans() }}
                                             </p>
                                         @else
-                                            <span class="text-xs italic text-slate-400 dark:text-slate-500">Belum pernah login</span>
+                                            <span class="text-xs italic text-slate-500 dark:text-slate-400">Belum pernah login</span>
                                         @endif
                                     </td>
 
@@ -342,16 +342,16 @@
                                         <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ $user->identifier ?: $user->email }}</div>
                                     </div>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-black uppercase bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shrink-0">{{ ucfirst($user->role) }}</span>
+                                <span class="px-2 py-0.5 rounded-lg text-[11px] font-black uppercase bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shrink-0">{{ ucfirst($user->role) }}</span>
                             </div>
 
                             <div class="grid grid-cols-2 gap-2 text-xs">
                                 <div class="p-2 rounded-xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/60 dark:border-orange-800/40">
-                                    <div class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Periode Ini</div>
+                                    <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Periode Ini</div>
                                     <div class="font-black text-orange-600 dark:text-orange-400">{{ number_format($user->period_logins_count) }} kali</div>
                                 </div>
                                 <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/80">
-                                    <div class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Total All-Time</div>
+                                    <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Total All-Time</div>
                                     <div class="font-black text-slate-800 dark:text-slate-100">{{ number_format($user->total_logins_count) }} kali</div>
                                 </div>
                             </div>
@@ -375,7 +375,7 @@
                 <!-- TAB 2: USER BELUM / TIDAK AKTIF (Desktop) -->
                 <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-sm text-left">
-                        <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
+                        <thead class="text-[11px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                             <tr>
                                 <th scope="col" class="py-4 px-6 text-center w-14">No</th>
                                 <th scope="col" class="py-4 px-6">Pengguna</th>
@@ -394,7 +394,7 @@
                                     $daysInactive = $user->last_login_at ? (int) $user->last_login_at->copy()->startOfDay()->diffInDays(now()->startOfDay()) : null;
                                 @endphp
                                 <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-700/40 transition-colors group">
-                                    <td class="py-4 px-6 text-center text-xs font-bold text-slate-400">
+                                    <td class="py-4 px-6 text-center text-xs font-bold text-slate-500 dark:text-slate-400">
                                         {{ $rowNo }}
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
@@ -402,25 +402,25 @@
                                             <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shadow-2xs">
                                             <div>
                                                 <p class="text-sm font-bold text-slate-800 dark:text-slate-200">{{ $user->name }}</p>
-                                                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
                                                     {{ $user->identifier ? $user->identifier . ' • ' : '' }}{{ $user->email }}
                                                 </p>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                                             {{ ucfirst($user->role) }}
                                         </span>
                                     </td>
                                     <td class="py-4 px-6 whitespace-nowrap">
                                         @if($isNever)
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                                                 Belum Pernah Login
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                                 Pasif ({{ $daysInactive }} Hari Lalu)
                                             </span>
@@ -431,7 +431,7 @@
                                             <p class="text-xs font-bold text-slate-700 dark:text-slate-200">
                                                 {{ $user->last_login_at->locale('id')->translatedFormat('d M Y, H:i') }}
                                             </p>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                                 {{ $user->last_login_at->locale('id')->diffForHumans() }}
                                             </p>
                                         @else
@@ -449,7 +449,7 @@
                                                 <span>{{ $user->phone_number }}</span>
                                             </a>
                                         @else
-                                            <span class="text-xs text-slate-400 font-medium">-</span>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">-</span>
                                         @endif
                                     </td>
                                     <td class="py-4 px-6 text-right whitespace-nowrap">
@@ -494,7 +494,7 @@
                                         <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ $user->identifier ?: $user->email }}</p>
                                     </div>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase border shrink-0 {{ $isNever ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800/60' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60' }}">
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase border shrink-0 {{ $isNever ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800/60' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60' }}">
                                     {{ $isNever ? 'Belum Login' : "Pasif {$daysInactive} Hr" }}
                                 </span>
                             </div>
@@ -581,7 +581,7 @@
                                 </p>
                             </div>
                         </div>
-                        <button type="button" @click="closeModal()" aria-label="Tutup detail sesi login" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer">
+                        <button type="button" @click="closeModal()" aria-label="Tutup detail sesi login" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
@@ -609,7 +609,7 @@
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <span class="text-sm font-black text-slate-900 dark:text-white" x-text="userData?.name"></span>
-                                            <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400" x-text="userData?.role"></span>
+                                            <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400" x-text="userData?.role"></span>
                                         </div>
                                         <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
                                             <span x-text="userData?.identifier"></span> • <span x-text="userData?.email"></span>
@@ -617,7 +617,7 @@
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Status Saat Ini</span>
+                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Status Saat Ini</span>
                                     <span class="text-xs font-black" :class="userData?.is_online ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500'" x-text="userData?.is_online ? 'Online' : 'Offline'"></span>
                                 </div>
                             </div>
@@ -626,15 +626,15 @@
                             <div class="grid grid-cols-3 gap-3 mb-5">
                                 <div class="p-3 rounded-xl bg-orange-50/60 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/40 text-center">
                                     <span class="text-lg font-black text-orange-600 dark:text-orange-400 block" x-text="userData?.total_logins">0</span>
-                                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total All-Time</span>
+                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total All-Time</span>
                                 </div>
                                 <div class="p-3 rounded-xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 text-center">
                                     <span class="text-lg font-black text-blue-600 dark:text-blue-400 block" x-text="userData?.month_logins">0</span>
-                                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Bulan Ini</span>
+                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Bulan Ini</span>
                                 </div>
                                 <div class="p-3 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 text-center">
                                     <span class="text-lg font-black text-emerald-600 dark:text-emerald-400 block" x-text="userData?.week_logins">0</span>
-                                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">7 Hari Lalu</span>
+                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">7 Hari Lalu</span>
                                 </div>
                             </div>
 
@@ -642,7 +642,7 @@
                             <div>
                                 <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider mb-3 flex items-center justify-between">
                                     <span>20 Sesi Login Terakhir</span>
-                                    <span class="text-[10px] font-bold text-slate-400">Urut waktu terbaru</span>
+                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Urut waktu terbaru</span>
                                 </h4>
 
                                 <div class="max-h-64 overflow-y-auto space-y-2 pr-1 divide-y divide-slate-100 dark:divide-slate-700/60">
@@ -655,23 +655,23 @@
                                                 <div>
                                                     <div class="flex items-center gap-2">
                                                         <span class="font-bold text-slate-800 dark:text-slate-200" x-text="session.created_at_formatted"></span>
-                                                        <span class="text-[10px] font-medium text-slate-400" x-text="session.time_ago"></span>
+                                                        <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400" x-text="session.time_ago"></span>
                                                     </div>
                                                     <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
                                                         <span class="font-semibold text-slate-600 dark:text-slate-300" x-text="session.device"></span>
                                                         <span>•</span>
-                                                        <span class="font-mono text-[10px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-300" x-text="session.ip_address"></span>
+                                                        <span class="font-mono text-[11px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-300" x-text="session.ip_address"></span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/60 shrink-0">
+                                            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/60 shrink-0">
                                                 Sukses
                                             </span>
                                         </div>
                                     </template>
 
                                     <template x-if="sessions.length === 0">
-                                        <div class="py-8 text-center text-xs text-slate-400">
+                                        <div class="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
                                             Belum ada catatan detail riwayat sesi untuk user ini.
                                         </div>
                                     </template>

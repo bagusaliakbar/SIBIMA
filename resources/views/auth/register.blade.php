@@ -9,7 +9,7 @@
         <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
             SIBIMA
         </h1>
-        <p class="text-xs font-semibold text-slate-400 dark:text-slate-400 mt-1">
+        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">
             Fakultas Ilmu Komputer &bull; Universitas Subang
         </p>
         <div class="mt-3 inline-flex items-center px-3 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200/60 dark:border-orange-900/50 text-xs font-bold text-orange-600 dark:text-orange-400">
@@ -65,7 +65,7 @@
 
             <!-- Username -->
             <div>
-                <label for="username" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Username <span class="text-[10px] font-normal text-slate-400 normal-case">(Opsional)</span></label>
+                <label for="username" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Username <span class="text-[11px] font-normal text-slate-400 normal-case">(Opsional)</span></label>
                 <input id="username" type="text" name="username" value="{{ old('username') }}"
                        class="block w-full px-4 py-3 bg-slate-50 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-orange-500 transition-all duration-200"
                        placeholder="Sama dengan NPM/NIDN jika kosong">
@@ -115,7 +115,7 @@
                            class="block w-full pl-4 pr-11 py-3 bg-slate-50 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-orange-500 transition-all duration-200"
                            placeholder="••••••••">
                     <button type="button" @click="showPassword = !showPassword" 
-                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none cursor-pointer"
+                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none cursor-pointer"
                             title="Tampilkan / Sembunyikan Password" aria-label="Tampilkan / Sembunyikan Password">
                         <svg x-show="!showPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -136,7 +136,7 @@
                            class="block w-full pl-4 pr-11 py-3 bg-slate-50 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:bg-white dark:focus:bg-slate-900 focus:border-orange-500 transition-all duration-200"
                            placeholder="••••••••">
                     <button type="button" @click="showPasswordConfirm = !showPasswordConfirm" 
-                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none cursor-pointer"
+                            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors focus:outline-none cursor-pointer"
                             title="Tampilkan / Sembunyikan Password" aria-label="Tampilkan / Sembunyikan Password">
                         <svg x-show="!showPasswordConfirm" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

@@ -85,11 +85,11 @@
                     </div>
 
                     <div class="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200 dark:border-slate-700 shrink-0">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Jadwal Saat Ini</span>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Jadwal Saat Ini</span>
                         <div class="text-xs font-bold text-slate-800 dark:text-slate-200">
                             {{ $mentoringSession->scheduled_at->locale('id')->translatedFormat('d M Y') }} • {{ $mentoringSession->scheduled_at->format('H:i') }} WIB
                         </div>
-                        <span class="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold rounded {{ $mentoringSession->type === 'online' ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300' }}">
+                        <span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-bold rounded {{ $mentoringSession->type === 'online' ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300' }}">
                             {{ ucfirst($mentoringSession->type) }}
                         </span>
                     </div>
@@ -128,7 +128,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2 shrink-0 self-start sm:self-auto">
-                            <span class="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/80 text-indigo-800 dark:text-indigo-200 rounded text-[10px] font-bold">
+                            <span class="px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/80 text-indigo-800 dark:text-indigo-200 rounded text-[11px] font-bold">
                                 Bimbingan Bersama
                             </span>
                             <button type="button" 
@@ -146,7 +146,7 @@
                             <span class="w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
                             <div class="min-w-0 flex-1">
                                 <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ $mentoringSession->thesis?->student?->name }}</p>
-                                <p class="text-[10px] font-semibold text-orange-600 dark:text-orange-400">{{ $mentoringSession->thesis?->student?->identifier ?? 'NPM -' }}</p>
+                                <p class="text-[11px] font-semibold text-orange-600 dark:text-orange-400">{{ $mentoringSession->thesis?->student?->identifier ?? 'NPM -' }}</p>
                             </div>
                         </div>
                         @foreach($relatedSessions as $idx => $rel)
@@ -154,7 +154,7 @@
                                 <span class="w-2 h-2 rounded-full bg-indigo-400 shrink-0"></span>
                                 <div class="min-w-0 flex-1">
                                     <p class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">{{ $rel->thesis?->student?->name }}</p>
-                                    <p class="text-[10px] font-medium text-slate-400 dark:text-slate-500">{{ $rel->thesis?->student?->identifier ?? 'NPM -' }}</p>
+                                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400">{{ $rel->thesis?->student?->identifier ?? 'NPM -' }}</p>
                                 </div>
                             </div>
                         @endforeach
@@ -315,7 +315,7 @@
                                    @change="onDateChange()"
                                    required 
                                    class="mt-2 block w-full md:w-1/2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
-                            <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">Pilih tanggal baru. Tanggal sebelum hari ini otomatis dinonaktifkan.</p>
+                            <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Pilih tanggal baru. Tanggal sebelum hari ini otomatis dinonaktifkan.</p>
                         </div>
 
                         <!-- Visual Time Slot Selector -->
@@ -328,7 +328,7 @@
                                     </label>
                                     <span class="inline-flex items-center gap-1 text-xs font-black text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-1 rounded-lg border border-orange-200/60 dark:border-orange-900/50 whitespace-nowrap shadow-xs">
                                         <span x-text="selectedTime"></span>
-                                        <span class="text-[10px] text-orange-500/90 font-bold">WIB</span>
+                                        <span class="text-[11px] text-orange-500/90 font-bold">WIB</span>
                                     </span>
                                 </div>
                                 <button type="button" @click="customTimeMode = !customTimeMode" class="text-xs font-bold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 inline-flex items-center gap-1 transition-colors self-start sm:self-auto">
@@ -374,7 +374,7 @@
                                 <div class="pt-3 border-t border-slate-200/70 dark:border-slate-800 flex flex-wrap items-center gap-4 sm:gap-6 text-[11px] text-slate-600 dark:text-slate-300">
                                     <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-orange-600 inline-block shadow-sm"></span> <span class="font-medium">Terpilih</span></span>
                                     <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 inline-block shadow-sm"></span> <span class="font-medium text-slate-700 dark:text-slate-200">Tersedia</span></span>
-                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-slate-200 dark:bg-slate-700/80 border border-slate-300 dark:border-slate-600 inline-block"></span> <span class="font-medium text-slate-400 dark:text-slate-400 line-through">Terlewat</span></span>
+                                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-slate-200 dark:bg-slate-700/80 border border-slate-300 dark:border-slate-600 inline-block"></span> <span class="font-medium text-slate-500 dark:text-slate-400 line-through">Terlewat</span></span>
                                 </div>
                             </div>
 
@@ -514,7 +514,7 @@
                                         <span class="text-xs font-bold text-indigo-950 dark:text-indigo-100 group-hover:text-indigo-600 transition-colors">
                                             Terapkan Perubahan ke Seluruh ({{ $relatedSessions->count() + 1 }}) Mahasiswa Terkait
                                         </span>
-                                        <span class="px-1.5 py-0.2 bg-indigo-200 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded text-[9px] font-bold uppercase">
+                                        <span class="px-1.5 py-0.2 bg-indigo-200 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded text-[11px] font-bold uppercase">
                                             Reschedule Massal
                                         </span>
                                     </div>
@@ -630,7 +630,7 @@
                                     <span class="text-slate-500 dark:text-slate-400 font-medium">Mahasiswa:</span>
                                     <div class="text-right">
                                         <span class="font-bold text-slate-800 dark:text-slate-200">{{ $mentoringSession->thesis?->student?->name }}</span>
-                                        <span class="text-slate-400 text-[10px] ml-1">({{ $mentoringSession->thesis?->student?->identifier ?? '-' }})</span>
+                                        <span class="text-slate-500 dark:text-slate-400 text-[11px] ml-1">({{ $mentoringSession->thesis?->student?->identifier ?? '-' }})</span>
                                     </div>
                                 </div>
                                 <div class="h-px bg-slate-200/70 dark:bg-slate-700/70"></div>
@@ -648,7 +648,7 @@
                             <!-- Group Option if available -->
                             @if(isset($relatedSessions) && $relatedSessions->count() > 0)
                                 <div class="p-3 bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60 rounded-xl space-y-2">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
                                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                         <span>Sesi Bimbingan Bersama Terdeteksi</span>
                                     </span>
@@ -760,7 +760,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <button type="button" @click="addStudentModalOpen = false" aria-label="Tutup modal tambah mahasiswa" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                <button type="button" @click="addStudentModalOpen = false" aria-label="Tutup modal tambah mahasiswa" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </button>
                             </div>
@@ -770,7 +770,7 @@
                                 <!-- Session Schedule Info Card -->
                                 <div class="p-3 bg-indigo-50/60 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-900/50 flex items-center justify-between gap-3 text-xs">
                                     <div>
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400">Jadwal Sesi</span>
+                                        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400">Jadwal Sesi</span>
                                         <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">
                                             {{ $mentoringSession->scheduled_at->locale('id')->translatedFormat('l, d F Y') }} • {{ $mentoringSession->scheduled_at->format('H:i') }} WIB
                                         </p>
@@ -778,7 +778,7 @@
                                             Topik: {{ $mentoringSession->topic }}
                                         </p>
                                     </div>
-                                    <span class="px-2 py-0.5 text-[10px] font-bold rounded {{ $mentoringSession->type === 'online' ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300' }} shrink-0">
+                                    <span class="px-2 py-0.5 text-[11px] font-bold rounded {{ $mentoringSession->type === 'online' ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300' }} shrink-0">
                                         {{ ucfirst($mentoringSession->type) }}
                                     </span>
                                 </div>
@@ -855,16 +855,16 @@
                                                     <div class="min-w-0 flex-1">
                                                         <div class="flex items-center gap-2 flex-wrap">
                                                             <span class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" x-text="t.name"></span>
-                                                            <span class="text-[10px] px-1.5 py-0.2 rounded bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 font-bold" x-text="t.npm"></span>
-                                                            <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" x-text="t.role_label"></span>
+                                                            <span class="text-[11px] px-1.5 py-0.2 rounded bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 font-bold" x-text="t.npm"></span>
+                                                            <span class="text-[11px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" x-text="t.role_label"></span>
                                                         </div>
-                                                        <p class="text-[10px] text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5" x-text="t.title"></p>
+                                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5" x-text="t.title"></p>
                                                     </div>
                                                 </label>
                                             </template>
 
                                             <template x-if="filteredAvailableTheses.length === 0">
-                                                <div class="py-6 text-center text-xs text-slate-400 dark:text-slate-500">
+                                                <div class="py-6 text-center text-xs text-slate-500 dark:text-slate-400">
                                                     Tidak ditemukan mahasiswa yang cocok dengan pencarian.
                                                 </div>
                                             </template>
@@ -895,7 +895,7 @@
                                         x-show="availableTheses.length > 0"
                                         :disabled="selectedThesesToAdd.length === 0"
                                         :class="selectedThesesToAdd.length === 0 
-                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-600 shadow-none' 
+                                            ? 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed border border-slate-300 dark:border-slate-600 shadow-none' 
                                             : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/25 cursor-pointer hover:scale-[1.02] active:scale-95'"
                                         class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>

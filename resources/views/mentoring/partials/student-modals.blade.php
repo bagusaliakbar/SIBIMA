@@ -28,18 +28,18 @@
                                         </div>
                                         <div>
                                             <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Formulir Izin Bimbingan</h3>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500">Konfirmasi bahwa Anda berhalangan hadir</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400">Konfirmasi bahwa Anda berhalangan hadir</p>
                                         </div>
                                     </div>
-                                    <button type="button" @click="permissionModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg font-bold p-1 cursor-pointer">&times;</button>
+                                    <button type="button" @click="permissionModalOpen = false" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg font-bold p-1 cursor-pointer">&times;</button>
                                 </div>
                                 <div class="p-6 space-y-4">
                                     <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
-                                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Topik Sesi Bimbingan</label>
+                                        <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">Topik Sesi Bimbingan</label>
                                         <p class="text-xs font-bold text-slate-800 dark:text-slate-200" x-text="activeSessionTopic"></p>
                                     </div>
                                     <div>
-                                        <label for="permission_reason" class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">
+                                        <label for="permission_reason" class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">
                                             Alasan / Keterangan Berhalangan Hadir <span class="text-rose-500">*</span>
                                         </label>
                                         <textarea name="reason" 
@@ -49,7 +49,7 @@
                                                   x-model="permissionReason"
                                                   placeholder="Jelaskan alasan izin Anda (misal: Sakit, Jadwal praktikum/ujian bentrok, Sedang dinas luar, dll.)..." 
                                                   class="w-full text-xs text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"></textarea>
-                                        <p class="text-[10px] text-slate-400 mt-1">Alasan ini akan dikirimkan langsung ke Dosen Pembimbing Anda.</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Alasan ini akan dikirimkan langsung ke Dosen Pembimbing Anda.</p>
                                     </div>
                                 </div>
                                 <div class="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
@@ -96,10 +96,10 @@
                                         </div>
                                         <div>
                                             <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Batalkan Jadwal Bimbingan</h3>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500">Batalkan pengajuan / jadwal bimbingan skripsi</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400">Batalkan pengajuan / jadwal bimbingan skripsi</p>
                                         </div>
                                     </div>
-                                    <button type="button" @click="cancelModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg font-bold p-1 cursor-pointer">&times;</button>
+                                    <button type="button" @click="cancelModalOpen = false" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg font-bold p-1 cursor-pointer">&times;</button>
                                 </div>
                                 <div class="p-6 space-y-4 text-xs">
                                     <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
@@ -120,7 +120,7 @@
                                     </div>
 
                                     <div>
-                                        <label for="student_cancel_reason" class="block text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">
+                                        <label for="student_cancel_reason" class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">
                                             Alasan Pembatalan (Opsional / Disampaikan ke Dosen)
                                         </label>
                                         <textarea name="reason" 

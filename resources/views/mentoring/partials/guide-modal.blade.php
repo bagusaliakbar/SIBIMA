@@ -33,7 +33,7 @@
                             <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
                                 Panduan Jadwal Bimbingan
                             </h3>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40">
+                            <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 border border-orange-200/60 dark:border-orange-800/40">
                                 Panduan Dosen
                             </span>
                         </div>
@@ -45,7 +45,7 @@
 
                 <button type="button" 
                         @click="openGuideModal = false" 
-                        class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-all cursor-pointer"
+                        class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-all cursor-pointer"
                         title="Tutup (Esc)"
                         aria-label="Tutup panduan jadwal bimbingan">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -159,7 +159,7 @@
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2">
                                     <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Tampilan Tabel (Default & Paling Lengkap)</h4>
-                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Format Baris</span>
+                                    <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Format Baris</span>
                                 </div>
                                 <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                                     Menampilkan daftar terstruktur. <strong>Fitur unggulan:</strong> Klik baris mana saja untuk melebarkan (<em>expand</em>) lembar catatan dan riwayat mahasiswa tanpa berpindah halaman. Terdapat kotak centang untuk memproses banyak mahasiswa sekaligus.
@@ -175,7 +175,7 @@
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2">
                                     <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">Tampilan Kartu (Timeline Waktu)</h4>
-                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300">Visual</span>
+                                    <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300">Visual</span>
                                 </div>
                                 <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                                     Sesi disajikan dalam bentuk kartu visual yang dikelompokkan berdasarkan waktu: <strong>Hari Ini</strong>, <strong>Besok</strong>, dan <strong>Mendatang</strong>. Sangat ideal saat Anda ingin melihat jadwal bimbingan terdekat dengan cepat.

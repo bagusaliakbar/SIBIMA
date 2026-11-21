@@ -53,7 +53,7 @@
                                         </label>
                                         <p class="pl-1 py-1">atau drag and drop</p>
                                     </div>
-                                    <p class="text-[10px] text-slate-500">XLSX atau XLS maksimal 5MB</p>
+                                    <p class="text-[11px] text-slate-500">XLSX atau XLS maksimal 5MB</p>
                                 </div>
                                 
                                 <!-- File Selected View -->
@@ -71,14 +71,14 @@
                         </div>
 
                         <div class="pt-2 flex gap-3">
-                            <button type="submit" :disabled="!fileName || isUploading" class="inline-flex justify-center items-center px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
+                            <button type="submit" :disabled="!fileName || isUploading" class="inline-flex justify-center items-center px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-[11px] font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
                                 <span x-show="!isUploading">Mulai Import Arsip</span>
                                 <span x-show="isUploading" style="display: none;" class="flex items-center">
                                     <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                                     Sedang Memproses...
                                 </span>
                             </button>
-                            <a href="{{ route('repositories.index') }}" class="inline-flex items-center px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm">Batal</a>
+                            <a href="{{ route('repositories.index') }}" class="inline-flex items-center px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm">Batal</a>
                         </div>
                     </form>
                 </div>

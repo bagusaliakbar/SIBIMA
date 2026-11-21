@@ -26,21 +26,21 @@
                                         :class="sessionStatusFilter === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
                                         class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer">
                                     <span>Semua</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums bg-slate-200/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300">{{ $sessions->count() }}</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[11px] tabular-nums bg-slate-200/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300">{{ $sessions->count() }}</span>
                                 </button>
                                 <button type="button"
                                         @click="sessionStatusFilter = 'actionable'"
                                         :class="sessionStatusFilter === 'actionable' ? 'bg-orange-600 text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
                                         class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer">
                                     <span>Perlu Diproses</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="sessionStatusFilter === 'actionable' ? 'bg-orange-500/40 text-white' : 'bg-slate-200/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300'">{{ $cardActionableCount }}</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[11px] tabular-nums" :class="sessionStatusFilter === 'actionable' ? 'bg-orange-500/40 text-white' : 'bg-slate-200/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300'">{{ $cardActionableCount }}</span>
                                 </button>
                                 <button type="button"
                                         @click="sessionStatusFilter = 'completed'"
                                         :class="sessionStatusFilter === 'completed' ? 'bg-slate-800 dark:bg-slate-600 text-white shadow-2xs font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium'"
                                         class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer">
                                     <span>Selesai</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] tabular-nums" :class="sessionStatusFilter === 'completed' ? 'bg-slate-700 dark:bg-slate-500 text-white' : 'bg-slate-200/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300'">{{ $cardCompletedCount }}</span>
+                                    <span class="px-1.5 py-0.5 rounded-md text-[11px] tabular-nums" :class="sessionStatusFilter === 'completed' ? 'bg-slate-700 dark:bg-slate-500 text-white' : 'bg-slate-200/70 dark:bg-slate-900/60 text-slate-600 dark:text-slate-300'">{{ $cardCompletedCount }}</span>
                                 </button>
                             </div>
                             <!-- Toggle Mode Grouping: Per Sesi (Default) vs Per Mahasiswa -->
@@ -75,25 +75,25 @@
                                         
                                         @if(empty($attendanceFilter))
                                             <span>Kehadiran: Semua</span>
-                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300" x-text="attendanceStats?.total ?? '{{ $attendanceStats['total'] ?? 0 }}'">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300" x-text="attendanceStats?.total ?? '{{ $attendanceStats['total'] ?? 0 }}'">
                                                 {{ $attendanceStats['total'] ?? 0 }}
                                             </span>
                                         @elseif($attendanceFilter === 'attending')
                                             <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                                             <span>Akan Hadir</span>
-                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300" x-text="attendanceStats?.attending ?? '{{ $attendanceStats['attending'] ?? 0 }}'">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300" x-text="attendanceStats?.attending ?? '{{ $attendanceStats['attending'] ?? 0 }}'">
                                                 {{ $attendanceStats['attending'] ?? 0 }}
                                             </span>
                                         @elseif($attendanceFilter === 'permission')
                                             <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
                                             <span>Izin</span>
-                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300" x-text="attendanceStats?.permission ?? '{{ $attendanceStats['permission'] ?? 0 }}'">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300" x-text="attendanceStats?.permission ?? '{{ $attendanceStats['permission'] ?? 0 }}'">
                                                 {{ $attendanceStats['permission'] ?? 0 }}
                                             </span>
                                         @elseif($attendanceFilter === 'pending')
                                             <span class="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 animate-pulse shrink-0"></span>
                                             <span>Belum Respon</span>
-                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200" x-text="attendanceStats?.pending ?? '{{ $attendanceStats['pending'] ?? 0 }}'">
+                                            <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200" x-text="attendanceStats?.pending ?? '{{ $attendanceStats['pending'] ?? 0 }}'">
                                                 {{ $attendanceStats['pending'] ?? 0 }}
                                             </span>
                                         @endif
@@ -112,7 +112,7 @@
                                          class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/50 border border-slate-200 dark:border-slate-700 p-1.5 z-50 text-left"
                                          style="display: none;">
                                         
-                                        <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
+                                        <div class="px-3 py-2 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/80 flex items-center justify-between">
                                             <span class="flex items-center gap-1.5">
                                                 <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                                                 Filter Status Kehadiran
@@ -134,7 +134,7 @@
                                                     <span>Semua Kehadiran</span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
-                                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ empty($attendanceFilter) ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}" x-text="attendanceStats?.total ?? '{{ $attendanceStats['total'] ?? 0 }}'">
+                                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ empty($attendanceFilter) ? 'bg-orange-200/80 dark:bg-orange-500/30 text-orange-800 dark:text-orange-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}" x-text="attendanceStats?.total ?? '{{ $attendanceStats['total'] ?? 0 }}'">
                                                         {{ $attendanceStats['total'] ?? 0 }}
                                                     </span>
                                                     @if(empty($attendanceFilter))
@@ -151,7 +151,7 @@
                                                     <span>Akan Hadir</span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
-                                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ $attendanceFilter === 'attending' ? 'bg-emerald-200/80 dark:bg-emerald-500/30 text-emerald-800 dark:text-emerald-200' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}" x-text="attendanceStats?.attending ?? '{{ $attendanceStats['attending'] ?? 0 }}'">
+                                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ $attendanceFilter === 'attending' ? 'bg-emerald-200/80 dark:bg-emerald-500/30 text-emerald-800 dark:text-emerald-200' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}" x-text="attendanceStats?.attending ?? '{{ $attendanceStats['attending'] ?? 0 }}'">
                                                         {{ $attendanceStats['attending'] ?? 0 }}
                                                     </span>
                                                     @if($attendanceFilter === 'attending')
@@ -168,7 +168,7 @@
                                                     <span>Izin / Berhalangan</span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
-                                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ $attendanceFilter === 'permission' ? 'bg-amber-200/80 dark:bg-amber-500/30 text-amber-800 dark:text-amber-200' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300' }}" x-text="attendanceStats?.permission ?? '{{ $attendanceStats['permission'] ?? 0 }}'">
+                                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ $attendanceFilter === 'permission' ? 'bg-amber-200/80 dark:bg-amber-500/30 text-amber-800 dark:text-amber-200' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300' }}" x-text="attendanceStats?.permission ?? '{{ $attendanceStats['permission'] ?? 0 }}'">
                                                         {{ $attendanceStats['permission'] ?? 0 }}
                                                     </span>
                                                     @if($attendanceFilter === 'permission')
@@ -185,7 +185,7 @@
                                                     <span>Belum Respon</span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
-                                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-black {{ $attendanceFilter === 'pending' ? 'bg-slate-300 dark:bg-slate-600 text-slate-800 dark:text-slate-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}" x-text="attendanceStats?.pending ?? '{{ $attendanceStats['pending'] ?? 0 }}'">
+                                                    <span class="min-w-[18px] h-4.5 px-1.5 inline-flex items-center justify-center rounded-full text-[11px] font-black {{ $attendanceFilter === 'pending' ? 'bg-slate-300 dark:bg-slate-600 text-slate-800 dark:text-slate-200' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}" x-text="attendanceStats?.pending ?? '{{ $attendanceStats['pending'] ?? 0 }}'">
                                                         {{ $attendanceStats['pending'] ?? 0 }}
                                                     </span>
                                                     @if($attendanceFilter === 'pending')

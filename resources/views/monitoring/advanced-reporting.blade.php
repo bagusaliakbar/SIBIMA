@@ -10,7 +10,7 @@
                     <h2 class="font-black text-2xl text-slate-800 dark:text-slate-100 leading-tight tracking-tight">
                         Pusat Statistik & Pelaporan Terpadu
                     </h2>
-                    <span class="px-2.5 py-0.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[10px] font-black uppercase tracking-wider rounded-lg shadow-sm">
+                    <span class="px-2.5 py-0.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[11px] font-black uppercase tracking-wider rounded-lg shadow-sm">
                         Enterprise Pro
                     </span>
                 </div>
@@ -89,48 +89,48 @@
             <!-- Card 1: Total Skripsi Aktif -->
             <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs relative overflow-hidden group hover:border-orange-500/50 transition-all">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Skripsi Aktif</span>
+                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Skripsi Aktif</span>
                     <div class="w-8 h-8 rounded-xl bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-orange-600">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
                     <p class="text-2xl font-black text-slate-800 dark:text-slate-100">{{ $activeThesesCount }}</p>
-                    <span class="text-[11px] font-bold text-slate-400">Mahasiswa</span>
+                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Mahasiswa</span>
                 </div>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">Tahap bimbingan berjalan</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">Tahap bimbingan berjalan</p>
                 <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-amber-500 opacity-80"></div>
             </div>
 
             <!-- Card 2: Bimbingan Minggu Ini -->
             <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs relative overflow-hidden group hover:border-blue-500/50 transition-all">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Sesi Minggu Ini</span>
+                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Sesi Minggu Ini</span>
                     <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
                     <p class="text-2xl font-black text-slate-800 dark:text-slate-100">{{ $sessionsThisWeek }}</p>
-                    <span class="text-[11px] font-bold text-slate-400">Interaksi</span>
+                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Interaksi</span>
                 </div>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">Keaktifan dosen & mhs</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">Keaktifan dosen & mhs</p>
                 <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 opacity-80"></div>
             </div>
 
             <!-- Card 3: Mahasiswa Lulus -->
             <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs relative overflow-hidden group hover:border-emerald-500/50 transition-all">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Total Lulus</span>
+                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Lulus</span>
                     <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
                     <p class="text-2xl font-black text-slate-800 dark:text-slate-100">{{ $thesisStatusCounts['completed'] ?? 0 }}</p>
-                    <span class="text-[11px] font-bold text-slate-400">Lulusan</span>
+                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Lulusan</span>
                 </div>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">Telah yudisium & SKL</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">Telah yudisium & SKL</p>
                 <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500 opacity-80"></div>
             </div>
 
@@ -140,32 +140,32 @@
             @endphp
             <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs relative overflow-hidden group hover:border-amber-500/50 transition-all">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Mhs Pasif (>14 H)</span>
+                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Mhs Pasif (>14 H)</span>
                     <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
                     <p class="text-2xl font-black text-amber-600 dark:text-amber-400">{{ $inactiveCount }}</p>
-                    <span class="text-[11px] font-bold text-slate-400">Mahasiswa</span>
+                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Mahasiswa</span>
                 </div>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">Perlu surat teguran</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">Perlu surat teguran</p>
                 <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-500 opacity-80"></div>
             </div>
 
             <!-- Card 5: Masa Studi Kritis -->
             <div class="bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs relative overflow-hidden group hover:border-rose-500/50 transition-all col-span-2 sm:col-span-1">
                 <div class="flex items-center justify-between mb-3">
-                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Masa Studi Kritis</span>
+                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Masa Studi Kritis</span>
                     <div class="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
                 </div>
                 <div class="flex items-baseline gap-2">
                     <p class="text-2xl font-black text-rose-600 dark:text-rose-400">{{ $studentHealthStats['Kritis'] ?? 0 }}</p>
-                    <span class="text-[11px] font-bold text-slate-400">Mahasiswa</span>
+                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Mahasiswa</span>
                 </div>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 truncate">Batas waktu kelulusan</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 truncate">Batas waktu kelulusan</p>
                 <div class="absolute bottom-0 left-0 right-0 h-1 bg-rose-500 opacity-80"></div>
             </div>
         </div>
@@ -180,7 +180,7 @@
                     </h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Pilih salah satu dari 8 laporan spesifik di bawah ini untuk mengonfigurasi filter dan mengekspor data.</p>
                 </div>
-                <span class="text-xs font-bold text-slate-400 hidden sm:inline-block">8 Jenis Laporan Tersedia</span>
+                <span class="text-xs font-bold text-slate-500 dark:text-slate-400 hidden sm:inline-block">8 Jenis Laporan Tersedia</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -193,12 +193,12 @@
                             <div :class="activeTab === 'akademik' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 group-hover:text-orange-600'" class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                             </div>
-                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/40">Utama</span>
+                            <span class="px-2 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-md bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/40">Utama</span>
                         </div>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-1">Status & Progres Akademik</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Rekap bimbingan, logbook, sesi P1/P2, dan kesiapan ACC seminar & sidang.</p>
                     </div>
-                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'akademik' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400'">
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'akademik' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'">
                         <span>Konfigurasi Filter &rarr;</span>
                     </div>
                 </button>
@@ -212,12 +212,12 @@
                             <div :class="activeTab === 'nilai_sidang' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 group-hover:text-orange-600'" class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                             </div>
-                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/40">Yudisium</span>
+                            <span class="px-2 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-md bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/40">Yudisium</span>
                         </div>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-1">Rekap Nilai & Yudisium</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Nilai tim penelaah (P1, E1, E2), nilai akhir angka/huruf, dan status kelulusan sidang.</p>
                     </div>
-                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'nilai_sidang' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400'">
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'nilai_sidang' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'">
                         <span>Konfigurasi Filter &rarr;</span>
                     </div>
                 </button>
@@ -231,12 +231,12 @@
                             <div :class="activeTab === 'beban_dosen' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 group-hover:text-orange-600'" class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                             </div>
-                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/40">SK & Honor</span>
+                            <span class="px-2 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-md bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/40">SK & Honor</span>
                         </div>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-1">Beban Kinerja Dosen</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Beban bimbingan P1/P2 ditambah frekuensi menguji seminar & sidang untuk SK.</p>
                     </div>
-                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'beban_dosen' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400'">
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'beban_dosen' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'">
                         <span>Konfigurasi Filter &rarr;</span>
                     </div>
                 </button>
@@ -250,12 +250,12 @@
                             <div :class="activeTab === 'kepatuhan' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 group-hover:text-orange-600'" class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                             </div>
-                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40">Early Warning</span>
+                            <span class="px-2 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40">Early Warning</span>
                         </div>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-1">Kepatuhan & Pasif</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Peringatan mahasiswa tidak bimbingan (>14 hari) dan kepatuhan kuota sesi.</p>
                     </div>
-                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'kepatuhan' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400'">
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'kepatuhan' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'">
                         <span>Konfigurasi Filter &rarr;</span>
                     </div>
                 </button>
@@ -269,12 +269,12 @@
                             <div :class="activeTab === 'topik' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 group-hover:text-orange-600'" class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
                             </div>
-                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">Akreditasi</span>
+                            <span class="px-2 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40">Akreditasi</span>
                         </div>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-1">Topik & Peminatan</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Klasifikasi topik riset skripsi per angkatan untuk evaluasi kurikulum LAM-INFOKOM.</p>
                     </div>
-                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'topik' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400'">
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'topik' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'">
                         <span>Konfigurasi Filter &rarr;</span>
                     </div>
                 </button>
@@ -288,12 +288,12 @@
                             <div :class="activeTab === 'kelulusan' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 group-hover:text-orange-600'" class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                             </div>
-                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/40">Alumni</span>
+                            <span class="px-2 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-md bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/40">Alumni</span>
                         </div>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-1">Rekapitulasi Kelulusan</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Daftar alumni yang telah tuntas sidang, masa studi riil, dan tanggal penyelesaian.</p>
                     </div>
-                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'kelulusan' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400'">
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'kelulusan' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'">
                         <span>Konfigurasi Filter &rarr;</span>
                     </div>
                 </button>
@@ -307,12 +307,12 @@
                             <div :class="activeTab === 'waktu' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 group-hover:text-orange-600'" class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
-                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/40">Statistik</span>
+                            <span class="px-2 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-md bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/40">Statistik</span>
                         </div>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-1">Analisis Durasi & Tren</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Rata-rata bulan pengerjaan skripsi per gelombang & rasio lulus tepat waktu.</p>
                     </div>
-                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'waktu' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400'">
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'waktu' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'">
                         <span>Konfigurasi Filter &rarr;</span>
                     </div>
                 </button>
@@ -326,12 +326,12 @@
                             <div :class="activeTab === 'logs' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40 group-hover:text-orange-600'" class="w-9 h-9 rounded-xl flex items-center justify-center transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             </div>
-                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">Audit Trail</span>
+                            <span class="px-2 py-0.5 text-[11px] font-black uppercase tracking-wider rounded-md bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">Audit Trail</span>
                         </div>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 mb-1">Audit Log Sistem</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">Riwayat audit aktivitas admin, mutasi data skripsi, dan rekaman perubahan sistem.</p>
                     </div>
-                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'logs' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400'">
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-bold" :class="activeTab === 'logs' ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'">
                         <span>Konfigurasi Filter &rarr;</span>
                     </div>
                 </button>
@@ -345,13 +345,13 @@
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div class="space-y-1">
                         <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider rounded-md border border-orange-500/20" x-text="reportInfo[activeTab].tag"></span>
-                            <span class="text-xs text-slate-400">• Konfigurator Filter & Ekspor</span>
+                            <span class="px-2.5 py-0.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[11px] font-black uppercase tracking-wider rounded-md border border-orange-500/20" x-text="reportInfo[activeTab].tag"></span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">• Konfigurator Filter & Ekspor</span>
                         </div>
                         <h3 class="text-xl font-black text-slate-800 dark:text-slate-100" x-text="reportInfo[activeTab].title"></h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 max-w-3xl leading-relaxed" x-text="reportInfo[activeTab].desc"></p>
                     </div>
-                    <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 dark:bg-slate-900/60 px-3.5 py-2 rounded-xl border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                    <div class="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900/60 px-3.5 py-2 rounded-xl border border-slate-200/60 dark:border-slate-700/60 shrink-0">
                         <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <span>Format Dokumen: Landscape A4 / Excel OpenXML</span>
                     </div>
@@ -504,12 +504,12 @@
                     <div>
                         <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
                             <span>Pratinjau Struktur Data (Live Sample Preview)</span>
-                            <span class="px-2 py-0.5 text-[9px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-md">5 Baris Teratas</span>
+                            <span class="px-2 py-0.5 text-[11px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-md">5 Baris Teratas</span>
                         </h4>
-                        <p class="text-xs text-slate-400">Cuplikan data aktual dari database untuk memvalidasi kolom dan representasi sebelum diunduh.</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Cuplikan data aktual dari database untuk memvalidasi kolom dan representasi sebelum diunduh.</p>
                     </div>
                 </div>
-                <div class="text-[11px] font-medium text-slate-400 flex items-center gap-1.5">
+                <div class="text-[11px] font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                     <span>Struktur Kolom:</span>
                     <span class="font-bold text-slate-700 dark:text-slate-200 truncate max-w-xs sm:max-w-md" x-text="reportInfo[activeTab].columns"></span>
                 </div>
@@ -520,7 +520,7 @@
                 <!-- Preview 1: Akademik & Mahasiswa -->
                 <div x-show="activeTab === 'akademik'">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
                             <tr>
                                 <th class="py-3 px-4">NPM</th>
                                 <th class="py-3 px-4">Nama Mahasiswa</th>
@@ -542,30 +542,30 @@
                                     <td class="py-3 px-4 max-w-xs truncate" title="{{ $t->final_title ?? $t->title }}">{{ $t->final_title ?? $t->title }}</td>
                                     <td class="py-3 px-4 text-[11px]">
                                         <div class="truncate max-w-[180px]">P1: {{ $t->pembimbing1->name ?? '-' }}</div>
-                                        <div class="truncate max-w-[180px] text-slate-400">P2: {{ $t->pembimbing2->name ?? '-' }}</div>
+                                        <div class="truncate max-w-[180px] text-slate-500 dark:text-slate-400">P2: {{ $t->pembimbing2->name ?? '-' }}</div>
                                     </td>
                                     <td class="py-3 px-4 text-center font-bold">{{ ($t->sessions_p1 ?? 0) + ($t->sessions_p2 ?? 0) }}</td>
                                     <td class="py-3 px-4 text-center">
                                         @if($t->isAccUpFinal())
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">Siap Seminar</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">Siap Seminar</span>
                                         @else
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">Belum ACC</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">Belum ACC</span>
                                         @endif
                                     </td>
                                     <td class="py-3 px-4 text-center">
                                         @if($t->isAccSidangFinal())
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">Siap Sidang</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">Siap Sidang</span>
                                         @else
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">Belum ACC</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">Belum ACC</span>
                                         @endif
                                     </td>
                                     <td class="py-3 px-4 text-center">
-                                        <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-orange-50 text-orange-600 dark:bg-orange-950/50 dark:text-orange-400">{{ ucfirst($t->status) }}</span>
+                                        <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-orange-50 text-orange-600 dark:bg-orange-950/50 dark:text-orange-400">{{ ucfirst($t->status) }}</span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="py-8 text-center text-slate-400">Belum ada data skripsi aktif.</td>
+                                    <td colspan="9" class="py-8 text-center text-slate-500 dark:text-slate-400">Belum ada data skripsi aktif.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -575,7 +575,7 @@
                 <!-- Preview 2: Nilai Sidang & Yudisium -->
                 <div x-show="activeTab === 'nilai_sidang'">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
                             <tr>
                                 <th class="py-3 px-4">NPM</th>
                                 <th class="py-3 px-4">Nama Mahasiswa</th>
@@ -607,17 +607,17 @@
                                     </td>
                                     <td class="py-3 px-4 text-center">
                                         @if($sc['finalScore'] >= 60)
-                                            <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">LULUS</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">LULUS</span>
                                         @elseif($sc['finalScore'] > 0)
-                                            <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">TIDAK LULUS</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">TIDAK LULUS</span>
                                         @else
-                                            <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">BELUM LENGKAP</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-black rounded-full bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">BELUM LENGKAP</span>
                                         @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="py-8 text-center text-slate-400">Belum ada data sidang skripsi.</td>
+                                    <td colspan="7" class="py-8 text-center text-slate-500 dark:text-slate-400">Belum ada data sidang skripsi.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -627,7 +627,7 @@
                 <!-- Preview 3: Beban Kinerja Dosen -->
                 <div x-show="activeTab === 'beban_dosen'">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
                             <tr>
                                 <th class="py-3 px-4">Nama Dosen</th>
                                 <th class="py-3 px-4">NIP / NIDN</th>
@@ -648,17 +648,17 @@
                                     <td class="py-3 px-4 text-center font-black text-sm text-slate-800 dark:text-slate-100">{{ $totDos }}</td>
                                     <td class="py-3 px-4 text-center">
                                         @if($totDos >= 10)
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400">Padat (&ge;10)</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400">Padat (&ge;10)</span>
                                         @elseif($totDos >= 5)
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">Normal</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">Normal</span>
                                         @else
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">Tersedia</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">Tersedia</span>
                                         @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="py-8 text-center text-slate-400">Belum ada data dosen pengajar.</td>
+                                    <td colspan="6" class="py-8 text-center text-slate-500 dark:text-slate-400">Belum ada data dosen pengajar.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -668,7 +668,7 @@
                 <!-- Preview 4: Kepatuhan Bimbingan -->
                 <div x-show="activeTab === 'kepatuhan'">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
                             <tr>
                                 <th class="py-3 px-4">NPM</th>
                                 <th class="py-3 px-4">Nama Mahasiswa</th>
@@ -691,17 +691,17 @@
                                     </td>
                                     <td class="py-3 px-4 text-center">
                                         @if($daysInactive === null || $daysInactive > 14)
-                                            <span class="px-2.5 py-0.5 text-[10px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">KRITIS (>14 HARI)</span>
+                                            <span class="px-2.5 py-0.5 text-[11px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">KRITIS (>14 HARI)</span>
                                         @elseif($daysInactive > 7)
-                                            <span class="px-2.5 py-0.5 text-[10px] font-black rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">PERINGATAN (>7 HARI)</span>
+                                            <span class="px-2.5 py-0.5 text-[11px] font-black rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">PERINGATAN (>7 HARI)</span>
                                         @else
-                                            <span class="px-2.5 py-0.5 text-[10px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">AKTIF</span>
+                                            <span class="px-2.5 py-0.5 text-[11px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">AKTIF</span>
                                         @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="py-8 text-center text-slate-400">Semua mahasiswa aktif melakukan bimbingan secara teratur.</td>
+                                    <td colspan="6" class="py-8 text-center text-slate-500 dark:text-slate-400">Semua mahasiswa aktif melakukan bimbingan secara teratur.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -711,7 +711,7 @@
                 <!-- Preview 5: Topik & Peminatan -->
                 <div x-show="activeTab === 'topik'">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
                             <tr>
                                 <th class="py-3 px-4">NPM</th>
                                 <th class="py-3 px-4">Nama Mahasiswa</th>
@@ -727,19 +727,19 @@
                                     <td class="py-3 px-4 font-mono font-bold">{{ $top->student->identifier ?? '-' }}</td>
                                     <td class="py-3 px-4 font-bold text-slate-900 dark:text-white">{{ $top->student->name ?? '-' }}</td>
                                     <td class="py-3 px-4">
-                                        <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300">
+                                        <span class="px-2 py-0.5 text-[11px] font-bold rounded-md bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300">
                                             {{ strtoupper($top->topic ?? 'UMUM') }}
                                         </span>
                                     </td>
                                     <td class="py-3 px-4 max-w-sm truncate">{{ $top->final_title ?? $top->title }}</td>
                                     <td class="py-3 px-4 text-slate-500">{{ $top->pembimbing1->name ?? '-' }}</td>
                                     <td class="py-3 px-4 text-center">
-                                        <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">{{ ucfirst($top->status) }}</span>
+                                        <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">{{ ucfirst($top->status) }}</span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="py-8 text-center text-slate-400">Belum ada data topik skripsi.</td>
+                                    <td colspan="6" class="py-8 text-center text-slate-500 dark:text-slate-400">Belum ada data topik skripsi.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -749,7 +749,7 @@
                 <!-- Preview 6: Kelulusan -->
                 <div x-show="activeTab === 'kelulusan'">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
                             <tr>
                                 <th class="py-3 px-4">NPM</th>
                                 <th class="py-3 px-4">Nama Mahasiswa</th>
@@ -777,7 +777,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="py-8 text-center text-slate-400">Belum ada data kelulusan yang tercatat.</td>
+                                    <td colspan="6" class="py-8 text-center text-slate-500 dark:text-slate-400">Belum ada data kelulusan yang tercatat.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -788,7 +788,7 @@
                 <div x-show="activeTab === 'waktu'">
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-4">
-                            <h5 class="text-xs font-black uppercase tracking-wider text-slate-400">Rata-Rata Durasi Skripsi per Gelombang</h5>
+                            <h5 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Rata-Rata Durasi Skripsi per Gelombang</h5>
                             <div class="space-y-2">
                                 @forelse($waveDurationStats ?? [] as $wName => $avgM)
                                     <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/60">
@@ -796,13 +796,13 @@
                                         <span class="font-black text-indigo-600 dark:text-indigo-400">{{ $avgM }} Bulan</span>
                                     </div>
                                 @empty
-                                    <p class="text-xs text-slate-400">Belum ada data gelombang kelulusan.</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">Belum ada data gelombang kelulusan.</p>
                                 @endforelse
                             </div>
                         </div>
 
                         <div class="space-y-4">
-                            <h5 class="text-xs font-black uppercase tracking-wider text-slate-400">Rasio Ketepatan Waktu Lulus</h5>
+                            <h5 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Rasio Ketepatan Waktu Lulus</h5>
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="p-4 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-800/40 text-center">
                                     <p class="text-2xl font-black text-emerald-600 dark:text-emerald-400">{{ $onTimeStats['Tepat Waktu'] ?? 0 }}</p>
@@ -820,7 +820,7 @@
                 <!-- Preview 8: Logs -->
                 <div x-show="activeTab === 'logs'">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+                        <thead class="bg-slate-50/80 dark:bg-slate-900/40 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
                             <tr>
                                 <th class="py-3 px-4">Waktu</th>
                                 <th class="py-3 px-4">Pengguna</th>
@@ -831,10 +831,10 @@
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700 font-medium">
                             @forelse($previewLogs as $lg)
                                 <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/20">
-                                    <td class="py-3 px-4 text-slate-400 whitespace-nowrap">{{ $lg->created_at ? $lg->created_at->format('d/m/Y H:i') : '-' }}</td>
+                                    <td class="py-3 px-4 text-slate-500 dark:text-slate-400 whitespace-nowrap">{{ $lg->created_at ? $lg->created_at->format('d/m/Y H:i') : '-' }}</td>
                                     <td class="py-3 px-4 font-bold text-slate-800 dark:text-slate-200">{{ $lg->user->name ?? 'System' }}</td>
                                     <td class="py-3 px-4">
-                                        <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded-md bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                                        <span class="px-2 py-0.5 text-[11px] font-mono font-bold rounded-md bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
                                             {{ strtoupper($lg->activity ?? '-') }}
                                         </span>
                                     </td>
@@ -842,7 +842,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="py-8 text-center text-slate-400">Belum ada riwayat aktivitas log.</td>
+                                    <td colspan="4" class="py-8 text-center text-slate-500 dark:text-slate-400">Belum ada riwayat aktivitas log.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -861,14 +861,14 @@
                                     <div class="text-xs font-bold text-slate-900 dark:text-white">{{ $t->student->name ?? '-' }}</div>
                                     <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">{{ $t->student->identifier ?? '-' }} &bull; Angkatan {{ $t->student->entry_year ?? '-' }}</div>
                                 </div>
-                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300 shrink-0">{{ ucfirst($t->status) }}</span>
+                                <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300 shrink-0">{{ ucfirst($t->status) }}</span>
                             </div>
                             <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{{ $t->final_title ?? $t->title }}</p>
                             <div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5">
                                 <div>P1: <strong class="text-slate-700 dark:text-slate-200">{{ $t->pembimbing1->name ?? '-' }}</strong></div>
                                 <div>P2: <strong class="text-slate-700 dark:text-slate-200">{{ $t->pembimbing2->name ?? '-' }}</strong></div>
                             </div>
-                            <div class="flex flex-wrap items-center gap-1.5 pt-1 text-[10px] font-bold">
+                            <div class="flex flex-wrap items-center gap-1.5 pt-1 text-[11px] font-bold">
                                 <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">{{ ($t->sessions_p1 ?? 0) + ($t->sessions_p2 ?? 0) }} Sesi</span>
                                 <span class="px-2 py-0.5 rounded-full {{ $t->isAccUpFinal() ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">UP: {{ $t->isAccUpFinal() ? 'Siap Seminar' : 'Belum ACC' }}</span>
                                 <span class="px-2 py-0.5 rounded-full {{ $t->isAccSidangFinal() ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">Sidang: {{ $t->isAccSidangFinal() ? 'Siap Sidang' : 'Belum ACC' }}</span>
@@ -894,11 +894,11 @@
                                     <span class="text-sm font-black text-slate-900 dark:text-white">{{ $sc['finalScore'] > 0 ? number_format($sc['finalScore'], 1) : '-' }} ({{ $sc['finalGrade'] ?? '-' }})</span>
                                     <div class="mt-0.5">
                                         @if($sc['finalScore'] >= 60)
-                                            <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">LULUS</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">LULUS</span>
                                         @elseif($sc['finalScore'] > 0)
-                                            <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">TIDAK LULUS</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">TIDAK LULUS</span>
                                         @else
-                                            <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">BELUM LENGKAP</span>
+                                            <span class="px-2 py-0.5 text-[11px] font-black rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">BELUM LENGKAP</span>
                                         @endif
                                     </div>
                                 </div>
@@ -925,11 +925,11 @@
                             </div>
                             <div class="shrink-0">
                                 @if($totDos >= 10)
-                                    <span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">Padat (&ge;10)</span>
+                                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">Padat (&ge;10)</span>
                                 @elseif($totDos >= 5)
-                                    <span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">Normal</span>
+                                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">Normal</span>
                                 @else
-                                    <span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">Tersedia</span>
+                                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">Tersedia</span>
                                 @endif
                             </div>
                         </div>
@@ -949,11 +949,11 @@
                                     <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">{{ $kp->student->identifier ?? '-' }}</div>
                                 </div>
                                 @if($daysInactive === null || $daysInactive > 14)
-                                    <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 shrink-0">KRITIS</span>
+                                    <span class="px-2 py-0.5 text-[11px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 shrink-0">KRITIS</span>
                                 @elseif($daysInactive > 7)
-                                    <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 shrink-0">PERINGATAN</span>
+                                    <span class="px-2 py-0.5 text-[11px] font-black rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 shrink-0">PERINGATAN</span>
                                 @else
-                                    <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 shrink-0">AKTIF</span>
+                                    <span class="px-2 py-0.5 text-[11px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 shrink-0">AKTIF</span>
                                 @endif
                             </div>
                             <div class="text-[11px] text-slate-500 dark:text-slate-400">
@@ -974,7 +974,7 @@
                                     <div class="text-xs font-bold text-slate-900 dark:text-white">{{ $top->student->name ?? '-' }}</div>
                                     <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">{{ $top->student->identifier ?? '-' }}</div>
                                 </div>
-                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 shrink-0">{{ strtoupper($top->topic ?? 'UMUM') }}</span>
+                                <span class="px-2 py-0.5 text-[11px] font-bold rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 shrink-0">{{ strtoupper($top->topic ?? 'UMUM') }}</span>
                             </div>
                             <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{{ $top->final_title ?? $top->title }}</p>
                             <div class="text-[11px] text-slate-500 dark:text-slate-400">P1: {{ $top->pembimbing1->name ?? '-' }} &bull; Status: <strong>{{ ucfirst($top->status) }}</strong></div>
@@ -1041,7 +1041,7 @@
                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-100">{{ $lg->user->name ?? 'System' }}</span>
                                 <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ $lg->created_at ? $lg->created_at->format('d/m/Y H:i') : '-' }}</span>
                             </div>
-                            <span class="inline-block px-2 py-0.5 text-[10px] font-mono font-bold rounded-md bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">{{ strtoupper($lg->activity ?? '-') }}</span>
+                            <span class="inline-block px-2 py-0.5 text-[11px] font-mono font-bold rounded-md bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">{{ strtoupper($lg->activity ?? '-') }}</span>
                             <p class="text-xs text-slate-600 dark:text-slate-300">{{ $lg->description }}</p>
                         </div>
                     @empty

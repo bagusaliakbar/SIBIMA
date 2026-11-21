@@ -61,7 +61,7 @@
                 {{ $icon }}
             @endif
         </div>
-        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ $title }}</h3>
+        <h3 class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{{ $title }}</h3>
         <h2 class="text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-1 uppercase">{{ $value }}</h2>
         @if($subtitle)
             <div class="mt-2 space-y-0.5 border-t border-slate-100 dark:border-slate-700/50 pt-2">

@@ -36,19 +36,19 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                        <span class="text-slate-400">Nomor Dokumen Resmi:</span>
+                        <span class="text-slate-500 dark:text-slate-400">Nomor Dokumen Resmi:</span>
                         <div class="font-black text-slate-800 dark:text-slate-200 text-sm mt-0.5">{{ $advisorDecree->decree_number }}</div>
                     </div>
                     <div>
-                        <span class="text-slate-400">Tanggal Ditetapkan:</span>
+                        <span class="text-slate-500 dark:text-slate-400">Tanggal Ditetapkan:</span>
                         <div class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">{{ $advisorDecree->formatted_decree_date }}</div>
                     </div>
                     <div>
-                        <span class="text-slate-400">Tahun Akademik / Semester:</span>
+                        <span class="text-slate-500 dark:text-slate-400">Tahun Akademik / Semester:</span>
                         <div class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">T.A {{ $advisorDecree->academic_year }} - Semester {{ $advisorDecree->semester }}</div>
                     </div>
                     <div>
-                        <span class="text-slate-400">Jenis Dokumen:</span>
+                        <span class="text-slate-500 dark:text-slate-400">Jenis Dokumen:</span>
                         <div class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">
                             @if($advisorDecree->target_type === 'individual_dosen' && $advisorDecree->dosen)
                                 Surat Tugas Khusus Dosen: {{ $advisorDecree->dosen->name }}
@@ -58,24 +58,24 @@
                         </div>
                     </div>
                     <div>
-                        <span class="text-slate-400">Pejabat Penandatangan:</span>
+                        <span class="text-slate-500 dark:text-slate-400">Pejabat Penandatangan:</span>
                         <div class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">
                             {{ $advisorDecree->signatory_name }}
                             @if($advisorDecree->signatory_identifier)
-                                <span class="text-slate-400">({{ $advisorDecree->signatory_identifier }})</span>
+                                <span class="text-slate-500 dark:text-slate-400">({{ $advisorDecree->signatory_identifier }})</span>
                             @endif
                         </div>
                         <div class="text-[11px] text-slate-500">{{ $advisorDecree->signatory_title }}</div>
                     </div>
                     <div>
-                        <span class="text-slate-400">Total Mahasiswa Terlampir:</span>
+                        <span class="text-slate-500 dark:text-slate-400">Total Mahasiswa Terlampir:</span>
                         <div class="font-black text-orange-600 text-base mt-0.5">{{ $advisorDecree->total_students }} Mahasiswa</div>
                     </div>
                 </div>
 
                 @if($advisorDecree->notes)
                     <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
-                        <span class="text-xs text-slate-400 font-bold">Catatan Pengarsipan:</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-bold">Catatan Pengarsipan:</span>
                         <p class="text-xs text-slate-600 dark:text-slate-300 italic mt-0.5">{{ $advisorDecree->notes }}</p>
                     </div>
                 @endif
@@ -119,7 +119,7 @@
             {{-- Desktop Table View --}}
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[10px] border-y border-slate-100 dark:border-slate-800">
+                    <thead class="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[11px] border-y border-slate-100 dark:border-slate-800">
                         <tr>
                             <th class="px-6 py-3.5 w-12 text-center">No</th>
                             <th class="px-6 py-3.5 w-60">Mahasiswa (NPM)</th>
@@ -131,12 +131,12 @@
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                         @foreach($advisorDecree->theses_data as $index => $item)
                             <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition">
-                                <td class="px-6 py-4 text-center font-bold text-slate-400">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 text-center font-bold text-slate-500 dark:text-slate-400">{{ $index + 1 }}</td>
                                 <td class="px-6 py-4">
                                     <div class="font-black text-slate-900 dark:text-white">{{ $item['student_name'] ?? '-' }}</div>
                                     <div class="text-[11px] text-slate-500 font-mono">{{ $item['student_npm'] ?? '-' }}</div>
                                     @if(!empty($item['student_cohort']))
-                                        <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold">
+                                        <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold">
                                             Angkatan {{ $item['student_cohort'] }}
                                         </span>
                                     @endif
@@ -146,7 +146,7 @@
                                         "{{ $item['title'] ?? '-' }}"
                                     </div>
                                     @if(!empty($item['topic']) && $item['topic'] !== '-')
-                                        <div class="text-[10px] text-orange-600 font-bold mt-1">
+                                        <div class="text-[11px] text-orange-600 font-bold mt-1">
                                             Bidang/Topik: {{ $item['topic'] }}
                                         </div>
                                     @endif
@@ -187,12 +187,12 @@
                         @endif
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
                             <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
-                                <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Pembimbing 1</div>
+                                <div class="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400">Pembimbing 1</div>
                                 <div class="font-bold text-slate-900 dark:text-white mt-0.5">{{ $item['pembimbing1_name'] ?? '-' }}</div>
                                 <div class="text-[11px] text-slate-500 dark:text-slate-400">NIDN: {{ $item['pembimbing1_nidn'] ?? '-' }}</div>
                             </div>
                             <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
-                                <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Pembimbing 2</div>
+                                <div class="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400">Pembimbing 2</div>
                                 <div class="font-bold text-slate-900 dark:text-white mt-0.5">{{ $item['pembimbing2_name'] ?? '-' }}</div>
                                 <div class="text-[11px] text-slate-500 dark:text-slate-400">NIDN: {{ $item['pembimbing2_nidn'] ?? '-' }}</div>
                             </div>

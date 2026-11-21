@@ -96,14 +96,14 @@
                                                     @if($student)
                                                         <img src="{{ $student->avatar_url }}" alt="{{ $student->name }}" class="w-full h-full object-cover">
                                                     @else
-                                                        <span class="text-xs font-bold text-slate-400">M</span>
+                                                        <span class="text-xs font-bold text-slate-500 dark:text-slate-400">M</span>
                                                     @endif
                                                 </div>
                                                 <div class="min-w-0">
                                                     <h4 class="text-xs font-black text-slate-900 dark:text-slate-100 truncate">
                                                         {{ $student?->name ?? 'Mahasiswa' }}
                                                     </h4>
-                                                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                                                         {{ $student?->identifier ?? '-' }}
                                                     </p>
                                                 </div>
@@ -111,26 +111,26 @@
 
                                             <div class="shrink-0">
                                                 @if($session->is_absent)
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold border border-slate-200 dark:border-slate-600">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-bold border border-slate-200 dark:border-slate-600">
                                                         <span>{{ $session->student_attendance_status === 'attending' ? 'Konfirmasi: Hadir' : ($session->student_attendance_status === 'permission' ? 'Izin' : 'Tanpa Konfirmasi') }}</span>
                                                     </span>
                                                 @elseif($session->status === 'completed')
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-[10px] font-black uppercase border border-emerald-200 dark:border-emerald-800">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-[11px] font-black uppercase border border-emerald-200 dark:border-emerald-800">
                                                         <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                         <span>Hadir</span>
                                                     </span>
                                                 @elseif($session->student_attendance_status === 'attending')
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-black uppercase border border-emerald-200 dark:border-emerald-700">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-black uppercase border border-emerald-200 dark:border-emerald-700">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                         <span>Akan Hadir</span>
                                                     </span>
                                                 @elseif($session->student_attendance_status === 'permission')
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[10px] font-black uppercase border border-amber-200 dark:border-amber-700" title="{{ $session->student_attendance_reason }}">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[11px] font-black uppercase border border-amber-200 dark:border-amber-700" title="{{ $session->student_attendance_reason }}">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                                         <span>Izin</span>
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold border border-slate-200 dark:border-slate-600">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-bold border border-slate-200 dark:border-slate-600">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
                                                         <span>Belum Respon</span>
                                                     </span>
@@ -159,7 +159,7 @@
                                                         @method('PATCH')
                                                         <input type="hidden" name="status" value="approved">
                                                         <button type="submit" 
-                                                                class="px-2.5 py-1 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center gap-1">
+                                                                class="px-2.5 py-1 bg-orange-600 hover:bg-orange-700 active:bg-orange-800 text-white rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center gap-1">
                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                             <span>Terima</span>
                                                         </button>
@@ -168,7 +168,7 @@
                                             @endif
 
                                             @can('update', $session)
-                                                <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="p-1.5 text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all" title="Ubah / Reschedule">
+                                                <a href="{{ route('mentoring-sessions.edit', $session->id) }}" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-all" title="Ubah / Reschedule">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                 </a>
                                             @endcan
@@ -186,7 +186,7 @@
                                                         data-scheduled-time="{{ $session->scheduled_at->format('H:i') }} WIB"
                                                         data-is-group="{{ $isGroup ? '1' : '0' }}"
                                                         data-group-count="{{ $groupCountMap[($session->dosen_id ?? '0') . '_' . $session->scheduled_at->format('Y-m-d H:i')] ?? 1 }}"
-                                                        class="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-all cursor-pointer"
+                                                        class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-all cursor-pointer"
                                                         title="{{ $session->status === 'pending' ? 'Tolak Pengajuan Jadwal' : 'Batalkan Sesi Bimbingan' }}">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                 </button>
@@ -217,19 +217,19 @@
                                         <!-- 1. Rincian Skripsi & Dosen Pembimbing -->
                                         <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-2 shadow-2xs">
                                             <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-1.5">
-                                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Info Akademik Skripsi</span>
-                                                <span class="font-bold text-slate-600 dark:text-slate-300 font-mono text-[10px]">{{ $student?->identifier ?? '-' }}</span>
+                                                <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Info Akademik Skripsi</span>
+                                                <span class="font-bold text-slate-600 dark:text-slate-300 font-mono text-[11px]">{{ $student?->identifier ?? '-' }}</span>
                                             </div>
                                             <p class="font-bold text-slate-800 dark:text-slate-200 text-xs">
-                                                <span class="text-slate-400 font-normal">Judul:</span> {{ $thesis?->title ?? '-' }}
+                                                <span class="text-slate-500 dark:text-slate-400 font-normal">Judul:</span> {{ $thesis?->title ?? '-' }}
                                             </p>
                                             <div class="grid grid-cols-2 gap-2 pt-1 text-[11px]">
                                                 <div>
-                                                    <span class="text-slate-400 block text-[10px]">Pembimbing 1:</span>
+                                                    <span class="text-slate-500 dark:text-slate-400 block text-[11px]">Pembimbing 1:</span>
                                                     <strong class="text-slate-700 dark:text-slate-300">{{ $thesis?->pembimbing1?->name ?? '-' }}</strong>
                                                 </div>
                                                 <div>
-                                                    <span class="text-slate-400 block text-[10px]">Pembimbing 2:</span>
+                                                    <span class="text-slate-500 dark:text-slate-400 block text-[11px]">Pembimbing 2:</span>
                                                     <strong class="text-slate-700 dark:text-slate-300">{{ $thesis?->pembimbing2?->name ?? '-' }}</strong>
                                                 </div>
                                             </div>
@@ -238,20 +238,20 @@
                                         <!-- 2. Catatan Pengajuan & Berkas Naskah Mahasiswa -->
                                         <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-2 shadow-2xs">
                                             <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-1.5">
-                                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Catatan Mahasiswa</span>
-                                                <span class="text-[10px] text-slate-400">Pengajuan Bimbingan</span>
+                                                <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Catatan Mahasiswa</span>
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400">Pengajuan Bimbingan</span>
                                             </div>
                                             @if($session->notes)
                                                 <p class="text-slate-700 dark:text-slate-300 italic leading-relaxed whitespace-pre-line text-xs">
                                                     "{{ $session->notes }}"
                                                 </p>
                                             @else
-                                                <p class="text-slate-400 dark:text-slate-500 italic text-xs">Tidak ada catatan pengajuan khusus dari mahasiswa.</p>
+                                                <p class="text-slate-500 dark:text-slate-400 italic text-xs">Tidak ada catatan pengajuan khusus dari mahasiswa.</p>
                                             @endif
 
                                             @if($session->document_path)
                                                 <div class="pt-2 border-t border-slate-100 dark:border-slate-700/80">
-                                                    <span class="text-[10px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 block mb-1">Dokumen Bimbingan:</span>
+                                                    <span class="text-[11px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 block mb-1">Dokumen Bimbingan:</span>
                                                     <a href="{{ $session->document_path }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/60 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 rounded-xl font-bold text-xs transition-all shadow-2xs">
                                                         <x-google-drive-icon class="w-4 h-4 shrink-0" />
                                                         <span>Buka Dokumen Naskah Google Drive</span>
@@ -263,14 +263,14 @@
                                         <!-- 3. Catatan Hasil Bimbingan Dosen & Form Selesaikan Sesi -->
                                         <div class="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/90 dark:border-slate-700/80 space-y-2.5 shadow-2xs" x-data="{ editingFeedbackMob: false }">
                                             <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700 pb-1.5">
-                                                <span class="text-[10px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 flex items-center gap-1">
+                                                <span class="text-[11px] font-black uppercase tracking-wider text-orange-600 dark:text-orange-400 flex items-center gap-1">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
                                                     <span>Catatan Logbook Pembimbing</span>
                                                 </span>
                                                 @if(in_array(Auth::user()->role, ['dosen', 'admin', 'kaprodi']) && ($session->status === 'completed' || $session->feedback))
                                                     <button type="button" 
                                                             @click="editingFeedbackMob = !editingFeedbackMob" 
-                                                            class="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
+                                                            class="text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer">
                                                         <span x-text="editingFeedbackMob ? 'Batal' : 'Ubah Catatan'">Ubah Catatan</span>
                                                     </button>
                                                 @endif
@@ -317,10 +317,10 @@
                                                         </div>
                                                         <div class="flex items-center justify-end gap-2 pt-1">
                                                             @if($session->status === 'completed')
-                                                                <button type="button" @click="editingFeedbackMob = false" class="px-2.5 py-1 text-slate-500 dark:text-slate-400 text-[10px] font-bold cursor-pointer">Batal</button>
-                                                                <button type="submit" class="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer">Simpan Catatan</button>
+                                                                <button type="button" @click="editingFeedbackMob = false" class="px-2.5 py-1 text-slate-500 dark:text-slate-400 text-[11px] font-bold cursor-pointer">Batal</button>
+                                                                <button type="submit" class="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer">Simpan Catatan</button>
                                                             @else
-                                                                <button type="submit" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5">
+                                                                <button type="submit" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5">
                                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                                     <span>Simpan & Selesaikan Sesi</span>
                                                                 </button>

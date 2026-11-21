@@ -118,7 +118,7 @@
                             Progress Bimbingan
                         </h3>
                         <div class="flex items-center gap-3">
-                            <button type="button" onclick="captureProgress()" class="inline-flex items-center px-2.5 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-[10px] font-bold text-slate-600 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm cursor-pointer">
+                            <button type="button" onclick="captureProgress()" class="inline-flex items-center px-2.5 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm cursor-pointer">
                                 <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                 DOWNLOAD BUKTI ACC
                             </button>
@@ -128,13 +128,13 @@
                     <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-6 p-3 bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl">
                         <div class="flex items-center gap-2">
                             <div class="w-3 h-3 rounded bg-orange-500"></div>
-                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Progres Sesi Bimbingan</span>
+                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Progres Sesi Bimbingan</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sudah di-ACC Dosen Pembimbing</span>
+                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sudah di-ACC Dosen Pembimbing</span>
                         </div>
-                        <div class="ml-auto text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest hidden lg:block">
+                        <div class="ml-auto text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest hidden lg:block">
                             Syarat: 4x (UP) & 8x (Sidang) Per Dosen
                         </div>
                     </div>
@@ -145,7 +145,7 @@
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between items-start gap-2.5 sm:gap-4 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
                                 <span class="text-sm font-bold text-slate-800 dark:text-slate-100">Seminar Usulan Penelitian (UP)</span>
                                 @if($thesis->isAccUpFinal())
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/60 self-start sm:self-auto shrink-0 whitespace-nowrap shadow-xs">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/60 self-start sm:self-auto shrink-0 whitespace-nowrap shadow-xs">
                                         <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                         </svg>
@@ -159,10 +159,10 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-1.5">
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 1: {{ $thesis->pembimbing1->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold tabular-nums {{ $countP1 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">
+                                        <span class="text-[11px] font-bold tabular-nums {{ $countP1 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">
                                             {{ min($countP1, 4) }}/4
                                             @if($countP1 > 4)
-                                                <span class="text-slate-400 dark:text-slate-500 font-medium">({{ $countP1 }} sesi)</span>
+                                                <span class="text-slate-500 dark:text-slate-400 font-medium">({{ $countP1 }} sesi)</span>
                                             @endif
                                         </span>
                                     </div>
@@ -184,10 +184,10 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-1.5">
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 2: {{ $thesis->pembimbing2->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold tabular-nums {{ $countP2 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">
+                                        <span class="text-[11px] font-bold tabular-nums {{ $countP2 >= 4 ? 'text-emerald-600' : 'text-orange-600' }}">
                                             {{ min($countP2, 4) }}/4
                                             @if($countP2 > 4)
-                                                <span class="text-slate-400 dark:text-slate-500 font-medium">({{ $countP2 }} sesi)</span>
+                                                <span class="text-slate-500 dark:text-slate-400 font-medium">({{ $countP2 }} sesi)</span>
                                             @endif
                                         </span>
                                     </div>
@@ -212,14 +212,14 @@
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between items-start gap-2.5 sm:gap-4 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
                                 <span class="text-sm font-bold text-slate-800 dark:text-slate-100">Sidang Akhir Skripsi</span>
                                 @if($thesis->isAccSidangFinal())
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/60 self-start sm:self-auto shrink-0 whitespace-nowrap shadow-xs">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold uppercase tracking-wider border border-emerald-200 dark:border-emerald-800/60 self-start sm:self-auto shrink-0 whitespace-nowrap shadow-xs">
                                         <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                         </svg>
                                         <span>Sudah Di-ACC Kedua Pembimbing</span>
                                     </span>
                                 @elseif($countP1 >= 8 && $countP2 >= 8)
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-[10px] font-bold uppercase tracking-wider border border-amber-200 dark:border-amber-800/60 self-start sm:self-auto shrink-0 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 text-[11px] font-bold uppercase tracking-wider border border-amber-200 dark:border-amber-800/60 self-start sm:self-auto shrink-0 whitespace-nowrap">
                                         <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                                         <span>Syarat Sesi Terpenuhi · Menunggu ACC</span>
                                     </span>
@@ -227,7 +227,7 @@
                                     @php
                                         $sidangRemaining = max(0, 8 - $countP1) + max(0, 8 - $countP2);
                                     @endphp
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-700 self-start sm:self-auto shrink-0 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold uppercase tracking-wider border border-slate-200 dark:border-slate-700 self-start sm:self-auto shrink-0 whitespace-nowrap">
                                         <span>Butuh {{ $sidangRemaining }} Sesi Lagi</span>
                                     </span>
                                 @endif
@@ -238,7 +238,7 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-1.5">
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 1: {{ $thesis->pembimbing1->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold {{ $countP1 >= 8 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP1 }}/8</span>
+                                        <span class="text-[11px] font-bold {{ $countP1 >= 8 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP1 }}/8</span>
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -258,7 +258,7 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-1.5">
                                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Pembimbing 2: {{ $thesis->pembimbing2->name ?? '-' }}</span>
-                                        <span class="text-[10px] font-bold {{ $countP2 >= 8 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP2 }}/8</span>
+                                        <span class="text-[11px] font-bold {{ $countP2 >= 8 ? 'text-emerald-600' : 'text-orange-600' }}">{{ $countP2 }}/8</span>
                                     </div>
                                     <div class="flex items-center gap-3">
                                         <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -321,7 +321,7 @@
                                placeholder="Cari Topik Pembahasan" 
                                class="h-10 w-full sm:w-64 pl-9 pr-9 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-slate-100 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs block">
                         @if(isset($search) && $search !== '')
-                            <a href="{{ route('mentoring-sessions.index') }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" title="Bersihkan Pencarian">
+                            <a href="{{ route('mentoring-sessions.index') }}" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" title="Bersihkan Pencarian">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </a>
                         @endif

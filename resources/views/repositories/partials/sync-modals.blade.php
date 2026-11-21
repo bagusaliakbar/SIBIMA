@@ -8,7 +8,7 @@
                 </div>
                 <div>
                     <h3 class="text-base font-black text-slate-800 dark:text-white uppercase tracking-tight">Migrasi Data Portal</h3>
-                    <p class="text-[11px] font-medium text-slate-400">Sinkronisasi Pustaka FASILKOM</p>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Sinkronisasi Pustaka FASILKOM</p>
                 </div>
             </div>
             
@@ -27,15 +27,15 @@
             <!-- Live Migration Statistics Cards -->
             <div class="grid grid-cols-3 gap-2.5 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
-                    <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Data Baru</p>
+                    <p class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Data Baru</p>
                     <p id="statNewCount" class="text-base font-black text-emerald-600 dark:text-emerald-400">0</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
-                    <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Duplikat</p>
+                    <p class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Duplikat</p>
                     <p id="statDupCount" class="text-base font-black text-amber-600 dark:text-amber-400">0</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
-                    <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Total</p>
+                    <p class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Total</p>
                     <p id="statTotalCount" class="text-base font-black text-indigo-600 dark:text-indigo-400">0</p>
                 </div>
             </div>
@@ -57,17 +57,17 @@
                 </div>
                 <div>
                     <h3 class="text-base font-black text-slate-800 dark:text-white uppercase tracking-tight">Sync Repositori UNSUB</h3>
-                    <p class="text-[11px] font-medium text-slate-400">Sinkronisasi Pustaka & Naskah BAB I & II</p>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Sinkronisasi Pustaka & Naskah BAB I & II</p>
                 </div>
             </div>
 
             <!-- Policy & Constraints Badges -->
             <div class="flex items-center gap-2 mb-4 flex-wrap">
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                     <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                     <span>Khusus FASILKOM (144 Dokumen)</span>
                 </span>
-                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
                     <svg class="w-3 h-3 text-purple-600 dark:text-purple-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                     <span>BAB 1 s/d BAB 6 (On-Demand Ready)</span>
                 </span>
@@ -80,7 +80,7 @@
             <!-- Download PDF option toggle -->
             <div id="unsubOptionsContainer" class="p-3.5 mb-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/80 space-y-2.5">
                 <div class="flex items-center justify-between gap-2">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-black uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80">
                         <svg class="w-3 h-3 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         <span>Rekomendasi: On-Demand Streaming (Hemat Penyimpanan VPS)</span>
                     </span>
@@ -109,23 +109,23 @@
             <!-- Live Statistics Cards -->
             <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
-                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Fasilkom</p>
+                    <p class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Fasilkom</p>
                     <p id="statUnsubTotal" class="text-sm font-black text-slate-700 dark:text-slate-200">144</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
-                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Data Baru</p>
+                    <p class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Data Baru</p>
                     <p id="statUnsubNew" class="text-sm font-black text-emerald-600 dark:text-emerald-400">0</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
-                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">Diperkaya</p>
+                    <p class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Diperkaya</p>
                     <p id="statUnsubEnriched" class="text-sm font-black text-indigo-600 dark:text-indigo-400">0</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
-                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">BAB 1 PDF</p>
+                    <p class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">BAB 1 PDF</p>
                     <p id="statUnsubBab1" class="text-sm font-black text-purple-600 dark:text-purple-400">0</p>
                 </div>
                 <div class="text-center p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xs">
-                    <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-wider mb-0.5">BAB 2 PDF</p>
+                    <p class="text-[11px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">BAB 2 PDF</p>
                     <p id="statUnsubBab2" class="text-sm font-black text-amber-600 dark:text-amber-400">0</p>
                 </div>
             </div>

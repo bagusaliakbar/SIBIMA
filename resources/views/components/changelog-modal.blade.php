@@ -108,7 +108,7 @@
                         <h3 id="changelog-modal-title" class="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">
                             Catatan Versi SIBIMA
                         </h3>
-                        <span class="px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60 text-[10px] font-mono font-bold">
+                        <span class="px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60 text-[11px] font-mono font-bold">
                             {{ $currentVersion }}
                         </span>
                     </div>
@@ -120,7 +120,7 @@
 
             <button type="button"
                     @click="$dispatch('close-modal', 'changelog-modal')"
-                    class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer shrink-0"
+                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer shrink-0"
                     aria-label="Tutup">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -143,7 +143,7 @@
                         x-show="searchQuery.length > 0"
                         @click="searchQuery = ''"
                         aria-label="Hapus pencarian"
-                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -211,7 +211,7 @@
                                     {{ $ver }}
                                 </span>
                                 @if(!empty($release['badge']))
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $badgeColors }}">
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold border {{ $badgeColors }}">
                                         {{ $release['badge'] }}
                                     </span>
                                 @endif
@@ -225,7 +225,7 @@
                         </div>
 
                         <div class="flex items-center gap-2 shrink-0">
-                            <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 hidden sm:inline">
+                            <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline">
                                 {{ count($release['items']) }} item
                             </span>
                             <svg class="w-4 h-4 text-slate-400 transition-transform duration-200"
@@ -258,7 +258,7 @@
 
             <!-- Empty Search / Filter State -->
             <div x-show="visibleVersions.length === 0" x-cloak class="py-10 text-center space-y-3">
-                <div class="w-11 h-11 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center">
+                <div class="w-11 h-11 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>

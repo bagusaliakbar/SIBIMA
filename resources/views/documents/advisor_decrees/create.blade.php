@@ -71,7 +71,7 @@
                                     <div class="text-xs font-black text-orange-900 dark:text-orange-200">Surat Tugas Pembimbingan BKD (Dosen)</div>
                                     <div class="text-[11px] text-orange-700 dark:text-orange-400 mt-0.5">Menerbitkan surat tugas resmi untuk pelaporan BKD & SISTER bagi <strong>{{ Auth::user()->name }}</strong>.</div>
                                 </div>
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-orange-600 text-white uppercase tracking-wider">Khusus BKD</span>
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-black bg-orange-600 text-white uppercase tracking-wider">Khusus BKD</span>
                             </div>
                         @else
                             <!-- Target Type Segmented Control -->
@@ -118,7 +118,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                                     <span x-text="targetType === 'collective' ? 'Status Penerbitan SK Dekan' : 'Status Surat Tugas Dosen'"></span>
-                                    <span class="text-[10px] text-orange-600 font-bold">Rekomendasi</span>
+                                    <span class="text-[11px] text-orange-600 font-bold">Rekomendasi</span>
                                 </label>
                                 <select x-model="decreeStatus" @change="fetchCandidates()"
                                         class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 font-semibold focus:ring-orange-500 focus:border-orange-500">
@@ -126,20 +126,20 @@
                                     <option value="all">Semua Mahasiswa (Belum & Sudah Ada Dokumen)</option>
                                     <option value="assigned" x-text="targetType === 'collective' ? 'Sudah Pernah Di-SK-kan' : 'Sudah Terbit Surat Tugas Dosen Ini'"></option>
                                 </select>
-                                <p class="text-[10px] text-slate-400 mt-1" x-text="targetType === 'collective' ? 'Mahasiswa yang baru memiliki Surat Tugas mandiri dosen tetap dihitung belum di-SK-kan.' : 'Surat Tugas bisa diterbitkan 2x (masing-masing untuk Pembimbing 1 & Pembimbing 2).'"></p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1" x-text="targetType === 'collective' ? 'Mahasiswa yang baru memiliki Surat Tugas mandiri dosen tetap dihitung belum di-SK-kan.' : 'Surat Tugas bisa diterbitkan 2x (masing-masing untuk Pembimbing 1 & Pembimbing 2).'"></p>
                             </div>
 
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
                                     <span>Periode Pengajuan Judul</span>
-                                    <span class="text-[10px] text-slate-400">Berdasarkan Semester</span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400">Berdasarkan Semester</span>
                                 </label>
                                 <select x-model="submissionPeriod" @change="fetchCandidates()"
                                         class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 font-semibold focus:ring-orange-500 focus:border-orange-500">
                                     <option value="same_as_decree">Sesuai Semester SK Ini (<span x-text="academicYear + ' ' + semester"></span>)</option>
                                     <option value="all">Semua Periode Pengajuan (Termasuk Semester Lalu)</option>
                                 </select>
-                                <p class="text-[10px] text-slate-400 mt-1">Otomatis sinkron dengan T.A & Semester penetapan SK di sebelah kanan.</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Otomatis sinkron dengan T.A & Semester penetapan SK di sebelah kanan.</p>
                             </div>
                         </div>
 
@@ -194,7 +194,7 @@
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="flex items-center gap-2">
                                 <h3 class="text-sm font-black text-slate-900 dark:text-white">Pilih Mahasiswa untuk Lampiran SK</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400"
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400"
                                       x-text="(selectedCount + manualStudents.length) + ' Terpilih'"></span>
                             </div>
 
@@ -209,7 +209,7 @@
                                     Pilih Semua
                                 </button>
                                 <span class="text-slate-300">|</span>
-                                <button type="button" @click="deselectAll()" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition cursor-pointer">
+                                <button type="button" @click="deselectAll()" class="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-600 transition cursor-pointer">
                                     Batal Semua
                                 </button>
                             </div>
@@ -237,8 +237,8 @@
                                         <div class="space-y-1">
                                             <div class="flex items-center gap-2">
                                                 <span class="font-black text-slate-900 dark:text-white" x-text="st.student_name"></span>
-                                                <span class="text-slate-400" x-text="'(' + st.student_npm + ')'"></span>
-                                                <span class="px-1.5 py-0.2 rounded text-[10px] bg-orange-100 text-orange-700 font-bold">Manual</span>
+                                                <span class="text-slate-500 dark:text-slate-400" x-text="'(' + st.student_npm + ')'"></span>
+                                                <span class="px-1.5 py-0.2 rounded text-[11px] bg-orange-100 text-orange-700 font-bold">Manual</span>
                                             </div>
                                             <div class="text-slate-600 dark:text-slate-300 italic" x-text="st.title"></div>
                                             <div class="text-[11px] text-slate-500 flex flex-wrap gap-x-3">
@@ -258,13 +258,13 @@
                         <div class="border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden">
                             <div class="max-h-96 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800">
                                 <!-- Loading State -->
-                                <div x-show="isLoading" class="p-8 text-center text-slate-400 text-xs">
+                                <div x-show="isLoading" class="p-8 text-center text-slate-500 dark:text-slate-400 text-xs">
                                     <div class="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto mb-2"></div>
                                     <span>Memuat data mahasiswa...</span>
                                 </div>
 
                                 <!-- Empty State -->
-                                <div x-show="!isLoading && candidates.length === 0" class="p-8 text-center text-slate-400 text-xs space-y-2">
+                                <div x-show="!isLoading && candidates.length === 0" class="p-8 text-center text-slate-500 dark:text-slate-400 text-xs space-y-2">
                                     <p class="font-bold text-slate-600 dark:text-slate-300">Tidak ada mahasiswa yang sesuai dengan filter.</p>
                                     <p class="text-[11px] text-slate-500">
                                         Seluruh mahasiswa pada semester ini mungkin sudah pernah diterbitkan SK, atau Anda dapat mengubah filter <strong>Status Penerbitan SK</strong> / <strong>Periode Pengajuan</strong>, atau klik <strong>+ Tambah Manual</strong>.
@@ -283,26 +283,26 @@
                                             <div class="flex flex-wrap items-center justify-between gap-2">
                                                 <div class="flex flex-wrap items-center gap-2">
                                                     <span class="font-black text-slate-900 dark:text-white" x-text="candidate.student_name"></span>
-                                                    <span class="text-slate-400 text-[11px]" x-text="'(' + candidate.student_npm + ')'"></span>
-                                                    <span class="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold"
+                                                    <span class="text-slate-500 dark:text-slate-400 text-[11px]" x-text="'(' + candidate.student_npm + ')'"></span>
+                                                    <span class="px-1.5 py-0.5 rounded text-[11px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold"
                                                           x-text="'Angkatan ' + candidate.student_cohort"></span>
                                                     
                                                     <!-- Status Dokumen: SK Dekan vs Surat Tugas Dosen -->
                                                     <template x-if="targetType === 'collective'">
-                                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                                        <span class="px-2 py-0.5 rounded text-[11px] font-bold"
                                                               :class="candidate.has_sk ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'"
                                                               x-text="candidate.has_sk ? ('Sudah Di-SK-kan: ' + candidate.sk_info.decree_number) : 'Belum Ada SK'"></span>
                                                     </template>
 
                                                     <template x-if="targetType === 'individual_dosen'">
-                                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                                        <span class="px-2 py-0.5 rounded text-[11px] font-bold"
                                                               :class="candidate.has_decree ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800'"
                                                               x-text="candidate.has_decree ? ('Sudah Ada Surat Tugas Dosen Ini: ' + candidate.decree_info.decree_number) : 'Belum Ada Surat Tugas Dosen Ini'"></span>
                                                     </template>
 
                                                     <!-- Badge Surat Tugas Mandiri Dosen (Bisa 2x: untuk Pembimbing 1 & Pembimbing 2) -->
                                                     <template x-if="candidate.p1_st">
-                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
                                                               :title="'Surat Tugas Dosen Pembimbing 1: ' + candidate.p1_st.decree_number">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                                                             <span x-text="'ST P1: ' + candidate.p1_st.decree_number"></span>
@@ -310,14 +310,14 @@
                                                     </template>
 
                                                     <template x-if="candidate.p2_st">
-                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800"
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800"
                                                               :title="'Surat Tugas Dosen Pembimbing 2: ' + candidate.p2_st.decree_number">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
                                                             <span x-text="'ST P2: ' + candidate.p2_st.decree_number"></span>
                                                         </span>
                                                     </template>
                                                 </div>
-                                                <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded"
+                                                <span class="text-[11px] uppercase font-bold px-2 py-0.5 rounded"
                                                       :class="candidate.status === 'completed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400'"
                                                       x-text="candidate.status === 'completed' ? 'Sudah Lulus' : 'Aktif Bimbingan'"></span>
                                             </div>
@@ -362,12 +362,12 @@
                         <div>
                             <div class="flex justify-between items-center mb-1">
                                 <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Nomor SK Otomatis</label>
-                                <span class="text-[10px] text-orange-600 font-bold">Auto via LetterSetting</span>
+                                <span class="text-[11px] text-orange-600 font-bold">Auto via LetterSetting</span>
                             </div>
                             <input type="text" name="custom_decree_number" x-model="customDecreeNumber"
                                    placeholder="Contoh: 001/SK-PEMBIMBING/UNSUB/FIK/IX/2026"
                                    class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 font-mono font-bold focus:ring-orange-500 focus:border-orange-500">
-                            <p class="text-[10px] text-slate-400 mt-1">Biarkan sesuai pratinjau untuk penomoran otomatis berurutan.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Biarkan sesuai pratinjau untuk penomoran otomatis berurutan.</p>
                         </div>
 
                         <!-- Date & Semester Grid -->
@@ -428,7 +428,7 @@
                     <div class="bg-orange-600 rounded-3xl p-6 text-white shadow-xl shadow-orange-600/20 border border-orange-500 space-y-4">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-black uppercase tracking-wider text-orange-100">Ringkasan Penerbitan</span>
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white/20 text-white" x-text="(selectedCount + manualStudents.length) + ' Mahasiswa'"></span>
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-white/20 text-white" x-text="(selectedCount + manualStudents.length) + ' Mahasiswa'"></span>
                         </div>
 
                         <div class="space-y-1.5 text-xs">
@@ -465,7 +465,7 @@
                  @click.away="showManualModal = false">
                 <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                     <h3 class="text-sm font-black text-slate-900 dark:text-white">Tambah Mahasiswa Manual</h3>
-                    <button type="button" @click="showManualModal = false" aria-label="Tutup modal tambah mahasiswa manual" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors cursor-pointer">
+                    <button type="button" @click="showManualModal = false" aria-label="Tutup modal tambah mahasiswa manual" class="p-1 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition-colors cursor-pointer">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>

@@ -25,7 +25,7 @@
                         </div>
                     @endif
                 @else
-                    <div class="h-24 w-48 bg-slate-100 dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg flex items-center justify-center text-slate-400 italic text-xs">
+                    <div class="h-24 w-48 bg-slate-100 dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 italic text-xs">
                         Belum ada tanda tangan
                     </div>
                 @endif
@@ -36,7 +36,7 @@
                     <x-input-label for="signature" :value="__('Pilih Gambar Tanda Tangan')" />
                     <input id="signature" name="signature" type="file" class="mt-1 block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-orange-50 dark:file:bg-orange-900/20 file:text-orange-700 dark:file:text-orange-500 hover:file:bg-orange-100 border border-slate-200 dark:border-slate-700 rounded p-1" required />
                     <x-input-error class="mt-2" :messages="$errors->get('signature')" />
-                    <p class="mt-1 text-[10px] text-slate-500 italic">Disarankan gambar transparan (PNG) dengan ukuran 400x200px.</p>
+                    <p class="mt-1 text-[11px] text-slate-500 italic">Disarankan gambar transparan (PNG) dengan ukuran 400x200px.</p>
                 </div>
 
                 <div class="flex items-center gap-4">

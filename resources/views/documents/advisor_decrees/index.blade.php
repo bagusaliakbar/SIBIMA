@@ -45,7 +45,7 @@
             <!-- Total Dokumen -->
             <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs flex items-center justify-between">
                 <div class="space-y-1">
-                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Total Arsip Dokumen</p>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Arsip Dokumen</p>
                     <p class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white">{{ $stats['total'] }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center text-slate-600 dark:text-slate-300">
@@ -92,17 +92,17 @@
             <a href="{{ route('advisor-decrees.index', array_merge(request()->except('target_type'), ['target_type' => 'all'])) }}" 
                class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($targetType ?? 'all') === 'all' ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-50/50 dark:bg-orange-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Semua Dokumen</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($targetType ?? 'all') === 'all' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">{{ $stats['total'] }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ ($targetType ?? 'all') === 'all' ? 'bg-orange-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">{{ $stats['total'] }}</span>
             </a>
             <a href="{{ route('advisor-decrees.index', array_merge(request()->except('target_type'), ['target_type' => 'collective'])) }}" 
                class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($targetType ?? 'all') === 'collective' ? 'border-emerald-500 text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>SK Kolektif Prodi</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($targetType ?? 'all') === 'collective' ? 'bg-emerald-500 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}">{{ $stats['collective'] }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ ($targetType ?? 'all') === 'collective' ? 'bg-emerald-500 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' }}">{{ $stats['collective'] }}</span>
             </a>
             <a href="{{ route('advisor-decrees.index', array_merge(request()->except('target_type'), ['target_type' => 'individual_dosen'])) }}" 
                class="px-5 py-3 border-b-2 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 {{ ($targetType ?? 'all') === 'individual_dosen' ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-500/10' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                 <span>Surat Tugas Dosen (BKD)</span>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ ($targetType ?? 'all') === 'individual_dosen' ? 'bg-blue-500 text-white' : 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300' }}">{{ $stats['individual'] }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-black {{ ($targetType ?? 'all') === 'individual_dosen' ? 'bg-blue-500 text-white' : 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300' }}">{{ $stats['individual'] }}</span>
             </a>
         </div>
 
@@ -161,7 +161,7 @@
                 {{-- Desktop Table View --}}
                 <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[10px]">
+                        <thead class="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[11px]">
                             <tr>
                                 <th class="px-5 py-4">Nomor SK & Jenis</th>
                                 <th class="px-5 py-4">Perihal & Penandatangan</th>
@@ -179,12 +179,12 @@
                                         </div>
                                         <div class="mt-1 flex items-center gap-1.5">
                                             @if($decree->target_type === 'individual_dosen' && $decree->dosen)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                                                     Surat Tugas: {{ Str::limit($decree->dosen->name, 22) }}
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                     SK Kolektif Prodi
                                                 </span>
@@ -240,7 +240,7 @@
                                                       data-confirm-button="Ya, Hapus">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Hapus Arsip" aria-label="Hapus Arsip">
+                                                    <button type="submit" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Hapus Arsip" aria-label="Hapus Arsip">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                     </button>
                                                 </form>
@@ -262,11 +262,11 @@
                                     <div class="font-black text-slate-900 dark:text-white text-xs tracking-tight">{{ $decree->decree_number }}</div>
                                     <div class="mt-1">
                                         @if($decree->target_type === 'individual_dosen' && $decree->dosen)
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
                                                 Surat Tugas: {{ Str::limit($decree->dosen->name, 24) }}
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
                                                 SK Kolektif Prodi
                                             </span>
                                         @endif

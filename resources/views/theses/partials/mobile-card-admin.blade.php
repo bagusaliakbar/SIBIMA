@@ -24,7 +24,7 @@
                     {{ ucwords(strtolower($thesis->student->name)) }}
                 </a>
                 <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80">
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80">
                         {{ $thesis->student->identifier ?? 'NPM -' }}
                     </span>
 
@@ -32,18 +32,18 @@
                     @if($thesis->student->entry_year)
                         @if($thesis->isOldCohort())
                             @if($thesis->student->is_critical_semester)
-                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-500/10 text-rose-700 dark:text-rose-300">
+                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-bold bg-rose-500/10 text-rose-700 dark:text-rose-300">
                                     <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                                     Lama '{{ substr($thesis->student->entry_year, -2) }}
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300">
                                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                     Lama '{{ substr($thesis->student->entry_year, -2) }}
                                 </span>
                             @endif
                         @else
-                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
                                 '{{ substr($thesis->student->entry_year, -2) }}
                             </span>
                         @endif
@@ -69,13 +69,13 @@
     <!-- Status & Progres Badge -->
     <div class="flex items-center justify-between gap-2 flex-wrap pt-1 border-t border-slate-100 dark:border-slate-800">
         <!-- Status Badge -->
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold {{ $stageInfo['badge_class'] }} border shadow-2xs">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold {{ $stageInfo['badge_class'] }} border shadow-2xs">
             <span class="w-1.5 h-1.5 rounded-full {{ $stageInfo['dot_class'] }} shrink-0"></span>
             <span>{{ $stageInfo['label'] }}</span>
         </span>
 
         <!-- Sesi Bimbingan Count -->
-        <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">
+        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">
             {{ $completedCount }} Sesi Bimbingan
         </span>
     </div>
@@ -86,7 +86,7 @@
             {{ $thesis->final_title ?? $thesis->title }}
         </a>
         @if($thesis->final_title)
-            <p class="text-[10px] text-slate-400 dark:text-slate-500 italic line-clamp-1">
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 italic line-clamp-1">
                 ↳ Awal: {{ $thesis->title }}
             </p>
         @endif
@@ -94,7 +94,7 @@
 
     <!-- Similarity Score -->
     @if($hasValidTitle)
-        <div class="flex items-center gap-2 text-[10px]">
+        <div class="flex items-center gap-2 text-[11px]">
             <button type="button" @click='$dispatch("open-audit-modal", {
                 student: "{{ addslashes($thesis->student->name) }}",
                 npm: "{{ $thesis->student->identifier }}",
@@ -104,7 +104,7 @@
             })' class="group focus:outline-hidden cursor-pointer">
                 @if($simScore >= 66)
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-bold bg-rose-500/10 text-rose-700 dark:text-rose-300">
-                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping shrink-0"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
                         <span>{{ $simScore }}% Mirip</span>
                     </span>
                 @elseif($simScore >= 35)
@@ -123,15 +123,15 @@
     @endif
 
     <!-- Pembimbing Ditugaskan -->
-    <div class="grid grid-cols-2 gap-2 text-[10px] p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
+    <div class="grid grid-cols-2 gap-2 text-[11px] p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
         <div>
-            <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">Pembimbing 1</span>
+            <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-0.5">Pembimbing 1</span>
             <span class="font-bold text-slate-700 dark:text-slate-300 truncate block" title="{{ $thesis->pembimbing1?->name ?? 'Belum Ada' }}">
                 {{ $thesis->pembimbing1?->name ?? 'Belum Ada' }}
             </span>
         </div>
         <div>
-            <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 block mb-0.5">Pembimbing 2</span>
+            <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-0.5">Pembimbing 2</span>
             <span class="font-bold text-slate-700 dark:text-slate-300 truncate block" title="{{ $thesis->pembimbing2?->name ?? 'Belum Ada' }}">
                 {{ $thesis->pembimbing2?->name ?? 'Belum Ada' }}
             </span>

@@ -128,16 +128,16 @@
                         <div class="flex items-center gap-3 min-w-0">
                             <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-9 h-9 object-contain shrink-0">
                             <div class="min-w-0">
-                                <p class="text-[9px] font-bold tracking-[0.22em] text-orange-400 uppercase truncate">Universitas Subang</p>
+                                <p class="text-[11px] font-bold tracking-[0.22em] text-orange-400 uppercase truncate">Universitas Subang</p>
                                 <p class="text-xs sm:text-sm font-extrabold tracking-wide text-white truncate">Fakultas Ilmu Komputer</p>
                             </div>
                         </div>
                         <div class="shrink-0 pl-3 border-l border-slate-700/80 text-right">
                             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/15">
                                 <span class="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0"></span>
-                                <span class="text-[9px] font-bold uppercase tracking-[0.14em] text-slate-100">Kartu Bimbingan</span>
+                                <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-100">Kartu Bimbingan</span>
                             </div>
-                            <p class="mt-1.5 text-[9px] font-mono tracking-wider text-slate-400">
+                            <p class="mt-1.5 text-[11px] font-mono tracking-wider text-slate-500 dark:text-slate-400">
                                 <span class="text-slate-500 uppercase mr-1">No.</span>{{ $cardCode }}
                             </p>
                         </div>
@@ -157,7 +157,7 @@
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <span class="inline-flex items-center justify-center w-full px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-600 dark:text-slate-300">
+                                    <span class="inline-flex items-center justify-center w-full px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300">
                                         {{ $user->current_semester ? 'Semester ' . $user->current_semester : 'Mahasiswa Aktif' }}
                                     </span>
                                 </div>
@@ -166,7 +166,7 @@
                             <!-- Identity Metadata -->
                             <div class="flex-1 min-w-0 space-y-2.5">
                                 <div>
-                                    <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Nama Mahasiswa</p>
+                                    <p class="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Nama Mahasiswa</p>
                                     <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-slate-100 leading-snug break-words">
                                         {{ $user->name }}
                                     </h3>
@@ -174,13 +174,13 @@
 
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80">
-                                        <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">NPM</span>
+                                        <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">NPM</span>
                                         <span class="block text-xs font-mono font-bold text-orange-600 dark:text-orange-400 truncate">
                                             {{ $user->identifier ?: 'Belum Diatur' }}
                                         </span>
                                     </div>
                                     <div class="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80">
-                                        <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Angkatan</span>
+                                        <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Angkatan</span>
                                         <span class="block text-xs font-bold text-slate-800 dark:text-slate-200">
                                             {{ $user->entry_year ?: '-' }}
                                         </span>
@@ -190,12 +190,12 @@
                                 <!-- Academic Stage Pill -->
                                 <div class="flex flex-wrap items-center gap-1.5">
                                     @if($academicStage)
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-bold {{ $academicStage['badge_class'] }}">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold {{ $academicStage['badge_class'] }}">
                                             <span class="w-1.5 h-1.5 rounded-full {{ $academicStage['dot_class'] }}"></span>
                                             <span>{{ $academicStage['label'] }}</span>
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-bold bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-bold bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
                                             <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                                             <span>Belum Mengajukan Skripsi</span>
                                         </span>
@@ -208,14 +208,14 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 border-t border-slate-200/80 dark:border-slate-800">
                             <div class="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
                                 <div class="flex items-center justify-between gap-2 mb-1">
-                                    <span class="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Pembimbing 1</span>
-                                    <span class="text-[10px] font-mono font-bold text-orange-600 dark:text-orange-400">{{ min($p1Count, 8) }}/8</span>
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Pembimbing 1</span>
+                                    <span class="text-[11px] font-mono font-bold text-orange-600 dark:text-orange-400">{{ min($p1Count, 8) }}/8</span>
                                 </div>
                                 <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" title="{{ $thesis?->pembimbing1?->name }}">
                                     {{ $thesis?->pembimbing1?->name ?? 'Belum ditentukan' }}
                                 </p>
                                 @if($thesis)
-                                    <div class="flex items-center gap-1.5 mt-1.5 text-[9px] font-bold">
+                                    <div class="flex items-center gap-1.5 mt-1.5 text-[11px] font-bold">
                                         <span class="px-1.5 py-0.5 rounded {{ $thesis->acc_up_p1 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60' : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700' }}">
                                             UP: {{ $thesis->acc_up_p1 ? 'ACC' : 'Proses' }}
                                         </span>
@@ -228,14 +228,14 @@
 
                             <div class="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
                                 <div class="flex items-center justify-between gap-2 mb-1">
-                                    <span class="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Pembimbing 2</span>
-                                    <span class="text-[10px] font-mono font-bold text-orange-600 dark:text-orange-400">{{ min($p2Count, 8) }}/8</span>
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Pembimbing 2</span>
+                                    <span class="text-[11px] font-mono font-bold text-orange-600 dark:text-orange-400">{{ min($p2Count, 8) }}/8</span>
                                 </div>
                                 <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" title="{{ $thesis?->pembimbing2?->name }}">
                                     {{ $thesis?->pembimbing2?->name ?? 'Belum ditentukan' }}
                                 </p>
                                 @if($thesis)
-                                    <div class="flex items-center gap-1.5 mt-1.5 text-[9px] font-bold">
+                                    <div class="flex items-center gap-1.5 mt-1.5 text-[11px] font-bold">
                                         <span class="px-1.5 py-0.5 rounded {{ $thesis->acc_up_p2 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60' : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700' }}">
                                             UP: {{ $thesis->acc_up_p2 ? 'ACC' : 'Proses' }}
                                         </span>
@@ -250,13 +250,13 @@
                         <!-- Bottom Strip + QR -->
                         <div class="flex items-center justify-between gap-3 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
                             <div class="space-y-1 min-w-0">
-                                <div class="flex flex-wrap items-center gap-1.5 text-[10px] font-bold text-slate-700 dark:text-slate-200">
+                                <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-slate-700 dark:text-slate-200">
                                     <span>Total Kehadiran Bimbingan:</span>
                                     <span class="px-1.5 py-0.5 rounded bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60 font-mono">
                                         {{ $totalSessions }} / 16 Sesi
                                     </span>
                                 </div>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                                     SIBIMA · Sistem Informasi Bimbingan Tugas Akhir
                                 </p>
                             </div>
@@ -279,17 +279,17 @@
 
                     <!-- Top Magnetic/Header Strip -->
                     <div class="bg-slate-900 dark:bg-slate-950 text-white px-5 py-3 border-b-[3px] border-orange-500 flex items-center justify-between gap-3">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-orange-400">Kartu Kendali Bimbingan Skripsi</span>
-                        <span class="text-[10px] font-mono text-slate-300 truncate">{{ $user->identifier ?: $cardCode }}</span>
+                        <span class="text-[11px] font-black uppercase tracking-widest text-orange-400">Kartu Kendali Bimbingan Skripsi</span>
+                        <span class="text-[11px] font-mono text-slate-300 truncate">{{ $user->identifier ?: $cardCode }}</span>
                     </div>
 
                     <div class="p-5 space-y-4 flex-1">
                         <!-- Judul Skripsi -->
                         <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
                             <div class="flex items-center justify-between gap-2">
-                                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Judul Skripsi</span>
+                                <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Judul Skripsi</span>
                                 @if($thesis?->topic)
-                                    <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 text-[9px] font-bold truncate max-w-[180px]">
+                                    <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 text-[11px] font-bold truncate max-w-[180px]">
                                         {{ $thesis->topic }}
                                     </span>
                                 @endif
@@ -301,7 +301,7 @@
 
                         <!-- Matriks Kendali P1 (Slot 1-8) -->
                         <div class="space-y-1.5">
-                            <div class="flex items-center justify-between gap-2 text-[10px]">
+                            <div class="flex items-center justify-between gap-2 text-[11px]">
                                 <span class="font-bold text-slate-700 dark:text-slate-200 truncate">
                                     P1 · {{ $thesis?->pembimbing1?->name ?? 'Belum ditentukan' }}
                                 </span>
@@ -316,12 +316,12 @@
                                             <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                             </svg>
-                                            <span class="text-[8px] font-mono font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">{{ $sess->scheduled_at->format('d/m') }}</span>
+                                            <span class="text-[11px] font-mono font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">{{ $sess->scheduled_at->format('d/m') }}</span>
                                         </div>
                                     @else
-                                        <div class="h-11 rounded-lg bg-slate-50/70 dark:bg-slate-800/30 border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                                            <span class="text-[10px] font-mono font-bold">#{{ $slot + 1 }}</span>
-                                            <span class="text-[8px]">{{ $slot < 4 ? 'UP' : 'Sidang' }}</span>
+                                        <div class="h-11 rounded-lg bg-slate-50/70 dark:bg-slate-800/30 border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
+                                            <span class="text-[11px] font-mono font-bold">#{{ $slot + 1 }}</span>
+                                            <span class="text-[11px]">{{ $slot < 4 ? 'UP' : 'Sidang' }}</span>
                                         </div>
                                     @endif
                                 @endfor
@@ -330,7 +330,7 @@
 
                         <!-- Matriks Kendali P2 (Slot 1-8) -->
                         <div class="space-y-1.5">
-                            <div class="flex items-center justify-between gap-2 text-[10px]">
+                            <div class="flex items-center justify-between gap-2 text-[11px]">
                                 <span class="font-bold text-slate-700 dark:text-slate-200 truncate">
                                     P2 · {{ $thesis?->pembimbing2?->name ?? 'Belum ditentukan' }}
                                 </span>
@@ -345,12 +345,12 @@
                                             <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                                             </svg>
-                                            <span class="text-[8px] font-mono font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">{{ $sess->scheduled_at->format('d/m') }}</span>
+                                            <span class="text-[11px] font-mono font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">{{ $sess->scheduled_at->format('d/m') }}</span>
                                         </div>
                                     @else
-                                        <div class="h-11 rounded-lg bg-slate-50/70 dark:bg-slate-800/30 border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                                            <span class="text-[10px] font-mono font-bold">#{{ $slot + 1 }}</span>
-                                            <span class="text-[8px]">{{ $slot < 4 ? 'UP' : 'Sidang' }}</span>
+                                        <div class="h-11 rounded-lg bg-slate-50/70 dark:bg-slate-800/30 border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
+                                            <span class="text-[11px] font-mono font-bold">#{{ $slot + 1 }}</span>
+                                            <span class="text-[11px]">{{ $slot < 4 ? 'UP' : 'Sidang' }}</span>
                                         </div>
                                     @endif
                                 @endfor
@@ -359,7 +359,7 @@
                     </div>
 
                     <!-- Card Back Footer -->
-                    <div class="px-5 py-3 bg-slate-50 dark:bg-slate-950/60 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-[10px] text-slate-500 dark:text-slate-400">
+                    <div class="px-5 py-3 bg-slate-50 dark:bg-slate-950/60 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 dark:text-slate-400">
                         <span>Syarat minimal: 4x/Dosen (Seminar UP) &amp; 8x/Dosen (Sidang)</span>
                         <span class="font-semibold text-slate-700 dark:text-slate-300">Tervalidasi Logbook SIBIMA</span>
                     </div>
@@ -392,16 +392,16 @@
                         <div class="flex items-center gap-3 min-w-0">
                             <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-9 h-9 object-contain shrink-0">
                             <div class="min-w-0">
-                                <p class="text-[9px] font-bold tracking-[0.22em] text-orange-400 uppercase truncate">Universitas Subang</p>
+                                <p class="text-[11px] font-bold tracking-[0.22em] text-orange-400 uppercase truncate">Universitas Subang</p>
                                 <p class="text-xs sm:text-sm font-extrabold tracking-wide text-white truncate">Fakultas Ilmu Komputer</p>
                             </div>
                         </div>
                         <div class="shrink-0 pl-3 border-l border-slate-700/80 text-right">
                             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/15">
                                 <span class="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0"></span>
-                                <span class="text-[9px] font-bold uppercase tracking-[0.14em] text-slate-100">{{ $roleLabel }}</span>
+                                <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-100">{{ $roleLabel }}</span>
                             </div>
-                            <p class="mt-1.5 text-[9px] font-mono tracking-wider text-slate-400">
+                            <p class="mt-1.5 text-[11px] font-mono tracking-wider text-slate-500 dark:text-slate-400">
                                 <span class="text-slate-500 uppercase mr-1">No Kartu.</span>{{ $cardCode }}
                             </p>
                         </div>
@@ -427,7 +427,7 @@
                                         <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" />
                                         </svg>
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">NIDN/NIP</span>
+                                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">NIDN/NIP</span>
                                         <span class="font-mono font-bold text-orange-600 dark:text-orange-400 truncate">
                                             {{ $user->identifier ?: 'Belum Diatur' }}
                                         </span>
@@ -443,7 +443,7 @@
                                 @if($interests->isNotEmpty())
                                     <div class="flex flex-wrap gap-1.5 pt-0.5">
                                         @foreach($interests as $tag)
-                                            <span class="px-2 py-0.5 rounded-md bg-slate-100/90 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 text-[10px] font-semibold text-slate-700 dark:text-slate-300">
+                                            <span class="px-2 py-0.5 rounded-md bg-slate-100/90 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 text-[11px] font-semibold text-slate-700 dark:text-slate-300">
                                                 {{ $tag }}
                                             </span>
                                         @endforeach
@@ -456,17 +456,17 @@
                             <div class="pt-3 border-t border-slate-200/80 dark:border-slate-800">
                                 <div class="grid grid-cols-2 divide-x divide-slate-200/80 dark:divide-slate-700/80 rounded-xl bg-slate-50/90 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
                                     <div class="px-3.5 py-2.5">
-                                        <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">Pembimbing 1</span>
+                                        <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate">Pembimbing 1</span>
                                         <div class="mt-0.5 flex items-baseline gap-1">
                                             <span class="text-sm font-extrabold font-mono text-slate-900 dark:text-slate-100">{{ $dosenStats['active_p1'] }}</span>
-                                            <span class="text-[10px] font-medium text-slate-500 dark:text-slate-400">Mahasiswa</span>
+                                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Mahasiswa</span>
                                         </div>
                                     </div>
                                     <div class="px-3.5 py-2.5">
-                                        <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 truncate">Pembimbing 2</span>
+                                        <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate">Pembimbing 2</span>
                                         <div class="mt-0.5 flex items-baseline gap-1">
                                             <span class="text-sm font-extrabold font-mono text-slate-900 dark:text-slate-100">{{ $dosenStats['active_p2'] }}</span>
-                                            <span class="text-[10px] font-medium text-slate-500 dark:text-slate-400">Mahasiswa</span>
+                                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">Mahasiswa</span>
                                         </div>
                                     </div>
                                 </div>
@@ -476,7 +476,7 @@
                         <div class="flex items-center justify-between gap-3 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
                             <div class="min-w-0 space-y-0.5">
                                 <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate">Sistem Informasi Bimbingan Mahasiswa</p>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate">Kartu Dosen Pembimbing</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Kartu Dosen Pembimbing</p>
                             </div>
                             <div class="p-1.5 bg-white rounded-lg border border-slate-200 shadow-2xs shrink-0" title="QR Verifikasi Identitas">
                                 {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(48)->margin(0)->generate($qrPayload) !!}

@@ -155,7 +155,7 @@
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-3 sm:p-4 border border-slate-200/90 dark:border-slate-700/80 shadow-2xs">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full sm:w-auto">
-                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 shrink-0 mr-1 hidden sm:inline">
+                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1 hidden sm:inline">
                         Channel Penguji:
                     </span>
 
@@ -179,14 +179,14 @@
                                 <img src="{{ $otherRev->examiner->avatar_url }}" alt="{{ $otherRev->examiner->name }}" class="w-full h-full object-cover">
                             </div>
                             <div class="text-left">
-                                <span class="block text-[10px] {{ $isCurrent ? 'text-orange-100' : 'text-slate-400' }} uppercase leading-none font-black">{{ $roleName }}</span>
+                                <span class="block text-[11px] {{ $isCurrent ? 'text-orange-100' : 'text-slate-500 dark:text-slate-400' }} uppercase leading-none font-black">{{ $roleName }}</span>
                                 <span class="block truncate max-w-[120px] sm:max-w-[150px] leading-tight mt-0.5">{{ $otherRev->examiner->name }}</span>
                             </div>
                             <span class="ml-1">
                                 @if($isOtherApproved)
-                                    <span class="inline-flex items-center text-[10px] font-black {{ $isCurrent ? 'text-emerald-200' : 'text-emerald-600 dark:text-emerald-400' }}" title="Revisi Disetujui (ACC)">✓✓</span>
+                                    <span class="inline-flex items-center text-[11px] font-black {{ $isCurrent ? 'text-emerald-200' : 'text-emerald-600 dark:text-emerald-400' }}" title="Revisi Disetujui (ACC)">✓✓</span>
                                 @elseif($isOtherResubmitted)
-                                    <span class="inline-flex items-center text-[10px] font-black {{ $isCurrent ? 'text-sky-200' : 'text-sky-600 dark:text-sky-400' }}" title="Menunggu Review Dosen">✓</span>
+                                    <span class="inline-flex items-center text-[11px] font-black {{ $isCurrent ? 'text-sky-200' : 'text-sky-600 dark:text-sky-400' }}" title="Menunggu Review Dosen">✓</span>
                                 @else
                                     <span class="w-2 h-2 rounded-full {{ $isCurrent ? 'bg-amber-300' : 'bg-amber-500' }}" title="Perlu Revisi"></span>
                                 @endif
@@ -235,11 +235,11 @@
                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" x-text="currentDocLabel">
                                     Draf Proposal
                                 </span>
-                                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-orange-100 text-orange-700 dark:bg-orange-950/70 dark:text-orange-300">
+                                <span class="px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider bg-orange-100 text-orange-700 dark:bg-orange-950/70 dark:text-orange-300">
                                     Viewer
                                 </span>
                             </div>
-                            <p class="text-[10px] text-slate-400 truncate max-w-xs" x-text="currentDocUrl || 'Belum ada tautan dokumen terpilih'"></p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-xs" x-text="currentDocUrl || 'Belum ada tautan dokumen terpilih'"></p>
                         </div>
                     </div>
 
@@ -266,9 +266,9 @@
                                                 class="w-full text-left p-2 rounded-xl text-xs hover:bg-orange-50 dark:hover:bg-orange-950/40 transition-colors flex flex-col">
                                             <div class="flex items-center justify-between">
                                                 <span class="font-bold text-slate-800 dark:text-slate-200 truncate">{{ $doc['label'] }}</span>
-                                                <span class="text-[9px] uppercase px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-black">{{ $doc['tag'] }}</span>
+                                                <span class="text-[11px] uppercase px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-black">{{ $doc['tag'] }}</span>
                                             </div>
-                                            <span class="text-[10px] text-slate-400 mt-0.5 truncate">{{ $doc['subtitle'] }}</span>
+                                            <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">{{ $doc['subtitle'] }}</span>
                                         </button>
                                     @endforeach
                                 </div>
@@ -294,7 +294,7 @@
                     <template x-if="currentDocUrl">
                         <div class="w-full h-full relative">
                             <!-- Background Loading Indicator -->
-                            <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none text-slate-400">
+                            <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none text-slate-500 dark:text-slate-400">
                                 <svg class="w-7 h-7 animate-spin text-orange-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                                 <span class="text-xs font-bold uppercase tracking-wider">Memuat Dokumen Proposal...</span>
                             </div>
@@ -310,7 +310,7 @@
 
                     <template x-if="!currentDocUrl">
                         <div class="p-8 text-center max-w-sm space-y-3">
-                            <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-200/60 dark:bg-slate-800 text-slate-400 flex items-center justify-center">
+                            <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-200/60 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center">
                                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             </div>
                             <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300">Belum Ada Naskah Ditampilkan</h4>
@@ -338,7 +338,7 @@
                             <h3 class="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-100 truncate">
                                 {{ $revision->examiner->name }}
                             </h3>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+                            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-0.5">
                                 {{ $revision->detail->examiner1_id === $revision->examiner_id ? 'Dosen Penguji 1 Seminar' : ($revision->detail->examiner2_id === $revision->examiner_id ? 'Dosen Penguji 2 Seminar' : 'Dosen Penguji Seminar') }}
                             </p>
                         </div>
@@ -376,7 +376,7 @@
                     @endphp
                     @if($firstExaminerMsg)
                         <div class="p-4 rounded-2xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-800/50 space-y-2">
-                            <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-orange-700 dark:text-orange-300">
+                            <div class="flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-orange-700 dark:text-orange-300">
                                 <span class="flex items-center gap-1.5">
                                     <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                     <span>Catatan Revisi Awal Hasil Seminar</span>
@@ -388,12 +388,12 @@
                             </div>
                             @if($revision->revision_file)
                                 <div class="pt-2 border-t border-orange-200/50 dark:border-orange-800/40 flex items-center justify-between gap-2">
-                                    <span class="text-[10px] text-orange-600 dark:text-orange-400 font-semibold truncate">
+                                    <span class="text-[11px] text-orange-600 dark:text-orange-400 font-semibold truncate">
                                         Terdapat berkas catatan dari penguji
                                     </span>
                                     <button type="button" 
                                             @click="switchDocument('{{ $revision->revision_file }}', 'Catatan Penguji')" 
-                                            class="text-[10px] font-black text-orange-700 dark:text-orange-300 hover:underline shrink-0 inline-flex items-center gap-1">
+                                            class="text-[11px] font-black text-orange-700 dark:text-orange-300 hover:underline shrink-0 inline-flex items-center gap-1">
                                         <span>Lihat di Kolom Kiri ➔</span>
                                     </button>
                                 </div>
@@ -412,7 +412,7 @@
                             <div class="max-w-[88%] flex flex-col {{ $isMe ? 'items-end' : 'items-start' }}">
                                 
                                 <!-- Sender label & timestamp -->
-                                <div class="flex items-center gap-2 mb-1 text-[10px] text-slate-400 {{ $isMe ? 'flex-row-reverse' : '' }}">
+                                <div class="flex items-center gap-2 mb-1 text-[11px] text-slate-500 dark:text-slate-400 {{ $isMe ? 'flex-row-reverse' : '' }}">
                                     <span class="font-bold">{{ $isMe ? 'Anda' : $revision->examiner->name }}</span>
                                     <span>•</span>
                                     <span>{{ $msg->created_at->format('H:i') }}</span>
@@ -425,7 +425,7 @@
                                     <!-- Attachment in Message -->
                                     @if($msg->file_path)
                                         <div class="mt-2.5 pt-2.5 border-t {{ $isMe ? 'border-white/15' : 'border-slate-100 dark:border-slate-700' }} flex items-center justify-between gap-2 flex-wrap">
-                                            <span class="text-[10px] {{ $isMe ? 'text-slate-300' : 'text-slate-400' }} flex items-center gap-1 truncate max-w-[160px]">
+                                            <span class="text-[11px] {{ $isMe ? 'text-slate-300' : 'text-slate-500 dark:text-slate-400' }} flex items-center gap-1 truncate max-w-[160px]">
                                                 <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                                                 <span>Lampiran Berkas</span>
                                             </span>
@@ -433,10 +433,10 @@
                                             <div class="flex items-center gap-1.5 shrink-0">
                                                 <button type="button" 
                                                         @click="switchDocument('{{ $msg->file_path }}', 'Lampiran Pesan ({{ $msg->created_at->format('H:i') }})')"
-                                                        class="px-2 py-0.5 rounded-lg text-[10px] font-bold {{ $isMe ? 'bg-white/20 hover:bg-white/30 text-white' : 'bg-orange-50 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300' }} transition-colors cursor-pointer">
+                                                        class="px-2 py-0.5 rounded-lg text-[11px] font-bold {{ $isMe ? 'bg-white/20 hover:bg-white/30 text-white' : 'bg-orange-50 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300' }} transition-colors cursor-pointer">
                                                     Preview Kiri
                                                 </button>
-                                                <a href="{{ $msg->file_path }}" target="_blank" class="text-[10px] {{ $isMe ? 'text-white/80 hover:text-white' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400' }} hover:underline">
+                                                <a href="{{ $msg->file_path }}" target="_blank" class="text-[11px] {{ $isMe ? 'text-white/80 hover:text-white' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400' }} hover:underline">
                                                     ↗ Tab
                                                 </a>
                                             </div>
@@ -446,7 +446,7 @@
 
                                 <!-- Read & Sent Status Indicators (For messages sent by student) -->
                                 @if($isMe)
-                                    <div class="flex items-center gap-1.5 mt-1 text-[10px] font-bold">
+                                    <div class="flex items-center gap-1.5 mt-1 text-[11px] font-bold">
                                         @if($revision->isApproved())
                                             <!-- Disetujui (Centang 2 Hijau) -->
                                             <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400" title="Catatan telah disetujui (ACC)">
@@ -461,7 +461,7 @@
                                             </span>
                                         @else
                                             <!-- Terkirim (Centang 1 Abu-abu) -->
-                                            <span class="inline-flex items-center gap-1 text-slate-400 dark:text-slate-500" title="Terkirim, menunggu dibaca dosen">
+                                            <span class="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400" title="Terkirim, menunggu dibaca dosen">
                                                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                                 <span>Terkirim</span>
                                             </span>
@@ -473,11 +473,11 @@
                         </div>
                     @empty
                         @if($firstExaminerMsg)
-                            <div class="py-6 text-center text-slate-400 dark:text-slate-500">
+                            <div class="py-6 text-center text-slate-500 dark:text-slate-400">
                                 <p class="text-[11px] font-medium">Belum ada balasan atau diskusi lanjutan.</p>
                             </div>
                         @else
-                            <div class="py-12 text-center text-slate-400">
+                            <div class="py-12 text-center text-slate-500 dark:text-slate-400">
                                 <p class="text-xs">Belum ada riwayat percakapan revisi.</p>
                             </div>
                         @endif
@@ -505,17 +505,17 @@
                             <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                                 <button type="button" 
                                         @click="appendTemplate('Yth. Bapak/Ibu Dosen Penguji, seluruh catatan perbaikan revisi seminar proposal telah diperbaiki sesuai arahan. Mohon kesediaannya untuk memeriksa kembali.')"
-                                        class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-600 transition-all shrink-0 active:scale-95">
+                                        class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold border border-slate-200 dark:border-slate-600 transition-all shrink-0 active:scale-95">
                                     + Selesai diperbaiki
                                 </button>
                                 <button type="button" 
                                         @click="appendTemplate('Berkas draf proposal hasil revisi dan matriks perbaikan telah saya lampirkan pada tautan Google Drive.')"
-                                        class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-600 transition-all shrink-0 active:scale-95">
+                                        class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold border border-slate-200 dark:border-slate-600 transition-all shrink-0 active:scale-95">
                                     + Proposal & matriks terlampir
                                 </button>
                                 <button type="button" 
                                         @click="appendTemplate('Terima kasih banyak Bapak/Ibu atas arahan dan bimbingan perbaikannya.')"
-                                        class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold border border-slate-200 dark:border-slate-600 transition-all shrink-0 active:scale-95">
+                                        class="px-2.5 py-1 bg-slate-100 dark:bg-slate-700/60 hover:bg-orange-50 hover:text-orange-600 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[11px] font-bold border border-slate-200 dark:border-slate-600 transition-all shrink-0 active:scale-95">
                                     + Terima kasih
                                 </button>
                             </div>
@@ -541,7 +541,7 @@
                                            class="w-full text-xs font-mono rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500 py-1.5 px-3">
                                     <button type="button" 
                                             @click="pasteLink()" 
-                                            class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-orange-600 rounded-xl text-[10px] font-bold border border-slate-200 dark:border-slate-600 shrink-0 cursor-pointer"
+                                            class="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-orange-600 rounded-xl text-[11px] font-bold border border-slate-200 dark:border-slate-600 shrink-0 cursor-pointer"
                                             title="Tempel dari Clipboard">
                                         Tempel
                                     </button>

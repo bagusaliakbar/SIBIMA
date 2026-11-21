@@ -198,7 +198,7 @@
                         <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-10 h-10 object-contain drop-shadow-xs group-hover:scale-105 transition-transform">
                         <div>
                             <span class="text-sm font-black tracking-tight text-slate-800 dark:text-white">SIBIMA <span class="text-orange-600 dark:text-orange-400">FASILKOM</span></span>
-                            <span class="hidden sm:inline-block text-[11px] font-bold text-slate-400 dark:text-slate-500 ml-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">Pusat Bantuan</span>
+                            <span class="hidden sm:inline-block text-[11px] font-bold text-slate-500 dark:text-slate-400 ml-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">Pusat Bantuan</span>
                         </div>
                     </a>
 

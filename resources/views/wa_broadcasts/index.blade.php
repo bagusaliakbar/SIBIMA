@@ -71,7 +71,7 @@
             {{-- Desktop Table View --}}
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[10px]">
+                    <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[11px]">
                         <tr>
                             <th class="px-5 py-3.5">Waktu & Pengirim</th>
                             <th class="px-5 py-3.5">Judul & Filter Sasaran</th>
@@ -98,16 +98,16 @@
                                         {{ $bc->title }}
                                     </div>
                                     <div class="flex items-center gap-2 mt-1">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-50 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-orange-50 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
                                             {{ $bc->target_type_label }}
                                         </span>
                                         @if(isset($bc->target_filter['cohort']) && $bc->target_filter['cohort'] !== 'all')
-                                            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                                 Angkatan: {{ $bc->target_filter['cohort'] }}
                                             </span>
                                         @endif
                                         @if(isset($bc->target_filter['days']))
-                                            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                                 > {{ $bc->target_filter['days'] }} Hari
                                             </span>
                                         @endif
@@ -118,7 +118,7 @@
                                     <div class="font-black text-slate-900 dark:text-white text-sm">
                                         {{ $bc->total_recipients }} <span class="text-[11px] font-normal text-slate-500">Kontak</span>
                                     </div>
-                                    <div class="flex items-center justify-center gap-1.5 text-[10px] font-bold mt-1">
+                                    <div class="flex items-center justify-center gap-1.5 text-[11px] font-bold mt-1">
                                         <span class="text-emerald-600 dark:text-emerald-400">{{ $bc->successful_count }} Sukses</span>
                                         @if($bc->failed_count > 0)
                                             <span class="text-slate-300 dark:text-slate-600">•</span>
@@ -183,7 +183,7 @@
                                               data-confirm-button="Ya, Hapus">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" title="Hapus Riwayat Siaran" aria-label="Hapus Riwayat Siaran" class="inline-flex items-center justify-center p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer">
+                                            <button type="submit" title="Hapus Riwayat Siaran" aria-label="Hapus Riwayat Siaran" class="inline-flex items-center justify-center p-1.5 text-slate-500 dark:text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </form>
@@ -192,12 +192,12 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-12 text-center text-slate-400">
-                                    <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center mx-auto mb-3 text-slate-400">
+                                <td colspan="5" class="py-12 text-center text-slate-500 dark:text-slate-400">
+                                    <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center mx-auto mb-3 text-slate-500 dark:text-slate-400">
                                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
                                     </div>
                                     <p class="font-bold text-slate-700 dark:text-slate-300">Belum Ada Riwayat Siaran</p>
-                                    <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Mulai buat pesan siaran terarah pertama Anda untuk mengabarkan mahasiswa atau dosen secara proaktif.</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">Mulai buat pesan siaran terarah pertama Anda untuk mengabarkan mahasiswa atau dosen secara proaktif.</p>
                                     <a href="{{ route('wa-broadcasts.create') }}" class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-orange-600/20">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                         <span>Buat Broadcast Pertama</span>
@@ -220,7 +220,7 @@
                                     {{ $bc->created_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB &bull; {{ $bc->sender->name ?? 'Admin' }}
                                 </div>
                             </div>
-                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black shrink-0 {{ $bc->status === 'completed' && $bc->failed_count == 0 ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' : ($bc->status === 'completed' ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300' : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300') }}">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black shrink-0 {{ $bc->status === 'completed' && $bc->failed_count == 0 ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' : ($bc->status === 'completed' ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300' : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300') }}">
                                 {{ $bc->status === 'completed' ? ($bc->failed_count == 0 ? 'Selesai 100%' : 'Sebagian') : ucfirst($bc->status) }}
                             </span>
                         </div>

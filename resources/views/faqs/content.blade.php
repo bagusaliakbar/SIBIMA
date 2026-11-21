@@ -44,7 +44,7 @@
             <!-- Search Input Box -->
             <div class="pt-2">
                 <div class="relative max-w-2xl mx-auto">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500 dark:text-slate-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </span>
                     <input type="text" 
@@ -55,7 +55,7 @@
                         x-show="searchQuery.length > 0" 
                         aria-label="Hapus pencarian FAQ"
                         @click="searchQuery = ''" 
-                        class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
                         title="Hapus pencarian"
                         x-cloak>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -77,7 +77,7 @@
             <!-- Icon Grid -->
             <svg class="w-3.5 h-3.5 transition-colors" :class="selectedCategory === 'all' ? 'text-white' : 'text-slate-400 dark:text-slate-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
             <span>Semua Topik</span>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold transition-colors"
+            <span class="text-[11px] px-2 py-0.5 rounded-full font-mono font-bold transition-colors"
                   :class="selectedCategory === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">
                 {{ $categoryCounts['all'] ?? $faqs->count() }}
             </span>
@@ -109,7 +109,7 @@
                 @endif
 
                 <span>{{ $cat['name'] }}</span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold transition-colors"
+                <span class="text-[11px] px-2 py-0.5 rounded-full font-mono font-bold transition-colors"
                       :class="selectedCategory === '{{ $catKey }}' ? 'bg-white/20 text-white' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">
                     {{ $count }}
                 </span>
@@ -151,7 +151,7 @@
                     class="w-full text-left p-5 sm:p-6 flex items-start justify-between gap-4 transition-colors cursor-pointer group">
                     <div class="space-y-1.5 pr-2">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold tracking-tight
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold tracking-tight
                                 {{ $catColor === 'orange' ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300 border border-orange-200 dark:border-orange-800' : '' }}
                                 {{ $catColor === 'emerald' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' : '' }}
                                 {{ $catColor === 'indigo' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800' : '' }}
@@ -161,16 +161,16 @@
                                 {{ $faq->category_label }}
                             </span>
                             @if($faq->target_role === 'mahasiswa')
-                                <span class="text-[10px] text-slate-400 font-semibold">• Khusus Mahasiswa</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">• Khusus Mahasiswa</span>
                             @elseif($faq->target_role === 'dosen')
-                                <span class="text-[10px] text-slate-400 font-semibold">• Khusus Dosen</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">• Khusus Dosen</span>
                             @endif
                         </div>
                         <h3 class="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-snug group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                             {{ $faq->question }}
                         </h3>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-700/60 flex items-center justify-center text-slate-400 shrink-0 transition-transform duration-300"
+                    <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-700/60 flex items-center justify-center text-slate-500 dark:text-slate-400 shrink-0 transition-transform duration-300"
                          :class="{ 'rotate-180 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400': openFaqId === {{ $faq->id }} }">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>

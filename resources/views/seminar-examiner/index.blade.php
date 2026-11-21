@@ -77,11 +77,11 @@
                                 <div class="flex items-center gap-1.5 flex-wrap">
                                     <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100 truncate">{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}</h4>
                                     @if($isExaminer1)
-                                        <span class="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold rounded-md border border-indigo-200/60 dark:border-indigo-800/60">Penguji 1</span>
+                                        <span class="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[11px] font-bold rounded-md border border-indigo-200/60 dark:border-indigo-800/60">Penguji 1</span>
                                     @elseif($isExaminer2)
-                                        <span class="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 text-[10px] font-bold rounded-md border border-sky-200/60 dark:border-sky-800/60">Penguji 2</span>
+                                        <span class="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 text-[11px] font-bold rounded-md border border-sky-200/60 dark:border-sky-800/60">Penguji 2</span>
                                     @elseif($isStaff)
-                                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded-md border border-slate-200 dark:border-slate-700">P1 & P2</span>
+                                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold rounded-md border border-slate-200 dark:border-slate-700">P1 & P2</span>
                                     @endif
                                 </div>
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 italic">"{{ $exam->thesis?->title ?? '-' }}"</p>
@@ -90,12 +90,12 @@
 
                         <div class="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/60 text-xs">
                             <div>
-                                <span class="text-[10px] font-bold uppercase text-slate-400 block">Jadwal</span>
+                                <span class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400 block">Jadwal</span>
                                 <span class="font-bold text-slate-800 dark:text-slate-100 block">{{ $semStart->copy()->locale('id')->translatedFormat('d M Y') }}</span>
                                 <span class="text-[11px] text-slate-500 dark:text-slate-400 tabular-nums">{{ $semStart->format('H:i') }} - {{ $semEnd->format('H:i') }} WIB</span>
                             </div>
                             <div>
-                                <span class="text-[10px] font-bold uppercase text-slate-400 block">Lokasi & Status</span>
+                                <span class="text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400 block">Lokasi & Status</span>
                                 @if($exam->schedule->meeting_link && !$isFinished)
                                     <a href="{{ $exam->schedule->meeting_link }}" target="_blank" class="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
                                         <x-google-meet-icon class="w-3.5 h-3.5 shrink-0" />
@@ -137,7 +137,7 @@
 
             <table class="hidden sm:table w-full text-left text-sm">
                 <thead>
-                    <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
+                    <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
                         <th class="px-6 py-4">Mahasiswa & Judul</th>
                         <th class="px-6 py-4 text-center">Jadwal Seminar</th>
                         <th class="px-6 py-4 text-center">Lokasi</th>
@@ -195,11 +195,11 @@
                                         <div class="flex items-center gap-2 flex-wrap">
                                             <h4 class="font-bold text-slate-900 dark:text-slate-100 text-sm tracking-tight">{{ $exam->thesis?->student?->name ?? 'Mahasiswa' }}</h4>
                                             @if($isExaminer1)
-                                                <span class="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold rounded-md border border-indigo-200/60 dark:border-indigo-800/60">Penguji 1</span>
+                                                <span class="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-[11px] font-bold rounded-md border border-indigo-200/60 dark:border-indigo-800/60">Penguji 1</span>
                                             @elseif($isExaminer2)
-                                                <span class="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 text-[10px] font-bold rounded-md border border-sky-200/60 dark:border-sky-800/60">Penguji 2</span>
+                                                <span class="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 text-[11px] font-bold rounded-md border border-sky-200/60 dark:border-sky-800/60">Penguji 2</span>
                                             @elseif($isStaff)
-                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold rounded-md border border-slate-200 dark:border-slate-700">P1 & P2</span>
+                                                <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold rounded-md border border-slate-200 dark:border-slate-700">P1 & P2</span>
                                             @endif
                                         </div>
                                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 italic font-normal" title="{{ $exam->thesis?->title ?? '-' }}">
@@ -219,12 +219,12 @@
                                         {{ $semStart->format('H:i') }} - {{ $semEnd->format('H:i') }} WIB
                                     </span>
                                     @if($isFinished)
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200/70 dark:border-slate-700/70">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200/70 dark:border-slate-700/70">
                                             <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500"></span>
                                             Selesai
                                         </span>
                                     @elseif($isOngoing)
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
                                             <span class="relative flex h-1.5 w-1.5">
                                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                                 <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -232,17 +232,17 @@
                                             Berlangsung
                                         </span>
                                     @elseif($isTodayUpcoming)
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                             Hari Ini
                                         </span>
                                     @elseif($daysUntil === 1)
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/60">
                                             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                                             Besok
                                         </span>
                                     @elseif($daysUntil !== null)
-                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700">
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700">
                                             {{ $daysUntil }} hari lagi
                                         </span>
                                     @endif
@@ -285,7 +285,7 @@
                                         <span>Dokumen</span>
                                     </a>
                                 @else
-                                    <span class="text-xs text-slate-400 dark:text-slate-500 font-medium italic">-</span>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium italic">-</span>
                                 @endif
                             </td>
 
@@ -315,7 +315,7 @@
                                                 Menunggu Mahasiswa
                                             </span>
                                         @else
-                                            <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">Belum ada catatan</span>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Belum ada catatan</span>
                                         @endif
                                     @else
                                         @if($myRev)
@@ -336,7 +336,7 @@
                                                 </span>
                                             @endif
                                         @else
-                                            <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">Belum ada catatan</span>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Belum ada catatan</span>
                                         @endif
                                     @endif
                                 </div>
@@ -357,7 +357,7 @@
                     @empty
                         <tr>
                             <td colspan="6" class="py-12 text-center">
-                                <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mb-3">
+                                <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center mb-3">
                                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 </div>
                                 <h4 class="text-sm font-bold text-slate-800 dark:text-white">

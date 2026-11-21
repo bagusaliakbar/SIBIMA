@@ -24,7 +24,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                             <span>Operasional &amp; Antrean Berkas</span>
                             @if(($adminApprovals['total_pending'] ?? 0) > 0)
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white shadow-2xs">
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-600 text-white shadow-2xs">
                                     {{ $adminApprovals['total_pending'] }}
                                 </span>
                             @endif
@@ -34,7 +34,7 @@
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs uppercase tracking-wider transition-all cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                             <span>Analitik &amp; Tren Skripsi</span>
-                            <span class="text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 font-black">9 Grafik</span>
+                            <span class="text-[11px] uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 font-black">9 Grafik</span>
                         </button>
                     </div>
 
@@ -68,7 +68,7 @@
                                 <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
                                 Antrean Verifikasi &amp; Approval Prodi
                             </h3>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            <span class="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
                                 {{ ($adminApprovals['total_pending'] ?? 0) > 0 ? ($adminApprovals['total_pending'] . ' Berkas Menunggu Validasi') : 'Seluruh Berkas Telah Diproses' }}
                             </span>
                         </div>
@@ -79,14 +79,14 @@
                                     <div class="w-9 h-9 rounded-xl {{ (($adminApprovals['pending_theses'] ?? 0) + ($adminApprovals['unassigned_theses'] ?? 0)) > 0 ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                                     </div>
-                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ (($adminApprovals['pending_theses'] ?? 0) + ($adminApprovals['unassigned_theses'] ?? 0)) > 0 ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 border border-amber-300 dark:border-amber-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider {{ (($adminApprovals['pending_theses'] ?? 0) + ($adminApprovals['unassigned_theses'] ?? 0)) > 0 ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 border border-amber-300 dark:border-amber-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
                                         {{ (($adminApprovals['pending_theses'] ?? 0) + ($adminApprovals['unassigned_theses'] ?? 0)) > 0 ? 'Perlu ACC' : 'Tuntas' }}
                                     </span>
                                 </div>
                                 <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Usulan Judul Baru</h4>
                                 <div class="flex items-baseline gap-2 mt-1 mb-1">
                                     <span class="text-2xl font-black text-slate-800 dark:text-white">{{ ($adminApprovals['pending_theses'] ?? 0) + ($adminApprovals['unassigned_theses'] ?? 0) }}</span>
-                                    <span class="text-xs font-semibold text-slate-400">Judul</span>
+                                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Judul</span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                     {{ $adminApprovals['unassigned_theses'] ?? 0 }} judul belum di-plot pembimbing.
@@ -103,14 +103,14 @@
                                     <div class="w-9 h-9 rounded-xl {{ ($adminApprovals['pending_seminars'] ?? 0) > 0 ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                     </div>
-                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ ($adminApprovals['pending_seminars'] ?? 0) > 0 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 border border-blue-300 dark:border-blue-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider {{ ($adminApprovals['pending_seminars'] ?? 0) > 0 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 border border-blue-300 dark:border-blue-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
                                         {{ ($adminApprovals['pending_seminars'] ?? 0) > 0 ? 'Validasi Syarat' : 'Tuntas' }}
                                     </span>
                                 </div>
                                 <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Berkas Seminar</h4>
                                 <div class="flex items-baseline gap-2 mt-1 mb-1">
                                     <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $adminApprovals['pending_seminars'] ?? 0 }}</span>
-                                    <span class="text-xs font-semibold text-slate-400">Pendaftar</span>
+                                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Pendaftar</span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                     Menunggu verifikasi berkas pendaftaran seminar.
@@ -127,14 +127,14 @@
                                     <div class="w-9 h-9 rounded-xl {{ ($adminApprovals['pending_defenses'] ?? 0) > 0 ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                     </div>
-                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ ($adminApprovals['pending_defenses'] ?? 0) > 0 ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300 dark:border-rose-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider {{ ($adminApprovals['pending_defenses'] ?? 0) > 0 ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200 border border-rose-300 dark:border-rose-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
                                         {{ ($adminApprovals['pending_defenses'] ?? 0) > 0 ? 'Validasi Syarat' : 'Tuntas' }}
                                     </span>
                                 </div>
                                 <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Berkas Sidang</h4>
                                 <div class="flex items-baseline gap-2 mt-1 mb-1">
                                     <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $adminApprovals['pending_defenses'] ?? 0 }}</span>
-                                    <span class="text-xs font-semibold text-slate-400">Pendaftar</span>
+                                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Pendaftar</span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                     Menunggu validasi naskah lengkap &amp; syarat sidang.
@@ -151,14 +151,14 @@
                                     <div class="w-9 h-9 rounded-xl {{ ($adminApprovals['pending_graduations'] ?? 0) > 0 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }} flex items-center justify-center shrink-0">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </div>
-                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider {{ ($adminApprovals['pending_graduations'] ?? 0) > 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider {{ ($adminApprovals['pending_graduations'] ?? 0) > 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-500' }}">
                                         {{ ($adminApprovals['pending_graduations'] ?? 0) > 0 ? 'Approval SKL' : 'Tuntas' }}
                                     </span>
                                 </div>
                                 <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Pengajuan SKL &amp; Yudisium</h4>
                                 <div class="flex items-baseline gap-2 mt-1 mb-1">
                                     <span class="text-2xl font-black text-slate-800 dark:text-white">{{ $adminApprovals['pending_graduations'] ?? 0 }}</span>
-                                    <span class="text-xs font-semibold text-slate-400">Pengajuan</span>
+                                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Pengajuan</span>
                                 </div>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                     Bebas tanggungan &amp; penerbitan SKL resmi.
@@ -180,7 +180,7 @@
                             </div>
                             <div>
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-orange-600 text-white">Gelombang Ujian Sedang Berjalan</span>
+                                    <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider bg-orange-600 text-white">Gelombang Ujian Sedang Berjalan</span>
                                     <h4 class="text-base font-black text-slate-800 dark:text-white">{{ $activeWaveInfo['name'] }}</h4>
                                     <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">({{ $activeWaveInfo['academic_year'] }} - {{ $activeWaveInfo['semester'] }})</span>
                                 </div>
@@ -224,7 +224,7 @@
                             <x-slot name="icon">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                             </x-slot>
-                            <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Total judul skripsi terdaftar</p>
+                            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 italic tracking-tight">Total judul skripsi terdaftar</p>
                         </x-stat-card>
 
                         <x-stat-card title="Jadwal Minggu Ini" color="blue">
@@ -232,21 +232,21 @@
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </x-slot>
                             <h2 class="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-1">{{ $sessionsThisWeek ?? 0 }} <span class="text-xs font-medium text-slate-400 lowercase tracking-normal">Sesi</span></h2>
-                            <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Bimbingan pekan berjalan</p>
+                            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 italic tracking-tight">Bimbingan pekan berjalan</p>
                         </x-stat-card>
 
                         <x-stat-card title="Sesi Selesai" :value="$totalCompletedSessions ?? 0" color="emerald">
                             <x-slot name="icon">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </x-slot>
-                            <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Total seluruh bimbingan</p>
+                            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 italic tracking-tight">Total seluruh bimbingan</p>
                         </x-stat-card>
 
                         <x-stat-card title="Progres Rata-rata" :value="($averageStudentProgress ?? 0) . '%'" color="pink">
                             <x-slot name="icon">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                             </x-slot>
-                            <p class="text-[10px] font-medium text-slate-400 mt-1 italic tracking-tight">Performa bimbingan global</p>
+                            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1 italic tracking-tight">Performa bimbingan global</p>
                         </x-stat-card>
                     </div>
 
@@ -265,7 +265,7 @@
                                             <h3 class="text-sm sm:text-base font-black text-slate-800 dark:text-white uppercase tracking-tight">
                                                 Early Warning System: Bimbingan Butuh Intervensi
                                             </h3>
-                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-2xs">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-2xs">
                                                 {{ $earlyWarning['total_inactive'] }} Mahasiswa Pasif / Macet
                                             </span>
                                         </div>
@@ -399,7 +399,7 @@
                                     <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z"></path></svg>
                                     Analisa Tren Topik (AI Insights)
                                 </h3>
-                                <div class="px-3 py-1 bg-orange-100/80 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 text-[10px] font-black uppercase tracking-wider rounded-lg border border-orange-200 dark:border-orange-500/20">
+                                <div class="px-3 py-1 bg-orange-100/80 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 text-[11px] font-black uppercase tracking-wider rounded-lg border border-orange-200 dark:border-orange-500/20">
                                     Berbasis Data Tren
                                 </div>
                             </div>

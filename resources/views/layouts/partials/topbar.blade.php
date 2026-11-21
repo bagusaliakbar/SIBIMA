@@ -67,7 +67,7 @@
                         <a href="{{ route('profile.edit') }}" aria-label="Buka profil {{ Auth::user()->name }}" class="flex items-center pl-2.5 sm:pl-5 border-l border-slate-100 dark:border-slate-700 ml-1 sm:ml-2 group/profile">
                             <div class="hidden sm:flex flex-col items-end mr-4">
                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-none mb-1 group-hover/profile:text-orange-600 transition-colors">{{ Auth::user()->name }}</span>
-                                <span class="text-[10px] font-black text-orange-600 uppercase tracking-widest">{{ Auth::user()->role }}</span>
+                                <span class="text-[11px] font-black text-orange-600 uppercase tracking-widest">{{ Auth::user()->role }}</span>
                             </div>
                             <div class="w-10 h-10 rounded-xl overflow-hidden shadow-md shadow-orange-200 dark:shadow-none ring-2 ring-white dark:ring-slate-700 cursor-pointer hover:scale-105 transition-transform relative group">
                                 <img src="{{ Auth::user()->avatar_url }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">

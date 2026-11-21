@@ -24,7 +24,7 @@
                                     <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-tight">Edit Data Arsip Pustaka</h3>
                                     <p class="text-[11px] text-slate-500 dark:text-slate-400 font-bold mt-0.5">Koreksi judul, nama mahasiswa, atau data pembimbing</p>
                                 </div>
-                                <button type="button" @click="editModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold p-1">&times;</button>
+                                <button type="button" @click="editModalOpen = false" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold p-1">&times;</button>
                             </div>
                             <form :action="'/repositories/' + editData.id" method="POST" class="p-8 space-y-4">
                                 @csrf
@@ -33,46 +33,46 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <!-- Nama Mahasiswa -->
                                     <div>
-                                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Nama Mahasiswa <span class="text-rose-500">*</span></label>
+                                        <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">Nama Mahasiswa <span class="text-rose-500">*</span></label>
                                         <input type="text" name="name" x-model="editData.name" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
                                     </div>
                                     
                                     <!-- NPM / Identifier -->
                                     <div>
-                                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">NPM / Identifier</label>
+                                        <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">NPM / Identifier</label>
                                         <input type="text" name="identifier" x-model="editData.identifier" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
                                     </div>
                                 </div>
 
                                 <!-- Judul Skripsi -->
                                 <div>
-                                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Judul Skripsi <span class="text-rose-500">*</span></label>
+                                    <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">Judul Skripsi <span class="text-rose-500">*</span></label>
                                     <textarea name="title" x-model="editData.title" required rows="3" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 leading-relaxed"></textarea>
                                 </div>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <!-- Tahun Angkatan -->
                                     <div>
-                                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Tahun Angkatan</label>
+                                        <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">Tahun Angkatan</label>
                                         <input type="number" name="year" x-model="editData.year" placeholder="YYYY" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
                                     </div>
 
                                     <!-- Pembimbing 1 -->
                                     <div>
-                                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Pembimbing 1</label>
+                                        <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">Pembimbing 1</label>
                                         <input type="text" name="pembimbing1" x-model="editData.pembimbing1" placeholder="Nama P1" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
                                     </div>
 
                                     <!-- Pembimbing 2 -->
                                     <div>
-                                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Pembimbing 2</label>
+                                        <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">Pembimbing 2</label>
                                         <input type="text" name="pembimbing2" x-model="editData.pembimbing2" placeholder="Nama P2" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500">
                                     </div>
                                 </div>
 
                                 <!-- Abstrak -->
                                 <div>
-                                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Abstrak</label>
+                                    <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">Abstrak</label>
                                     <textarea name="abstract" x-model="editData.abstract" rows="4" placeholder="Abstrak skripsi..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-normal text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 leading-relaxed"></textarea>
                                 </div>
 

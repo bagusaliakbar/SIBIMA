@@ -95,7 +95,7 @@
             <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-700/80 relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Mahasiswa Aktif</p>
+                        <p class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Total Mahasiswa Aktif</p>
                         <h4 class="text-2xl sm:text-3xl font-black text-slate-800 dark:text-slate-100 mt-1">
                             {{ $stats['total'] }}
                         </h4>
@@ -113,7 +113,7 @@
             <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-700/80 relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Lengkap (P1 & P2)</p>
+                        <p class="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Lengkap (P1 & P2)</p>
                         <h4 class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
                             {{ $stats['compliant'] }}
                         </h4>
@@ -136,7 +136,7 @@
             <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-700/80 relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">Sebagian (1 Dosen)</p>
+                        <p class="text-[11px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest">Sebagian (1 Dosen)</p>
                         <h4 class="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 mt-1">
                             {{ $stats['partial'] }}
                         </h4>
@@ -159,7 +159,7 @@
             <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-700/80 relative overflow-hidden group">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest">Belum Bimbingan (0x)</p>
+                        <p class="text-[11px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest">Belum Bimbingan (0x)</p>
                         <h4 class="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400 mt-1">
                             {{ $stats['inactive'] }}
                         </h4>
@@ -187,7 +187,7 @@
                 <div class="flex flex-wrap items-center gap-2.5 flex-1">
                     <!-- Search Input -->
                     <div class="relative flex-1 min-w-[220px] max-w-sm group">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500 group-focus-within:text-orange-500 transition-colors">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400 group-focus-within:text-orange-500 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
                         <input type="text" 
@@ -264,12 +264,12 @@
                         <div class="flex items-start justify-between gap-2.5">
                             <div class="min-w-0">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="text-[10px] font-bold text-slate-400">#{{ $theses->firstItem() + $index }}</span>
+                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">#{{ $theses->firstItem() + $index }}</span>
                                     <span class="font-bold text-sm text-slate-900 dark:text-white truncate">
                                         {{ $thesis->student ? ucwords(strtolower($thesis->student->name)) : '-' }}
                                     </span>
                                 </div>
-                                <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
+                                <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
                                     <span class="font-mono">{{ $thesis->student->identifier ?? '-' }}</span>
                                     @if($thesis->student && $thesis->student->entry_year)
                                         <span>•</span>
@@ -282,7 +282,7 @@
                                         <span>{{ $thesis->student->phone }}</span>
                                     </div>
                                 @else
-                                    <span class="text-[10px] text-slate-400 italic mt-0.5 block">No WA belum ada</span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 italic mt-0.5 block">No WA belum ada</span>
                                 @endif
                             </div>
 
@@ -305,25 +305,25 @@
                         <div class="grid grid-cols-1 gap-2 p-2.5 rounded-xl bg-slate-50/70 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-700/60 text-xs">
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-1.5 min-w-0">
-                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[10px] font-bold text-blue-600 dark:text-blue-400 shrink-0">P1</span>
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[11px] font-bold text-blue-600 dark:text-blue-400 shrink-0">P1</span>
                                     <span class="font-semibold text-slate-700 dark:text-slate-200 truncate">{{ $thesis->pembimbing1 ? $thesis->pembimbing1->name : '-' }}</span>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 {{ $thesis->weekly_p1_count >= 1 ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40' }}">
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold shrink-0 {{ $thesis->weekly_p1_count >= 1 ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40' }}">
                                     {{ $thesis->weekly_p1_count }}x Sesi
                                 </span>
                             </div>
 
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-1.5 min-w-0">
-                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 shrink-0">P2</span>
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 shrink-0">P2</span>
                                     <span class="font-semibold text-slate-700 dark:text-slate-200 truncate">{{ $thesis->pembimbing2 ? $thesis->pembimbing2->name : ($thesis->pembimbing2_id ? '-' : 'Belum Ditugaskan') }}</span>
                                 </div>
                                 @if($thesis->pembimbing2_id)
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 {{ $thesis->weekly_p2_count >= 1 ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40' }}">
+                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-bold shrink-0 {{ $thesis->weekly_p2_count >= 1 ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40' }}">
                                         {{ $thesis->weekly_p2_count }}x Sesi
                                     </span>
                                 @else
-                                    <span class="text-[10px] text-slate-400 italic shrink-0">Nonaktif</span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 italic shrink-0">Nonaktif</span>
                                 @endif
                             </div>
                         </div>
@@ -354,12 +354,12 @@
                     </div>
                 @empty
                     <div class="py-12 px-6 text-center">
-                        <div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                        <div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
                             <svg class="w-12 h-12 mb-3 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                             <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Tidak ada data mahasiswa skripsi aktif yang cocok.</p>
-                            <p class="text-xs text-slate-400 mt-1">Coba sesuaikan filter pencarian, status kepatuhan, atau pilih minggu lain.</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Coba sesuaikan filter pencarian, status kepatuhan, atau pilih minggu lain.</p>
                         </div>
                     </div>
                 @endforelse
@@ -381,7 +381,7 @@
                         @forelse($theses as $index => $thesis)
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors align-top group">
                                 <!-- No -->
-                                <td class="py-4 px-4 text-center text-xs font-semibold text-slate-400">
+                                <td class="py-4 px-4 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">
                                     {{ $theses->firstItem() + $index }}
                                 </td>
 
@@ -390,7 +390,7 @@
                                     <div class="font-bold text-sm text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors tracking-tight">
                                         {{ $thesis->student ? ucwords(strtolower($thesis->student->name)) : '-' }}
                                     </div>
-                                    <div class="flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
+                                    <div class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
                                         <span class="font-mono">{{ $thesis->student->identifier ?? '-' }}</span>
                                         @if($thesis->student && $thesis->student->entry_year)
                                             <span class="text-slate-300 dark:text-slate-700">•</span>
@@ -403,7 +403,7 @@
                                             <span>{{ $thesis->student->phone }}</span>
                                         </div>
                                     @else
-                                        <span class="text-[10px] text-slate-400 italic mt-1 block">No WA belum ada</span>
+                                        <span class="text-[11px] text-slate-500 dark:text-slate-400 italic mt-1 block">No WA belum ada</span>
                                     @endif
                                 </td>
 
@@ -411,7 +411,7 @@
                                 <td class="py-4 px-5">
                                     <div class="space-y-1.5">
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[10px] font-bold text-blue-600 dark:text-blue-400 shrink-0">1</span>
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[11px] font-bold text-blue-600 dark:text-blue-400 shrink-0">1</span>
                                             <span class="text-xs font-semibold text-slate-800 dark:text-slate-100 tracking-tight">
                                                 {{ $thesis->pembimbing1 ? $thesis->pembimbing1->name : '-' }}
                                             </span>
@@ -419,18 +419,18 @@
 
                                         <div class="flex items-center gap-2 pl-7">
                                             @if($thesis->weekly_p1_count >= 1)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40">
                                                     <svg class="w-2.5 h-2.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                     {{ $thesis->weekly_p1_count }}x Bimbingan
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40">
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40">
                                                     0x Bimbingan
                                                 </span>
                                             @endif
 
                                             @if($thesis->weekly_latest_p1)
-                                                <span class="text-[10px] text-slate-400 dark:text-slate-500">
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400">
                                                     ({{ \Carbon\Carbon::parse($thesis->weekly_latest_p1->scheduled_at)->isoFormat('dd, D MMM') }})
                                                 </span>
                                             @endif
@@ -442,7 +442,7 @@
                                 <td class="py-4 px-5">
                                     <div class="space-y-1.5">
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 shrink-0">2</span>
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 shrink-0">2</span>
                                             <span class="text-xs font-semibold text-slate-800 dark:text-slate-100 tracking-tight">
                                                 {{ $thesis->pembimbing2 ? $thesis->pembimbing2->name : ($thesis->pembimbing2_id ? '-' : 'Belum Ditugaskan') }}
                                             </span>
@@ -451,25 +451,25 @@
                                         @if($thesis->pembimbing2_id)
                                             <div class="flex items-center gap-2 pl-7">
                                                 @if($thesis->weekly_p2_count >= 1)
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/40">
                                                         <svg class="w-2.5 h-2.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                         {{ $thesis->weekly_p2_count }}x Bimbingan
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/40">
                                                         0x Bimbingan
                                                     </span>
                                                 @endif
 
                                                 @if($thesis->weekly_latest_p2)
-                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500">
+                                                    <span class="text-[11px] text-slate-500 dark:text-slate-400">
                                                         ({{ \Carbon\Carbon::parse($thesis->weekly_latest_p2->scheduled_at)->isoFormat('dd, D MMM') }})
                                                     </span>
                                                 @endif
                                             </div>
                                         @else
                                             <div class="pl-7">
-                                                <span class="text-[10px] text-slate-400 italic">P2 belum aktif</span>
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">P2 belum aktif</span>
                                             </div>
                                         @endif
                                     </div>
@@ -483,7 +483,7 @@
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                 <span>Lengkap</span>
                                             </span>
-                                            <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">P1 & P2 Terpenuhi</span>
+                                            <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">P1 & P2 Terpenuhi</span>
                                         </div>
                                     @elseif($thesis->weekly_compliance_status === 'partial')
                                         <div class="inline-flex flex-col items-center gap-1">
@@ -491,7 +491,7 @@
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                                 <span>Sebagian</span>
                                             </span>
-                                            <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                                            <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">
                                                 {{ $thesis->weekly_p1_count >= 1 ? 'Kurang P2' : 'Kurang P1' }}
                                             </span>
                                         </div>
@@ -501,7 +501,7 @@
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                 <span>Belum Bimbingan</span>
                                             </span>
-                                            <span class="text-[10px] font-bold text-rose-600 dark:text-rose-400">0 Sesi Minggu Ini</span>
+                                            <span class="text-[11px] font-bold text-rose-600 dark:text-rose-400">0 Sesi Minggu Ini</span>
                                         </div>
                                     @endif
                                 </td>
@@ -532,7 +532,7 @@
                                         <!-- View Thesis / Mentoring History Details -->
                                         <a href="{{ route('theses.show', $thesis->id) }}" 
                                            title="Lihat profil dan riwayat bimbingan lengkap"
-                                           class="inline-flex items-center justify-center p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 rounded-xl transition-all">
+                                           class="inline-flex items-center justify-center p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 rounded-xl transition-all">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                         </a>
                                     </div>
@@ -541,12 +541,12 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="py-12 px-6 text-center">
-                                    <div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                                    <div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
                                         <svg class="w-12 h-12 mb-3 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
                                         <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Tidak ada data mahasiswa skripsi aktif yang cocok.</p>
-                                        <p class="text-xs text-slate-400 mt-1">Coba sesuaikan filter pencarian, status kepatuhan, atau pilih minggu lain.</p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Coba sesuaikan filter pencarian, status kepatuhan, atau pilih minggu lain.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -613,7 +613,7 @@
                                     <p class="text-xs text-slate-500 dark:text-slate-400">Peringatan kewajiban bimbingan skripsi mingguan</p>
                                 </div>
                             </div>
-                            <button type="button" @click="reminderModalOpen = false" aria-label="Tutup modal pengingat WhatsApp" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl cursor-pointer">
+                            <button type="button" @click="reminderModalOpen = false" aria-label="Tutup modal pengingat WhatsApp" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -624,11 +624,11 @@
                             <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-700/60 flex items-center justify-between">
                                 <div>
                                     <p class="text-xs font-bold text-slate-900 dark:text-slate-100" x-text="currentTarget.studentName"></p>
-                                    <p class="text-[11px] text-slate-400 font-mono" x-text="currentTarget.studentNpm"></p>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono" x-text="currentTarget.studentNpm"></p>
                                 </div>
                                 <div class="text-right">
                                     <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 block" x-text="currentTarget.studentPhone || 'Tidak ada nomor'"></span>
-                                    <span class="text-[10px] text-slate-400">Nomor WhatsApp</span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400">Nomor WhatsApp</span>
                                 </div>
                             </div>
 
@@ -642,7 +642,7 @@
                                           rows="7" 
                                           required 
                                           class="w-full text-xs p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 leading-relaxed font-mono shadow-2xs"></textarea>
-                                <p class="text-[11px] text-slate-400 mt-1">Anda dapat menyesuaikan isi pesan sebelum dikirimkan ke mahasiswa.</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Anda dapat menyesuaikan isi pesan sebelum dikirimkan ke mahasiswa.</p>
                             </div>
                         </div>
 

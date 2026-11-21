@@ -60,49 +60,49 @@
             <!-- Total Pengajuan -->
             <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-slate-300">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Total Pengajuan Baru</span>
+                    <span class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Total Pengajuan Baru</span>
                     <span class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </span>
                 </div>
                 <div class="text-3xl font-black text-slate-800 dark:text-slate-100" x-text="items.length">{{ $pendingSummary['total'] }}</div>
-                <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Menunggu Penugasan</p>
+                <p class="text-[11px] text-slate-400 font-bold uppercase mt-1">Menunggu Penugasan</p>
             </div>
 
             <!-- 100% Bersih -->
             <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-900/60 shadow-sm transition-all hover:border-emerald-300">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="inline-flex items-center gap-1.5 text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>100% Bersih (Siap ACC)</span>
+                    <span class="inline-flex items-center gap-1.5 text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>100% Bersih (Siap ACC)</span>
                     <span class="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                     </span>
                 </div>
                 <div class="text-3xl font-black text-emerald-600 dark:text-emerald-400" x-text="items.filter(i => i.category === 'clean').length">{{ $pendingSummary['clean_count'] }}</div>
-                <p class="text-[10px] text-emerald-600/80 font-bold uppercase mt-1">Judul Unik & Kuota Tersedia</p>
+                <p class="text-[11px] text-emerald-600/80 font-bold uppercase mt-1">Judul Unik & Kuota Tersedia</p>
             </div>
 
             <!-- Perlu Penyesuaian -->
             <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-900/60 shadow-sm transition-all hover:border-amber-300">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="inline-flex items-center gap-1.5 text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-amber-500"></span>Perlu Penyesuaian</span>
+                    <span class="inline-flex items-center gap-1.5 text-[11px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-amber-500"></span>Perlu Penyesuaian</span>
                     <span class="p-2 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </span>
                 </div>
                 <div class="text-3xl font-black text-amber-600 dark:text-amber-400" x-text="items.filter(i => i.category === 'warning').length">{{ $pendingSummary['warning_count'] }}</div>
-                <p class="text-[10px] text-amber-600/80 font-bold uppercase mt-1">Cek Kuota Dosen / Abstrak</p>
+                <p class="text-[11px] text-amber-600/80 font-bold uppercase mt-1">Cek Kuota Dosen / Abstrak</p>
             </div>
 
             <!-- Kritis -->
             <div class="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-900/60 shadow-sm transition-all hover:border-rose-300">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="inline-flex items-center gap-1.5 text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-rose-500"></span>Duplikasi Kritis</span>
+                    <span class="inline-flex items-center gap-1.5 text-[11px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-rose-500"></span>Duplikasi Kritis</span>
                     <span class="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </span>
                 </div>
                 <div class="text-3xl font-black text-rose-600 dark:text-rose-400" x-text="items.filter(i => i.category === 'critical').length">{{ $pendingSummary['critical_count'] }}</div>
-                <p class="text-[10px] text-rose-600/80 font-bold uppercase mt-1">Kemiripan Tinggi (≥66%)</p>
+                <p class="text-[11px] text-rose-600/80 font-bold uppercase mt-1">Kemiripan Tinggi (≥66%)</p>
             </div>
         </div>
 
@@ -160,15 +160,15 @@
                                 <h3 class="font-black text-slate-800 dark:text-slate-100 uppercase text-sm tracking-tight" x-text="item.student_name"></h3>
                                 <div class="flex flex-wrap items-center gap-2 mt-1">
                                     <span class="text-xs font-mono font-bold text-slate-600 dark:text-slate-400" x-text="item.student_identifier"></span>
-                                    <span class="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50" x-text="'Angkatan ' + item.entry_year"></span>
-                                    <span class="text-[10px] font-bold text-slate-400" x-text="'Diajukan: ' + item.created_at"></span>
+                                    <span class="px-2 py-0.5 rounded-lg text-[11px] font-black uppercase bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50" x-text="'Angkatan ' + item.entry_year"></span>
+                                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400" x-text="'Diajukan: ' + item.created_at"></span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="flex items-center gap-2.5">
                             <!-- Category Badge -->
-                            <span class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-2 border"
+                            <span class="px-3.5 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider flex items-center gap-2 border"
                                   :class="item.category === 'clean' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60' : (item.category === 'warning' ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-900/60' : 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/60')">
                                 <span class="w-2 h-2 rounded-full" :class="item.category === 'clean' ? 'bg-emerald-500' : (item.category === 'warning' ? 'bg-amber-500' : 'bg-rose-500')"></span>
                                 <span x-text="item.category_label"></span>
@@ -181,7 +181,7 @@
                                 title: item.title,
                                 score: item.similarity_score,
                                 matches: item.similarity_matches
-                            })" class="px-3.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer hover:scale-105"
+                            })" class="px-3.5 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider border transition-all cursor-pointer hover:scale-105"
                                     :class="item.similarity_score >= 66 ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100 dark:bg-rose-950/50' : (item.similarity_score >= 35 ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:bg-amber-950/50' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/50')"
                                     title="Klik untuk melihat dokumen dan kata kunci pembanding">
                                 <span x-text="item.similarity_score + '% Kemiripan'"></span>
@@ -192,14 +192,14 @@
                     <!-- Middle Content: Title & Abstract -->
                     <div class="py-5 space-y-4">
                         <div>
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1.5">Rencana Judul Skripsi</span>
+                            <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-1.5">Rencana Judul Skripsi</span>
                             <h4 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase leading-snug tracking-tight" x-text="item.title"></h4>
                         </div>
 
                         <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Deskripsi / Rencana Skripsi</span>
-                                <span class="text-[10px] font-bold" 
+                                <span class="text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Deskripsi / Rencana Skripsi</span>
+                                <span class="text-[11px] font-bold" 
                                       :class="item.word_count >= 50 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'"
                                       x-text="item.word_count + ' kata' + (item.word_count < 50 ? ' (Terlalu Pendek)' : '')"></span>
                             </div>
@@ -211,7 +211,7 @@
                             <!-- Strengths -->
                             <template x-if="item.strengths && item.strengths.length > 0">
                                 <div class="p-3.5 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 space-y-1.5">
-                                    <span class="text-[9px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <span class="text-[11px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-1.5">
                                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                         Kesesuaian Valid:
                                     </span>
@@ -229,7 +229,7 @@
                             <!-- Issues / Warnings -->
                             <template x-if="item.issues && item.issues.length > 0">
                                 <div class="p-3.5 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 space-y-1.5">
-                                    <span class="text-[9px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+                                    <span class="text-[11px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
                                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                                         Catatan / Perhatian:
                                     </span>
@@ -251,17 +251,17 @@
                         
                         <!-- Usulan Mahasiswa -->
                         <div class="space-y-2.5">
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Usulan Dosen oleh Mahasiswa:</span>
+                            <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Usulan Dosen oleh Mahasiswa:</span>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <!-- Usulan P1 -->
                                 <div class="p-3 rounded-2xl border flex flex-col justify-between"
                                      :class="item.req_p1 ? (item.req_p1.is_full ? 'bg-rose-50/50 border-rose-200 dark:bg-rose-950/20' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700') : 'bg-slate-50 dark:bg-slate-800/40 border-dashed border-slate-300'">
                                     <div>
-                                        <div class="text-[8px] font-black text-slate-400 uppercase tracking-widest">P1 Usulan</div>
+                                        <div class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">P1 Usulan</div>
                                         <div class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase truncate mt-0.5" x-text="item.req_p1 ? item.req_p1.name : 'Tidak Memilih'"></div>
                                     </div>
                                     <template x-if="item.req_p1">
-                                        <div class="mt-3 flex items-center justify-between text-[10px] font-bold">
+                                        <div class="mt-3 flex items-center justify-between text-[11px] font-bold">
                                             <span :class="item.req_p1.is_full ? 'text-rose-600 font-black' : 'text-slate-500'" x-text="'Beban: ' + item.req_p1.workload + '/' + item.req_p1.max_quota"></span>
                                             <span class="text-indigo-600 dark:text-indigo-400 font-extrabold" x-text="item.req_p1.match_score > 0 ? 'Match: ' + item.req_p1.match_score : ''"></span>
                                         </div>
@@ -272,11 +272,11 @@
                                 <div class="p-3 rounded-2xl border flex flex-col justify-between"
                                      :class="item.req_p2 ? (item.req_p2.is_full ? 'bg-rose-50/50 border-rose-200 dark:bg-rose-950/20' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700') : 'bg-slate-50 dark:bg-slate-800/40 border-dashed border-slate-300'">
                                     <div>
-                                        <div class="text-[8px] font-black text-slate-400 uppercase tracking-widest">P2 Usulan</div>
+                                        <div class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">P2 Usulan</div>
                                         <div class="text-xs font-black text-slate-800 dark:text-slate-100 uppercase truncate mt-0.5" x-text="item.req_p2 ? item.req_p2.name : 'Tidak Memilih'"></div>
                                     </div>
                                     <template x-if="item.req_p2">
-                                        <div class="mt-3 flex items-center justify-between text-[10px] font-bold">
+                                        <div class="mt-3 flex items-center justify-between text-[11px] font-bold">
                                             <span :class="item.req_p2.is_full ? 'text-rose-600 font-black' : 'text-slate-500'" x-text="'Beban: ' + item.req_p2.workload + '/' + item.req_p2.max_quota"></span>
                                             <span class="text-indigo-600 dark:text-indigo-400 font-extrabold" x-text="item.req_p2.match_score > 0 ? 'Match: ' + item.req_p2.match_score : ''"></span>
                                         </div>
@@ -288,9 +288,9 @@
                         <!-- Rekomendasi Pintar & Quick Action -->
                         <div class="space-y-2.5 flex flex-col justify-between">
                             <div class="flex items-center justify-between">
-                                <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Rekomendasi AI Sesuai Topik:</span>
+                                <span class="text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Rekomendasi AI Sesuai Topik:</span>
                                 <template x-if="item.recommended_p1">
-                                    <span class="text-[9px] font-black text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md">Kuota Tersedia</span>
+                                    <span class="text-[11px] font-black text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md">Kuota Tersedia</span>
                                 </template>
                             </div>
 
@@ -354,7 +354,7 @@
                     </div>
                     <div class="space-y-1">
                         <h4 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-wide">Semua Pengajuan Bersih & Terproses</h4>
-                        <p class="text-xs text-slate-400 max-w-sm mx-auto">Tidak ada pengajuan mahasiswa baru yang sesuai dengan kriteria filter atau pencarian saat ini.</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">Tidak ada pengajuan mahasiswa baru yang sesuai dengan kriteria filter atau pencarian saat ini.</p>
                     </div>
                 </div>
             </template>

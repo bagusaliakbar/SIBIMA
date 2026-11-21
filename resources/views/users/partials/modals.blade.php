@@ -28,7 +28,7 @@
                                     <div class="min-w-0">
                                         <div class="flex items-center gap-2 flex-wrap">
                                             <h3 class="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight truncate" x-text="selectedUser.name"></h3>
-                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0"
+                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider shrink-0"
                                                   :class="{
                                                     'bg-blue-100 dark:bg-blue-900/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700': selectedUser.role === 'dosen',
                                                     'bg-amber-100 dark:bg-amber-900/70 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700': selectedUser.role === 'kaprodi',
@@ -63,17 +63,17 @@
                                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-6">
                                         <!-- 1. NPM / NIDN -->
                                         <div>
-                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">NPM / NIDN</span>
+                                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">NPM / NIDN</span>
                                             <span class="text-xs font-mono font-black text-slate-800 dark:text-slate-100 mt-1 block" x-text="selectedUser.identifier || '-'"></span>
                                         </div>
 
                                         <!-- 2. WhatsApp -->
                                         <div>
-                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Kontak WhatsApp</span>
+                                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Kontak WhatsApp</span>
                                             <div class="flex items-center gap-1.5 mt-1">
                                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-100" x-text="selectedUser.phone_number || '-'"></span>
                                                 <template x-if="selectedUser.has_wa">
-                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
                                                         Terhubung
                                                     </span>
                                                 </template>
@@ -82,7 +82,7 @@
 
                                         <!-- 3. Status Akun -->
                                         <div>
-                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Status Akun</span>
+                                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Status Akun</span>
                                             <div class="flex items-center gap-1.5 mt-1">
                                                 <span class="w-2 h-2 rounded-full" :class="selectedUser.is_active ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'"></span>
                                                 <span class="text-xs font-bold" :class="selectedUser.is_active ? 'text-emerald-700 dark:text-emerald-300' : 'text-amber-700 dark:text-amber-300'" x-text="selectedUser.is_active ? 'Aktif' : 'Menunggu Aktivasi'"></span>
@@ -91,18 +91,18 @@
 
                                         <!-- 4. Terakhir Login -->
                                         <div>
-                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Terakhir Login</span>
+                                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Terakhir Login</span>
                                             <div class="mt-1">
                                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-100" x-text="selectedUser.last_login_at_human"></span>
                                                 <template x-if="selectedUser.last_login_at_full">
-                                                    <span class="text-[10px] text-slate-400 dark:text-slate-500 block font-mono mt-0.5" x-text="selectedUser.last_login_at_full"></span>
+                                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 block font-mono mt-0.5" x-text="selectedUser.last_login_at_full"></span>
                                                 </template>
                                             </div>
                                         </div>
 
                                         <!-- 5. Verifikasi Email -->
                                         <div>
-                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Verifikasi Email</span>
+                                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Verifikasi Email</span>
                                             <div class="mt-1 flex items-center gap-1">
                                                 <template x-if="selectedUser.has_email_verified">
                                                     <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
@@ -111,14 +111,14 @@
                                                     </span>
                                                 </template>
                                                 <template x-if="!selectedUser.has_email_verified">
-                                                    <span class="text-xs font-medium text-slate-400 dark:text-slate-500 italic">Belum Verifikasi</span>
+                                                    <span class="text-xs font-medium text-slate-500 dark:text-slate-400 italic">Belum Verifikasi</span>
                                                 </template>
                                             </div>
                                         </div>
 
                                         <!-- 6. Terdaftar Sejak -->
                                         <div>
-                                            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider block">Terdaftar Pada</span>
+                                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Terdaftar Pada</span>
                                             <span class="text-xs font-medium text-slate-700 dark:text-slate-300 mt-1 block" x-text="selectedUser.registered_at"></span>
                                         </div>
                                     </div>
@@ -133,7 +133,7 @@
                                                 <span>Informasi Skripsi & Akademik</span>
                                             </h4>
                                             <template x-if="selectedUser.entry_year">
-                                                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold border bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700">
+                                                <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-bold border bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700">
                                                     <span x-text="'Angkatan ' + selectedUser.entry_year"></span>
                                                 </span>
                                             </template>
@@ -143,18 +143,18 @@
                                             <div class="p-4.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3.5">
                                                 <!-- Thesis Title -->
                                                 <div>
-                                                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">Judul Skripsi Aktif:</span>
+                                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Judul Skripsi Aktif:</span>
                                                     <h5 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight mt-1 leading-relaxed" x-text="selectedUser.thesis.title"></h5>
                                                 </div>
 
                                                 <!-- Stage & Topic -->
                                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-200 dark:border-slate-700/60">
                                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
-                                                        <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1">Tahapan Saat Ini</p>
+                                                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Tahapan Saat Ini</p>
                                                         <p class="text-xs font-black text-indigo-600 dark:text-indigo-400" x-text="selectedUser.thesis.stage"></p>
                                                     </div>
                                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
-                                                        <p class="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1">Topik / Minat</p>
+                                                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Topik / Minat</p>
                                                         <p class="text-xs font-bold text-slate-700 dark:text-slate-200" x-text="selectedUser.thesis.topic"></p>
                                                     </div>
                                                 </div>
@@ -162,11 +162,11 @@
                                                 <!-- Supervisors -->
                                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
-                                                        <span class="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Pembimbing 1 (Utama)</span>
+                                                        <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Pembimbing 1 (Utama)</span>
                                                         <p class="text-xs font-bold text-slate-900 dark:text-white mt-1" x-text="selectedUser.thesis.pembimbing1"></p>
                                                     </div>
                                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
-                                                        <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Pembimbing 2 (Pendamping)</span>
+                                                        <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Pembimbing 2 (Pendamping)</span>
                                                         <p class="text-xs font-bold text-slate-900 dark:text-white mt-1" x-text="selectedUser.thesis.pembimbing2"></p>
                                                     </div>
                                                 </div>
@@ -203,29 +203,29 @@
                                                 <!-- Dosen KPI Stat Mini Grid -->
                                                 <div class="grid grid-cols-3 gap-3">
                                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70 text-center">
-                                                        <span class="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">Pembimbing 1</span>
+                                                        <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">Pembimbing 1</span>
                                                         <p class="text-lg font-black text-blue-700 dark:text-blue-300 mt-0.5" x-text="selectedUser.dosen.p1_count + ' Mhs'"></p>
                                                     </div>
                                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70 text-center">
-                                                        <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Pembimbing 2</span>
+                                                        <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Pembimbing 2</span>
                                                         <p class="text-lg font-black text-indigo-700 dark:text-indigo-300 mt-0.5" x-text="selectedUser.dosen.p2_count + ' Mhs'"></p>
                                                     </div>
                                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70 text-center">
-                                                        <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Total Bimbingan</span>
+                                                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Total Bimbingan</span>
                                                         <p class="text-lg font-black text-slate-900 dark:text-white mt-0.5" x-text="selectedUser.dosen.total_active + ' / ' + selectedUser.dosen.max_quota"></p>
                                                     </div>
                                                 </div>
 
                                                 <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/70">
-                                                    <p class="text-[9px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Bidang Minat / Riset</p>
+                                                    <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Bidang Minat / Riset</p>
                                                     <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5" x-text="selectedUser.dosen.research_interests"></p>
                                                 </div>
 
                                                 <!-- List of Supervised Students -->
                                                 <div>
                                                     <div class="flex items-center justify-between mb-2">
-                                                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Mahasiswa Bimbingan Aktif</span>
-                                                        <span class="text-[10px] font-bold text-slate-400" x-text="selectedUser.dosen.students.length + ' Mahasiswa'"></span>
+                                                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Mahasiswa Bimbingan Aktif</span>
+                                                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400" x-text="selectedUser.dosen.students.length + ' Mahasiswa'"></span>
                                                     </div>
 
                                                     <template x-if="selectedUser.dosen.students.length > 0">
@@ -235,11 +235,11 @@
                                                                     <div class="min-w-0 flex-1">
                                                                         <div class="flex items-center gap-2">
                                                                             <span class="font-bold text-slate-900 dark:text-white uppercase" x-text="st.student_name"></span>
-                                                                            <span class="font-mono text-[10px] text-slate-400" x-text="'(' + st.student_npm + ')'"></span>
+                                                                            <span class="font-mono text-[11px] text-slate-500 dark:text-slate-400" x-text="'(' + st.student_npm + ')'"></span>
                                                                         </div>
                                                                         <p class="text-[11px] text-slate-600 dark:text-slate-300 truncate mt-0.5" x-text="st.title"></p>
                                                                     </div>
-                                                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase shrink-0 border"
+                                                                    <span class="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase shrink-0 border"
                                                                           :class="st.role === 'Pembimbing 1' ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800' : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800'"
                                                                           x-text="st.role"></span>
                                                                 </div>
@@ -249,7 +249,7 @@
 
                                                     <template x-if="selectedUser.dosen.students.length === 0">
                                                         <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 text-center py-4">
-                                                            <p class="text-xs font-medium text-slate-400">Belum ada mahasiswa bimbingan skripsi yang aktif saat ini.</p>
+                                                            <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Belum ada mahasiswa bimbingan skripsi yang aktif saat ini.</p>
                                                         </div>
                                                     </template>
                                                 </div>
@@ -299,12 +299,12 @@
                         <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">
                             Import Data Pengguna
                         </h3>
-                        <p class="text-[10px] text-slate-500 uppercase font-black mt-1">Silakan gunakan template Excel yang sesuai</p>
+                        <p class="text-[11px] text-slate-500 uppercase font-black mt-1">Silakan gunakan template Excel yang sesuai</p>
                         
                         <div class="mt-6 p-4 bg-orange-50 dark:bg-orange-500/5 rounded-xl border border-orange-100 dark:border-orange-500/10">
-                            <h4 class="text-[10px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest mb-2">Format Kolom:</h4>
-                            <p class="font-mono text-[9px] text-orange-600 dark:text-orange-500 bg-white/50 dark:bg-slate-900/50 p-2 rounded-lg border border-orange-100 dark:border-orange-500/10">Nama, Email, Peran, NPM/NIDN, Tahun Angkatan, No_WhatsApp, Status Aktif (1/0), Tanggal Lahir (YYYY-MM-DD)</p>
-                            <div class="mt-2 space-y-1 text-[9px] text-orange-600/70 dark:text-orange-400/70 font-bold uppercase">
+                            <h4 class="text-[11px] font-black text-orange-700 dark:text-orange-400 uppercase tracking-widest mb-2">Format Kolom:</h4>
+                            <p class="font-mono text-[11px] text-orange-600 dark:text-orange-500 bg-white/50 dark:bg-slate-900/50 p-2 rounded-lg border border-orange-100 dark:border-orange-500/10">Nama, Email, Peran, NPM/NIDN, Tahun Angkatan, No_WhatsApp, Status Aktif (1/0), Tanggal Lahir (YYYY-MM-DD)</p>
+                            <div class="mt-2 space-y-1 text-[11px] text-orange-600/70 dark:text-orange-400/70 font-bold uppercase">
                                 <p>* Peran: dosen, mahasiswa, atau kaprodi</p>
                                 <p>* Tahun Angkatan: Khusus mahasiswa (cth: 2020)</p>
                                 <p>* Status Aktif: 1 untuk Aktif, 0 untuk Pending</p>
@@ -315,14 +315,14 @@
                     <form action="{{ route('users.import') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="px-8 py-8">
-                            <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Pilih File Excel (.xlsx, .xls)</label>
+                            <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">Pilih File Excel (.xlsx, .xls)</label>
                             <div class="relative group">
-                                <input type="file" name="excel_file" required class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-orange-600 file:text-white hover:file:bg-orange-700 transition-all cursor-pointer bg-slate-50 dark:bg-slate-900 rounded-xl p-2 border border-dashed border-slate-200 dark:border-slate-700">
+                                <input type="file" name="excel_file" required class="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-[11px] file:font-black file:uppercase file:tracking-widest file:bg-orange-600 file:text-white hover:file:bg-orange-700 transition-all cursor-pointer bg-slate-50 dark:bg-slate-900 rounded-xl p-2 border border-dashed border-slate-200 dark:border-slate-700">
                             </div>
                         </div>
                         <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                            <button type="button" @click="openImportModal = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest hover:text-slate-800 dark:hover:text-slate-200 transition-colors">Batal</button>
-                            <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all">Mulai Import</button>
+                            <button type="button" @click="openImportModal = false" class="px-6 py-2.5 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest hover:text-slate-800 dark:hover:text-slate-200 transition-colors">Batal</button>
+                            <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[11px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all">Mulai Import</button>
                         </div>
                     </form>
                 </div>

@@ -248,13 +248,13 @@
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     {{-- Status Filter Tabs (Capsule / Segmented Control) --}}
                     <div class="inline-flex items-center gap-1 p-1 bg-slate-200/60 dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-x-auto max-w-full">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 px-2 hidden md:inline">Status:</span>
+                        <span class="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 px-2 hidden md:inline">Status:</span>
 
                         {{-- Semua Status --}}
                         <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'all', 'search' => $search]) }}"
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60' }}">
                             <span>Semua</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-300/60 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}">
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-300/60 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}">
                                 {{ $stats['total'] ?? 0 }}
                             </span>
                         </a>
@@ -264,7 +264,7 @@
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' }}">
                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             <span>Menunggu</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? '') === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
                                 {{ $stats['pending'] ?? 0 }}
                             </span>
                         </a>
@@ -273,7 +273,7 @@
                         <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'approved', 'search' => $search]) }}"
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'approved' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-200 hover:bg-emerald-100/50 dark:hover:bg-emerald-950/40' }}">
                             <span>✓ Disetujui</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'approved' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200' }}">
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? '') === 'approved' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200' }}">
                                 {{ $stats['approved'] ?? 0 }}
                             </span>
                         </a>
@@ -282,14 +282,14 @@
                         <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'rejected', 'search' => $search]) }}"
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'rejected' ? 'bg-rose-600 text-white shadow-xs' : 'text-rose-700 dark:text-rose-400 hover:text-rose-900 dark:hover:text-rose-200 hover:bg-rose-100/50 dark:hover:bg-rose-950/40' }}">
                             <span>✕ Perlu Revisi</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black {{ ($status ?? '') === 'rejected' ? 'bg-white/20 text-white' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200' }}">
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? '') === 'rejected' ? 'bg-white/20 text-white' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200' }}">
                                 {{ $stats['rejected'] ?? 0 }}
                             </span>
                         </a>
                     </div>
 
                     {{-- Wave & Filter Indicator (Right) --}}
-                    <div class="text-[11px] font-bold text-slate-400 dark:text-slate-500 hidden sm:flex items-center gap-1.5">
+                    <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 hidden sm:flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span>{{ $activeWave ? $activeWave->title : 'Semua Gelombang' }}</span>
                     </div>
@@ -308,7 +308,7 @@
 
                         <div class="relative w-full">
                             {{-- Search Icon / Submit Button --}}
-                            <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 hover:text-orange-500 transition-colors cursor-pointer" title="Cari" aria-label="Cari">
+                            <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-orange-500 transition-colors cursor-pointer" title="Cari" aria-label="Cari">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
@@ -322,7 +322,7 @@
                             {{-- Reset / Clear Button --}}
                             @if($search)
                                 <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => $status]) }}" 
-                                   class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold transition-colors"
+                                   class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold transition-colors"
                                    title="Reset Pencarian">
                                     ✕
                                 </a>
@@ -379,7 +379,7 @@
                                  x-transition:leave-end="transform opacity-0 scale-95 -translate-y-1"
                                  class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 z-30">
                                 
-                                <div class="px-3.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                <div class="px-3.5 py-1 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                     Pilih Format Dokumen
                                 </div>
 
@@ -393,7 +393,7 @@
                                     </span>
                                     <div>
                                         <p class="font-bold text-slate-800 dark:text-slate-100">Format PDF (.pdf)</p>
-                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-normal">Layout resmi siap cetak & arsip</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Layout resmi siap cetak & arsip</p>
                                     </div>
                                 </a>
 
@@ -409,7 +409,7 @@
                                     </span>
                                     <div>
                                         <p class="font-bold text-slate-800 dark:text-slate-100">Format Word (.doc)</p>
-                                        <p class="text-[10px] text-slate-400 dark:text-slate-400 font-normal">Dapat disunting & disesuaikan</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-normal">Dapat disunting & disesuaikan</p>
                                     </div>
                                 </a>
                             </div>
@@ -424,7 +424,7 @@
             <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead>
-                        <tr class="bg-slate-50/70 dark:bg-slate-900/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700/80">
+                        <tr class="bg-slate-50/70 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700/80">
                             <th class="py-4 px-6">Mahasiswa & Judul Skripsi</th>
                             <th class="py-4 px-6 text-center">Berkas Persyaratan</th>
                             <th class="py-4 px-6 text-center">Status</th>
@@ -505,11 +505,11 @@
                                         {{ $app->thesis->student->name }}
                                     </div>
                                     <div class="flex items-center gap-2 mt-1">
-                                        <span class="font-mono text-[10px] font-bold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded border border-slate-200 dark:border-slate-700">
+                                        <span class="font-mono text-[11px] font-bold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded border border-slate-200 dark:border-slate-700">
                                             {{ $app->thesis->student->identifier }}
                                         </span>
                                         @if($app->created_at)
-                                            <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold">
+                                            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-bold">
                                                 • Daftar: {{ $app->created_at->translatedFormat('d M Y, H:i') }}
                                             </span>
                                         @endif
@@ -518,7 +518,7 @@
                                     {{-- Thesis Title --}}
                                     @if($app->thesis->title)
                                         <div class="mt-2.5 text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/60">
-                                            <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-0.5">Judul Skripsi:</span>
+                                            <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-0.5">Judul Skripsi:</span>
                                             {{ $app->thesis->title }}
                                         </div>
                                     @endif
@@ -526,14 +526,14 @@
                                     {{-- Supervisors --}}
                                     <div class="mt-2.5 flex flex-wrap gap-2">
                                         @if($app->thesis->pembimbing1)
-                                            <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-indigo-50/80 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-800/60 text-[10px]">
-                                                <span class="w-3.5 h-3.5 rounded bg-indigo-600 text-white flex items-center justify-center text-[8px] font-black">1</span>
+                                            <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-indigo-50/80 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-800/60 text-[11px]">
+                                                <span class="w-3.5 h-3.5 rounded bg-indigo-600 text-white flex items-center justify-center text-[11px] font-black">1</span>
                                                 <span class="font-bold text-indigo-950 dark:text-indigo-200 truncate max-w-[150px]">{{ $app->thesis->pembimbing1->name }}</span>
                                             </div>
                                         @endif
                                         @if($app->thesis->pembimbing2)
-                                            <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-50/80 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-800/60 text-[10px]">
-                                                <span class="w-3.5 h-3.5 rounded bg-blue-600 text-white flex items-center justify-center text-[8px] font-black">2</span>
+                                            <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-50/80 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-800/60 text-[11px]">
+                                                <span class="w-3.5 h-3.5 rounded bg-blue-600 text-white flex items-center justify-center text-[11px] font-black">2</span>
                                                 <span class="font-bold text-blue-950 dark:text-blue-200 truncate max-w-[150px]">{{ $app->thesis->pembimbing2->name }}</span>
                                             </div>
                                         @endif
@@ -554,12 +554,12 @@
                                         </button>
 
                                         @if($rejectedCount > 0)
-                                            <span class="inline-flex items-center gap-1 text-[9px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-800/80">
+                                            <span class="inline-flex items-center gap-1 text-[11px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-800/80">
                                                 <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                                                 <span>{{ $rejectedCount }} Berkas Ditolak</span>
                                             </span>
                                         @else
-                                            <span class="text-[9px] font-medium text-slate-400 dark:text-slate-500">
+                                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">
                                                 Klik untuk periksa
                                             </span>
                                         @endif
@@ -576,7 +576,7 @@
                                         @endif
                                         
                                         @if($app->admin_feedback)
-                                            <p class="text-[9px] text-rose-600 dark:text-rose-400 font-bold mt-1 max-w-[140px] truncate bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-100 dark:border-rose-900/50" 
+                                            <p class="text-[11px] text-rose-600 dark:text-rose-400 font-bold mt-1 max-w-[140px] truncate bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-100 dark:border-rose-900/50" 
                                                title="{{ $app->admin_feedback }}">
                                                 "{{ $app->admin_feedback }}"
                                             </p>

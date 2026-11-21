@@ -36,7 +36,7 @@
                             <div class="flex-1 w-full md:w-auto pl-16 md:pl-0 {{ $index % 2 == 0 ? 'md:pr-12 md:text-right' : 'md:order-last md:pl-12 md:text-left' }}">
                                 <div class="bg-white dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm hover:shadow-xl hover:border-indigo-500/30 transition-all duration-500 relative overflow-hidden">
                                     <!-- Date Badge -->
-                                    <div class="inline-flex items-center px-2 py-1 bg-slate-50 dark:bg-slate-900/50 text-slate-400 text-[9px] font-black uppercase tracking-widest rounded-lg mb-3 border border-slate-100 dark:border-slate-700">
+                                    <div class="inline-flex items-center px-2 py-1 bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest rounded-lg mb-3 border border-slate-100 dark:border-slate-700">
                                         <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         {{ $log->created_at->locale('id')->translatedFormat('d F Y, H:i') }}
                                     </div>
@@ -48,16 +48,16 @@
 
                                     @if($log->properties)
                                         <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-slate-100 dark:border-slate-700/50 text-left">
-                                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Detail Perubahan</p>
+                                            <p class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2">Detail Perubahan</p>
                                             <div class="space-y-2">
                                                 @foreach($log->properties as $key => $value)
                                                     @if(is_array($value))
                                                         <div class="flex flex-col gap-1">
-                                                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-500 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
                                                             <div class="grid grid-cols-2 gap-2 text-[11px]">
                                                                 @foreach($value as $subKey => $subVal)
                                                                     <div class="bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-100 dark:border-slate-700">
-                                                                        <span class="block text-[8px] text-slate-400 uppercase font-black">{{ $subKey }}</span>
+                                                                        <span class="block text-[11px] text-slate-500 dark:text-slate-400 uppercase font-black">{{ $subKey }}</span>
                                                                         <span class="font-bold text-slate-700 dark:text-slate-200">{{ is_scalar($subVal) ? $subVal : json_encode($subVal) }}</span>
                                                                     </div>
                                                                 @endforeach
@@ -65,7 +65,7 @@
                                                         </div>
                                                     @else
                                                         <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700 last:border-0">
-                                                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-500 capitalize">{{ str_replace('_', ' ', $key) }}</span>
+                                                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 capitalize">{{ str_replace('_', ' ', $key) }}</span>
                                                             <span class="text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight">{{ $value }}</span>
                                                         </div>
                                                     @endif
@@ -78,16 +78,16 @@
                                         @if($log->user)
                                             <img src="{{ $log->user->avatar_url }}" class="w-6 h-6 rounded-full ring-2 ring-indigo-500/20" alt="">
                                             <div class="text-left">
-                                                <p class="text-[10px] font-black text-slate-800 dark:text-slate-200 leading-none mb-0.5">{{ $log->user->name }}</p>
-                                                <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">{{ $log->user->role }}</p>
+                                                <p class="text-[11px] font-black text-slate-800 dark:text-slate-200 leading-none mb-0.5">{{ $log->user->name }}</p>
+                                                <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-none">{{ $log->user->role }}</p>
                                             </div>
                                         @else
                                             <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center">
                                                 <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                                             </div>
                                             <div class="text-left">
-                                                <p class="text-[10px] font-black text-slate-800 dark:text-slate-200 leading-none mb-0.5">Sistem SIBIMA</p>
-                                                <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">Automated</p>
+                                                <p class="text-[11px] font-black text-slate-800 dark:text-slate-200 leading-none mb-0.5">Sistem SIBIMA</p>
+                                                <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-none">Automated</p>
                                             </div>
                                         @endif
                                     </div>

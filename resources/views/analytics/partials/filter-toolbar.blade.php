@@ -12,14 +12,14 @@
                 </div>
                 <div class="flex items-center gap-2">
                     @if(!empty($filters['wave_id']) || !empty($filters['entry_year_from']) || !empty($filters['entry_year_to']) || !empty($filters['dosen_id']) || ($filters['status'] ?? 'all') !== 'all' || !empty($filters['date_from']) || !empty($filters['date_to']))
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/30">
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/30">
                             Filter Aktif
                             @if(!empty($filters['entry_year_from']) || !empty($filters['entry_year_to']))
                                 • {{ $filters['entry_year_label'] ?? '' }}
                             @endif
                         </span>
                     @endif
-                    <span aria-hidden="true" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                    <span aria-hidden="true" class="p-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
                         <svg class="w-5 h-5 transition-transform duration-200" :class="{ 'rotate-180': filterOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </span>
                 </div>
@@ -30,7 +30,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     <!-- Filter Gelombang -->
                     <div>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Gelombang Pelaksanaan</label>
+                        <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Gelombang Pelaksanaan</label>
                         <select name="wave_id" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0">
                             <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Semua Gelombang</option>
                             @foreach($waves as $w)
@@ -48,13 +48,13 @@
                         <input type="hidden" name="cohort_type" :value="cohortType">
 
                         <div class="flex items-center justify-between mb-1.5">
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                            <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                                 <span x-show="cohortType === 'single'">Per Angkatan</span>
                                 <span x-show="cohortType === 'range'">Rentang Angkatan</span>
                             </label>
                             
                             <!-- Mode Switcher Tabs -->
-                            <div class="inline-flex items-center p-0.5 rounded-lg bg-slate-200/70 dark:bg-slate-700/70 text-[9px] font-bold">
+                            <div class="inline-flex items-center p-0.5 rounded-lg bg-slate-200/70 dark:bg-slate-700/70 text-[11px] font-bold">
                                 <button type="button" 
                                         @click="cohortType = 'single'"
                                         :class="cohortType === 'single' ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'"
@@ -119,7 +119,7 @@
 
                     <!-- Filter Dosen Pembimbing -->
                     <div>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Dosen Pembimbing</label>
+                        <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Dosen Pembimbing</label>
                         <select name="dosen_id" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0">
                             <option value="all" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Semua Dosen</option>
                             @foreach($dosens as $d)
@@ -132,7 +132,7 @@
 
                     <!-- Filter Status Skripsi -->
                     <div>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Status Skripsi</label>
+                        <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Status Skripsi</label>
                         <select name="status" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0">
                             <option value="all" {{ ($filters['status'] ?? 'all') === 'all' ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Semua Status</option>
                             <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }} class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Skripsi Aktif</option>
@@ -144,11 +144,11 @@
                     <!-- Rentang Tanggal (From - To) -->
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Dari Tgl</label>
+                            <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Dari Tgl</label>
                             <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0 [color-scheme:light] dark:[color-scheme:dark]">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Sampai Tgl</label>
+                            <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Sampai Tgl</label>
                             <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0 [color-scheme:light] dark:[color-scheme:dark]">
                         </div>
                     </div>

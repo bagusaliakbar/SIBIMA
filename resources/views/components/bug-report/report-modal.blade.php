@@ -34,7 +34,7 @@
                 <button onclick="window.closeBugReportModal()"
                         type="button"
                         aria-label="Tutup modal laporan bug"
-                        class="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer">
+                        class="w-9 h-9 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -191,7 +191,7 @@
                                 </label>
                             </div>
                             <p id="selected-file-name" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-1"></p>
-                            <p class="text-[10px] text-slate-400">PNG, JPG, WEBP atau PDF hingga 5MB</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">PNG, JPG, WEBP atau PDF hingga 5MB</p>
                         </div>
                     </div>
                 </div>

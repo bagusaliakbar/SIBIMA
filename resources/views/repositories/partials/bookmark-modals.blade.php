@@ -21,7 +21,7 @@
                             <button type="button" 
                                     @click="citationModalOpen = false" 
                                     aria-label="Tutup modal sitasi"
-                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                    class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -163,7 +163,7 @@
                             <button type="button" 
                                     @click="batchCitationModalOpen = false" 
                                     aria-label="Tutup modal ekspor sitasi massal"
-                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                    class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -284,7 +284,7 @@
                             <button type="button" 
                                     @click="folderModalOpen = false" 
                                     aria-label="Tutup modal folder"
-                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                    class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -303,7 +303,7 @@
 
                             <!-- Quick suggestions -->
                             <div class="space-y-1" x-show="folderFormMode === 'create'">
-                                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Saran Standar Bab Skripsi:</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Saran Standar Bab Skripsi:</span>
                                 <div class="flex flex-wrap gap-1 text-[11px]">
                                     <button type="button" @click="folderFormName = 'BAB I PENDAHULUAN'" class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-orange-100 dark:hover:bg-orange-950/60 transition-colors">BAB I</button>
                                     <button type="button" @click="folderFormName = 'BAB II LANDASAN TEORI'" class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-orange-100 dark:hover:bg-orange-950/60 transition-colors">BAB II</button>
@@ -355,7 +355,7 @@
                             <button type="button" 
                                     @click="moveModalOpen = false" 
                                     aria-label="Tutup modal pindah folder"
-                                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                    class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -385,7 +385,7 @@
                                         <svg class="w-4 h-4 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
                                         <span class="text-xs font-bold" x-text="f.name"></span>
                                     </div>
-                                    <span class="text-[10px] font-black px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300" x-text="(f.bookmarks_count || 0) + ' artikel'"></span>
+                                    <span class="text-[11px] font-black px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-slate-600 dark:text-slate-300" x-text="(f.bookmarks_count || 0) + ' artikel'"></span>
                                 </label>
                             </template>
                         </div>

@@ -168,7 +168,7 @@
                                     }
                                 }
                             @endphp
-                            <div class="flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
+                            <div class="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400">
                                 <span>Disimpan: {{ $bookmark->created_at->diffForHumans() }}</span>
                                 
                                 @if($safeBookmarkDoi)
@@ -245,7 +245,7 @@
                                     <p class="whitespace-pre-line leading-relaxed italic" x-text="notesText"></p>
                                 </template>
                                 <template x-if="!notesText">
-                                    <p class="text-slate-400 dark:text-slate-500 italic cursor-pointer" @click="editingNotes = true">
+                                    <p class="text-slate-500 dark:text-slate-400 italic cursor-pointer" @click="editingNotes = true">
                                         Belum ada catatan. Klik di sini untuk mencatat keterkaitan artikel ini dengan skripsi Anda (misal: "BAB II - Landasan Teori Algoritma").
                                     </p>
                                 </template>
@@ -260,7 +260,7 @@
                                 
                                 <!-- Quick Chapter Insert Chips -->
                                 <div class="flex flex-wrap items-center gap-1.5 text-[11px]">
-                                    <span class="text-slate-500 dark:text-slate-400 text-[10px] font-semibold mr-1">Sisipkan Label:</span>
+                                    <span class="text-slate-500 dark:text-slate-400 text-[11px] font-semibold mr-1">Sisipkan Label:</span>
                                     <button type="button" @click="notesText = (notesText ? notesText + '\n' : '') + '[BAB I PENDAHULUAN] '" class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 font-bold hover:bg-amber-200 cursor-pointer">+ BAB I</button>
                                     <button type="button" @click="notesText = (notesText ? notesText + '\n' : '') + '[BAB II LANDASAN TEORI] '" class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 font-bold hover:bg-amber-200 cursor-pointer">+ BAB II</button>
                                     <button type="button" @click="notesText = (notesText ? notesText + '\n' : '') + '[BAB III OBJEK DAN METODOLOGI PENELITIAN] '" class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 font-bold hover:bg-amber-200 cursor-pointer">+ BAB III</button>

@@ -75,7 +75,7 @@
                                 <span class="w-6 h-6 rounded-xl bg-orange-600 text-white flex items-center justify-center text-xs">1</span>
                                 <span>Pilih Periode Semester Penugasan</span>
                             </h3>
-                            <span class="text-xs text-slate-400">Sinkronisasi Otomatis</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Sinkronisasi Otomatis</span>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -116,7 +116,7 @@
                             <div class="flex items-center gap-2">
                                 <span class="w-6 h-6 rounded-xl bg-orange-600 text-white flex items-center justify-center text-xs">2</span>
                                 <h3 class="text-sm font-black text-slate-900 dark:text-white">Daftar Mahasiswa Bimbingan</h3>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400"
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400"
                                       x-text="selectedCount + ' Mahasiswa Terpilih'"></span>
                             </div>
 
@@ -125,7 +125,7 @@
                                     Pilih Semua
                                 </button>
                                 <span class="text-slate-300">|</span>
-                                <button type="button" @click="deselectAll()" class="font-bold text-slate-400 hover:text-slate-600 transition cursor-pointer">
+                                <button type="button" @click="deselectAll()" class="font-bold text-slate-500 dark:text-slate-400 hover:text-slate-600 transition cursor-pointer">
                                     Batal Semua
                                 </button>
                             </div>
@@ -137,7 +137,7 @@
                                class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition {{ $statusFilter === 'active' ? 'bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                                 <span>Aktif Bimbingan (Belum Lulus)</span>
-                                <span class="px-1.5 py-0.5 rounded-md text-[10px] {{ $statusFilter === 'active' ? 'bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-400 font-black' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                <span class="px-1.5 py-0.5 rounded-md text-[11px] {{ $statusFilter === 'active' ? 'bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-400 font-black' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                     {{ $activeCount }}
                                 </span>
                             </a>
@@ -145,7 +145,7 @@
                             <a href="{{ route('advisor-decrees.surat-tugas', array_merge(request()->query(), ['status_filter' => 'all'])) }}"
                                class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition {{ $statusFilter === 'all' ? 'bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
                                 <span>Semua Mahasiswa</span>
-                                <span class="px-1.5 py-0.5 rounded-md text-[10px] {{ $statusFilter === 'all' ? 'bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-400 font-black' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                <span class="px-1.5 py-0.5 rounded-md text-[11px] {{ $statusFilter === 'all' ? 'bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-400 font-black' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                     {{ $totalSupervisedCount }}
                                 </span>
                             </a>
@@ -155,7 +155,7 @@
                                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition {{ $statusFilter === 'completed' ? 'bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-400 shadow-xs' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
                                     <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                                     <span>Sudah Lulus</span>
-                                    <span class="px-1.5 py-0.5 rounded-md text-[10px] {{ $statusFilter === 'completed' ? 'bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-400 font-black' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                    <span class="px-1.5 py-0.5 rounded-md text-[11px] {{ $statusFilter === 'completed' ? 'bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-400 font-black' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                         {{ $graduatedCount }}
                                     </span>
                                 </a>
@@ -185,15 +185,15 @@
                         <!-- KPI Pill Counters -->
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             <div class="p-3 rounded-2xl bg-orange-50/60 dark:bg-orange-950/20 border border-orange-200/60 dark:border-orange-900/40">
-                                <div class="text-[10px] uppercase font-bold text-orange-700 dark:text-orange-400">Pembimbing I</div>
+                                <div class="text-[11px] uppercase font-bold text-orange-700 dark:text-orange-400">Pembimbing I</div>
                                 <div class="text-xl font-black text-orange-900 dark:text-orange-200">{{ $p1Theses->count() }} <span class="text-xs font-normal">Mhs</span></div>
                             </div>
                             <div class="p-3 rounded-2xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40">
-                                <div class="text-[10px] uppercase font-bold text-blue-700 dark:text-blue-400">Pembimbing II</div>
+                                <div class="text-[11px] uppercase font-bold text-blue-700 dark:text-blue-400">Pembimbing II</div>
                                 <div class="text-xl font-black text-blue-900 dark:text-blue-200">{{ $p2Theses->count() }} <span class="text-xs font-normal">Mhs</span></div>
                             </div>
                             <div class="col-span-2 sm:col-span-1 p-3 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40">
-                                <div class="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400">Ditampilkan</div>
+                                <div class="text-[11px] uppercase font-bold text-emerald-700 dark:text-emerald-400">Ditampilkan</div>
                                 <div class="text-xl font-black text-emerald-900 dark:text-emerald-200">{{ $allTheses->count() }} <span class="text-xs font-normal">Mhs</span></div>
                             </div>
                         </div>
@@ -207,7 +207,7 @@
                                 @if($p1Theses->count() > 0)
                                     <div class="bg-orange-50/50 dark:bg-orange-950/30 px-4 py-2 text-[11px] font-black uppercase tracking-wider text-orange-800 dark:text-orange-300 flex items-center justify-between">
                                         <span>Sebagai Pembimbing I ({{ $p1Theses->count() }} Mahasiswa)</span>
-                                        <span class="text-[10px] lowercase text-orange-600">Urutan Pertama di Tabel</span>
+                                        <span class="text-[11px] lowercase text-orange-600">Urutan Pertama di Tabel</span>
                                     </div>
                                     @foreach($p1Theses as $th)
                                         <label class="p-4 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition select-none">
@@ -218,20 +218,20 @@
                                                 <div class="flex items-center justify-between gap-2">
                                                     <div class="flex items-center gap-2 flex-wrap">
                                                         <span class="font-black text-slate-900 dark:text-white">{{ $th->student ? $th->student->name : '-' }}</span>
-                                                        <span class="text-slate-400 text-[11px]">({{ $th->student ? $th->student->identifier : '-' }})</span>
+                                                        <span class="text-slate-500 dark:text-slate-400 text-[11px]">({{ $th->student ? $th->student->identifier : '-' }})</span>
                                                         @if($th->isGraduated())
-                                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center gap-1">
+                                                            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center gap-1">
                                                                 <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
                                                                 Sudah Lulus / Yudisium
                                                             </span>
                                                         @else
-                                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
+                                                            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
                                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                                 Aktif Bimbingan
                                                             </span>
                                                         @endif
                                                     </div>
-                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-400">
+                                                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-400">
                                                         Pembimbing I
                                                     </span>
                                                 </div>
@@ -247,7 +247,7 @@
                                 @if($p2Theses->count() > 0)
                                     <div class="bg-blue-50/50 dark:bg-blue-950/30 px-4 py-2 text-[11px] font-black uppercase tracking-wider text-blue-800 dark:text-blue-300 flex items-center justify-between">
                                         <span>Sebagai Pembimbing II ({{ $p2Theses->count() }} Mahasiswa)</span>
-                                        <span class="text-[10px] lowercase text-blue-600">Urutan Kedua di Tabel</span>
+                                        <span class="text-[11px] lowercase text-blue-600">Urutan Kedua di Tabel</span>
                                     </div>
                                     @foreach($p2Theses as $th)
                                         <label class="p-4 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition select-none">
@@ -258,20 +258,20 @@
                                                 <div class="flex items-center justify-between gap-2">
                                                     <div class="flex items-center gap-2 flex-wrap">
                                                         <span class="font-black text-slate-900 dark:text-white">{{ $th->student ? $th->student->name : '-' }}</span>
-                                                        <span class="text-slate-400 text-[11px]">({{ $th->student ? $th->student->identifier : '-' }})</span>
+                                                        <span class="text-slate-500 dark:text-slate-400 text-[11px]">({{ $th->student ? $th->student->identifier : '-' }})</span>
                                                         @if($th->isGraduated())
-                                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center gap-1">
+                                                            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300 dark:border-slate-700 flex items-center gap-1">
                                                                 <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
                                                                 Sudah Lulus / Yudisium
                                                             </span>
                                                         @else
-                                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
+                                                            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 flex items-center gap-1">
                                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                                 Aktif Bimbingan
                                                             </span>
                                                         @endif
                                                     </div>
-                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-400">
+                                                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-400">
                                                         Pembimbing II
                                                     </span>
                                                 </div>
@@ -284,7 +284,7 @@
                                 @endif
                             </div>
                         @else
-                            <div class="p-8 text-center text-slate-400 text-xs border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl space-y-2">
+                            <div class="p-8 text-center text-slate-500 dark:text-slate-400 text-xs border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl space-y-2">
                                 <p class="font-bold text-slate-600 dark:text-slate-300">Tidak ada mahasiswa yang memenuhi kriteria filter ini.</p>
                                 <p class="text-[11px] text-slate-500">Coba ganti filter status di atas ke "Semua Mahasiswa" untuk melihat arsip mahasiswa binaan sebelumnya.</p>
                             </div>
@@ -312,23 +312,23 @@
                         <div>
                             <div class="flex justify-between items-center mb-1">
                                 <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Nomor Surat Tugas</label>
-                                <span class="text-[10px] text-orange-600 font-bold">Auto Numbering</span>
+                                <span class="text-[11px] text-orange-600 font-bold">Auto Numbering</span>
                             </div>
                             <input type="text" name="custom_decree_number" value="{{ $previewLetterNumber }}"
                                    class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 font-mono font-black focus:ring-orange-500 focus:border-orange-500">
-                            <p class="text-[10px] text-slate-400 mt-1">Menggunakan format resmi: <code>[NO]/PD.1.2/FIK-US/[BULAN]/[TAHUN]</code>.</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Menggunakan format resmi: <code>[NO]/PD.1.2/FIK-US/[BULAN]/[TAHUN]</code>.</p>
                         </div>
 
                         <!-- Signatory Details -->
                         <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-2">
-                            <div class="text-[10px] uppercase font-black tracking-wider text-slate-400">Pejabat Penandatangan Resmi</div>
+                            <div class="text-[11px] uppercase font-black tracking-wider text-slate-500 dark:text-slate-400">Pejabat Penandatangan Resmi</div>
                             <input type="hidden" name="signatory_title" value="{{ $defaultSignatoryTitle }}">
                             <input type="hidden" name="signatory_name" value="{{ $defaultSignatoryName }}">
                             <input type="hidden" name="signatory_identifier" value="{{ $defaultSignatoryIdentifier }}">
                             
                             <div class="text-xs font-black text-slate-900 dark:text-white">{{ $defaultSignatoryName }}</div>
                             <div class="text-[11px] text-slate-600 dark:text-slate-400">{{ $defaultSignatoryTitle }}</div>
-                            <div class="text-[10px] text-slate-400">NIDN: {{ $defaultSignatoryIdentifier ?? '-' }} | QR Code Terdaftar</div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400">NIDN: {{ $defaultSignatoryIdentifier ?? '-' }} | QR Code Terdaftar</div>
                         </div>
 
                         <!-- Action Area: Cetak & Simpan Bersama -->
@@ -345,7 +345,7 @@
                                 <span>Cetak & Simpan Surat Tugas (PDF)</span>
                             </button>
 
-                            <p class="text-[11px] text-center text-slate-400 dark:text-slate-500 leading-normal">
+                            <p class="text-[11px] text-center text-slate-500 dark:text-slate-400 leading-normal">
                                 Dokumen otomatis tersimpan ke riwayat arsip dan file PDF resmi langsung diunduh.
                             </p>
                         </div>
@@ -355,7 +355,7 @@
                     <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
                         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                             <h3 class="text-sm font-black text-slate-900 dark:text-white">Arsip Surat Tugas Anda</h3>
-                            <span class="text-xs font-bold text-slate-400">{{ $history->count() }} Berkas</span>
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400">{{ $history->count() }} Berkas</span>
                         </div>
 
                         @if($history->count() > 0)
@@ -367,7 +367,7 @@
                                                 <div class="text-xs font-black text-slate-900 dark:text-white">{{ $hist->decree_number }}</div>
                                                 <div class="text-[11px] text-slate-500">T.A {{ $hist->academic_year }} ({{ $hist->semester }})</div>
                                             </div>
-                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400">
+                                            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400">
                                                 {{ $hist->total_students }} Mhs
                                             </span>
                                         </div>
@@ -399,7 +399,7 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="text-center py-6 text-slate-400 text-xs">
+                            <div class="text-center py-6 text-slate-500 dark:text-slate-400 text-xs">
                                 Belum ada riwayat Surat Tugas yang diterbitkan.
                             </div>
                         @endif

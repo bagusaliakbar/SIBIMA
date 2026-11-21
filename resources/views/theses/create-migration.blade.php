@@ -104,10 +104,10 @@
                         </div>
 
                         <div class="pt-5 flex items-center gap-3">
-                            <button type="submit" class="inline-flex justify-center items-center px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-orange-500/20">
+                            <button type="submit" class="inline-flex justify-center items-center px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-black rounded-xl uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-orange-500/20">
                                 Simpan Data Migrasi
                             </button>
-                            <a href="{{ route('theses.index') }}" class="inline-flex items-center px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-[1.02] active:scale-95 shadow-sm duration-300">Batal</a>
+                            <a href="{{ route('theses.index') }}" class="inline-flex items-center px-6 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest rounded-xl transition-all hover:scale-[1.02] active:scale-95 shadow-sm duration-300">Batal</a>
                         </div>
                     </form>
                 </div>
@@ -154,7 +154,7 @@
                         </div>
                         
                         <div class="pt-2 flex items-center gap-3">
-                            <button type="submit" :disabled="!fileName || isUploading" :class="(!fileName || isUploading) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-95 hover:bg-orange-700 shadow-lg shadow-orange-500/20'" class="inline-flex justify-center items-center gap-2 px-8 py-3 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest transition-all">
+                            <button type="submit" :disabled="!fileName || isUploading" :class="(!fileName || isUploading) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-95 hover:bg-orange-700 shadow-lg shadow-orange-500/20'" class="inline-flex justify-center items-center gap-2 px-8 py-3 bg-orange-600 text-white text-[11px] font-black rounded-xl uppercase tracking-widest transition-all">
                                 <!-- Normal Icon -->
                                 <svg x-show="!isUploading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                                 

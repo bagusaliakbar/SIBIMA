@@ -35,7 +35,7 @@
                     </svg>
                 </div>
                 <div class="min-w-0 flex-1">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60 mb-1.5">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60 mb-1.5">
                         Keamanan Sesi
                     </span>
                     <h3 id="session-timeout-title" class="text-base font-bold text-slate-900 dark:text-slate-100 leading-snug">

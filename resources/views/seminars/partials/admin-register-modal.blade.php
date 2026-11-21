@@ -20,7 +20,7 @@
                                     <p class="text-xs text-slate-500 dark:text-slate-400">Pendaftaran mahasiswa langsung oleh Administrator / Kaprodi</p>
                                 </div>
                             </div>
-                            <button type="button" @click="openRegisterModal = false" aria-label="Tutup modal pendaftaran seminar" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                            <button type="button" @click="openRegisterModal = false" aria-label="Tutup modal pendaftaran seminar" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -59,7 +59,7 @@
                                                 <h4 class="text-xs font-black text-slate-900 dark:text-slate-100" x-text="selectedThesisData.student_name + ' (' + selectedThesisData.student_identifier + ')'"></h4>
                                                 <p class="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2 mt-0.5 font-medium" x-text="selectedThesisData.title"></p>
                                             </div>
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shrink-0"
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider shrink-0"
                                                   :class="selectedThesisData.is_acc_up ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300'">
                                                 <span x-text="selectedThesisData.is_acc_up ? 'ACC UP Lengkap' : 'Perlu Dispensasi ACC'"></span>
                                             </span>

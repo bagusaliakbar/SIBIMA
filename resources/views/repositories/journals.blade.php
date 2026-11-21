@@ -43,7 +43,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
                             <span>Jurnal GLOBAL FASILKOM</span>
-                            <span class="px-2 py-0.5 rounded-lg text-[10px] font-black {{ $source === 'fasilkom' ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">
+                            <span class="px-2 py-0.5 rounded-lg text-[11px] font-black {{ $source === 'fasilkom' ? 'bg-white/25 text-white' : 'bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60' }}">
                                 {{ $fasilkomTotalCount }}
                             </span>
                         </a>
@@ -103,7 +103,7 @@
                 <form action="{{ route('repositories.journals') }}" method="GET" class="pt-1 w-full">
                     <div class="flex flex-col sm:flex-row items-stretch gap-3 w-full">
                         <div class="relative flex-1 group min-w-0">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors z-10">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 dark:text-slate-400 group-focus-within:text-orange-500 dark:group-focus-within:text-orange-400 transition-colors z-10">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
@@ -120,7 +120,7 @@
                                     x-cloak
                                     aria-label="Hapus pencarian jurnal"
                                     @click="searchQuery = ''; @if(!empty($query)) window.location.href = '{{ route('repositories.journals', ['source' => $source]) }}'; @else document.getElementById('journal-search-input').focus(); @endif"
-                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer z-10"
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer z-10"
                                     title="Hapus / Reset pencarian">
                                 <div class="w-6 h-6 rounded-full bg-slate-100 hover:bg-rose-100 dark:bg-slate-800 dark:hover:bg-rose-950/60 flex items-center justify-center transition-colors">
                                     <svg class="w-3.5 h-3.5 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

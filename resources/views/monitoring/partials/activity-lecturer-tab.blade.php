@@ -19,7 +19,7 @@
                             :class="dosenSubTab === 'pasif' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'">
                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                         <span>Perlu Perhatian / Pasif</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black"
+                        <span class="px-1.5 py-0.2 rounded-md text-[11px] font-black"
                               :class="dosenSubTab === 'pasif' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'">
                             {{ count($inactive_dosens) }}
                         </span>
@@ -80,7 +80,7 @@
                                             default => 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
                                         };
                                     @endphp
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border {{ $activityBadgeClass }}">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider border {{ $activityBadgeClass }}">
                                         {{ $d['activity_level'] }}
                                     </span>
                                 </div>
@@ -170,11 +170,11 @@
                                                 <span class="font-semibold text-slate-800 dark:text-slate-200 block text-[11px]">
                                                     {{ \Carbon\Carbon::parse($d['last_session_at'])->diffForHumans() }}
                                                 </span>
-                                                <span class="text-[10px] text-slate-400">
+                                                <span class="text-[11px] text-slate-500 dark:text-slate-400">
                                                     {{ \Carbon\Carbon::parse($d['last_session_at'])->format('d M Y') }}
                                                 </span>
                                             @else
-                                                <span class="text-slate-400 italic text-[11px]">-</span>
+                                                <span class="text-slate-500 dark:text-slate-400 italic text-[11px]">-</span>
                                             @endif
                                         </td>
 
@@ -189,7 +189,7 @@
                                             default => 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
                                         };
                                     @endphp
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border {{ $activityBadgeClass }}">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider border {{ $activityBadgeClass }}">
                                                 {{ $d['activity_level'] }}
                                             </span>
                                         </td>
@@ -281,7 +281,7 @@
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 text-xs text-slate-700 dark:text-slate-300">
                                 @foreach($inactive_dosens as $idx => $d)
                                     <tr class="hover:bg-amber-50/30 dark:hover:bg-amber-950/10 transition-colors">
-                                        <td class="py-4 px-4 text-center font-bold text-slate-400">{{ $idx + 1 }}</td>
+                                        <td class="py-4 px-4 text-center font-bold text-slate-500 dark:text-slate-400">{{ $idx + 1 }}</td>
                                         
                                         <!-- Profile -->
                                         <td class="py-4 px-5">

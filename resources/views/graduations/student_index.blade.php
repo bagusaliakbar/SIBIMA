@@ -117,7 +117,7 @@
                         <!-- Progress Bar & Percentage Pill -->
                         <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/60 p-3.5 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-700/60 shrink-0">
                             <div class="text-right">
-                                <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none mb-1">Status Kesiapan</p>
+                                <p class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-none mb-1">Status Kesiapan</p>
                                 <p class="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">{{ $percentMet }}%</p>
                             </div>
                             <div class="w-16 sm:w-20 bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
@@ -128,10 +128,10 @@
 
                     <!-- Criteria Subtitle -->
                     <div class="flex items-center justify-between my-5 pt-1">
-                        <span class="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        <span class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                             Checklist Prasyarat Kelulusan
                         </span>
-                        <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                             Lengkapi seluruh poin di bawah untuk membuka form
                         </span>
                     </div>
@@ -153,14 +153,14 @@
                                     <div>
                                         <div class="flex items-center gap-2 flex-wrap">
                                             @if(!empty($c['tag']))
-                                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' }}">
+                                                <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' }}">
                                                     {{ $c['tag'] }}
                                                 </span>
                                             @endif
                                             <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
                                                 {{ $c['title'] }}
                                             </h4>
-                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300' }}">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider {{ $c['is_met'] ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300' }}">
                                                 {{ $c['status_text'] }}
                                             </span>
                                         </div>
@@ -212,7 +212,7 @@
                         </div>
 
                         <div class="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
-                            <button type="button" disabled class="w-full sm:w-auto px-5 py-2.5 bg-slate-200 dark:bg-slate-700/60 text-slate-400 dark:text-slate-500 rounded-xl text-xs font-black uppercase tracking-wider cursor-not-allowed flex items-center justify-center gap-2 shadow-2xs">
+                            <button type="button" disabled class="w-full sm:w-auto px-5 py-2.5 bg-slate-200 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 rounded-xl text-xs font-black uppercase tracking-wider cursor-not-allowed flex items-center justify-center gap-2 shadow-2xs">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                 <span>Daftar Terkunci</span>
                             </button>
@@ -256,19 +256,19 @@
                                 <h4 class="text-xl font-black text-white">Selamat, {{ Auth::user()->name }}! Anda Resmi Lulus</h4>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
                                     <div class="p-2.5 bg-white/5 rounded-xl border border-white/10">
-                                        <span class="text-[9px] uppercase tracking-wider text-slate-400 block">Nomor SKL</span>
+                                        <span class="text-[11px] uppercase tracking-wider text-slate-400 block">Nomor SKL</span>
                                         <span class="text-xs font-mono font-bold text-emerald-400 truncate block" title="{{ $graduation->skl_number }}">{{ $graduation->skl_number }}</span>
                                     </div>
                                     <div class="p-2.5 bg-white/5 rounded-xl border border-white/10">
-                                        <span class="text-[9px] uppercase tracking-wider text-slate-400 block">Tanggal Yudisium</span>
+                                        <span class="text-[11px] uppercase tracking-wider text-slate-400 block">Tanggal Yudisium</span>
                                         <span class="text-xs font-bold text-white block">{{ $graduation->formatted_graduation_date ?? now()->locale('id')->translatedFormat('d F Y') }}</span>
                                     </div>
                                     <div class="p-2.5 bg-white/5 rounded-xl border border-white/10">
-                                        <span class="text-[9px] uppercase tracking-wider text-slate-400 block">Predikat</span>
+                                        <span class="text-[11px] uppercase tracking-wider text-slate-400 block">Predikat</span>
                                         <span class="text-xs font-bold text-amber-300 block truncate">{{ $graduation->predicate ?? 'Memuaskan' }}</span>
                                     </div>
                                     <div class="p-2.5 bg-white/5 rounded-xl border border-white/10">
-                                        <span class="text-[9px] uppercase tracking-wider text-slate-400 block">IPK</span>
+                                        <span class="text-[11px] uppercase tracking-wider text-slate-400 block">IPK</span>
                                         <span class="text-xs font-bold text-white block">{{ $graduation->gpa ? number_format($graduation->gpa, 2) : '-' }}</span>
                                     </div>
                                 </div>
@@ -313,13 +313,13 @@
                         <div class="p-4 rounded-2xl border {{ $graduation->hardcover_collected ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40' : 'bg-slate-50/70 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-700/60' }}">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-200">1. Hardcover Skripsi</span>
-                                <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded {{ $graduation->hardcover_collected ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">
+                                <span class="text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded {{ $graduation->hardcover_collected ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">
                                     {{ $graduation->hardcover_collected ? 'Valid' : 'Pending' }}
                                 </span>
                             </div>
                             <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $graduation->hardcover_collected ? 'Diserahkan ke BAAK' : 'Menunggu penyerahan fisik' }}</p>
                             @if($graduation->hardcover_collected_at)
-                                <p class="text-[10px] text-slate-400 italic mt-1">{{ $graduation->hardcover_collected_at->format('d/m/Y') }}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 italic mt-1">{{ $graduation->hardcover_collected_at->format('d/m/Y') }}</p>
                             @endif
                         </div>
 
@@ -327,13 +327,13 @@
                         <div class="p-4 rounded-2xl border {{ $graduation->library_clearance ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40' : 'bg-slate-50/70 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-700/60' }}">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-200">2. Bebas Perpustakaan</span>
-                                <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded {{ $graduation->library_clearance ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">
+                                <span class="text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded {{ $graduation->library_clearance ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">
                                     {{ $graduation->library_clearance ? 'Bebas' : 'Pending' }}
                                 </span>
                             </div>
                             <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $graduation->library_clearance ? 'Bebas pinjaman & sumbangan' : 'Bebas pinjaman & sumbangan buku' }}</p>
                             @if($graduation->library_clearance_at)
-                                <p class="text-[10px] text-slate-400 italic mt-1">{{ $graduation->library_clearance_at->format('d/m/Y') }}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 italic mt-1">{{ $graduation->library_clearance_at->format('d/m/Y') }}</p>
                             @endif
                         </div>
 
@@ -341,13 +341,13 @@
                         <div class="p-4 rounded-2xl border {{ $graduation->lab_clearance ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40' : 'bg-slate-50/70 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-700/60' }}">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-200">3. Bebas Laboratorium</span>
-                                <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded {{ $graduation->lab_clearance ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">
+                                <span class="text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded {{ $graduation->lab_clearance ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">
                                     {{ $graduation->lab_clearance ? 'Bebas' : 'Pending' }}
                                 </span>
                             </div>
                             <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $graduation->lab_clearance ? 'Bebas pinjaman alat lab' : 'Bebas tanggungan alat praktikum' }}</p>
                             @if($graduation->lab_clearance_at)
-                                <p class="text-[10px] text-slate-400 italic mt-1">{{ $graduation->lab_clearance_at->format('d/m/Y') }}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 italic mt-1">{{ $graduation->lab_clearance_at->format('d/m/Y') }}</p>
                             @endif
                         </div>
 
@@ -355,13 +355,13 @@
                         <div class="p-4 rounded-2xl border {{ $graduation->cd_or_repository_collected ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40' : 'bg-slate-50/70 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-700/60' }}">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-slate-800 dark:text-slate-200">4. CD & Repositori</span>
-                                <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded {{ $graduation->cd_or_repository_collected ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">
+                                <span class="text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded {{ $graduation->cd_or_repository_collected ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">
                                     {{ $graduation->cd_or_repository_collected ? 'Valid' : 'Pending' }}
                                 </span>
                             </div>
                             <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $graduation->cd_or_repository_collected ? 'CD source code diterima' : 'CD source code & softcopy' }}</p>
                             @if($graduation->cd_or_repository_collected_at)
-                                <p class="text-[10px] text-slate-400 italic mt-1">{{ $graduation->cd_or_repository_collected_at->format('d/m/Y') }}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 italic mt-1">{{ $graduation->cd_or_repository_collected_at->format('d/m/Y') }}</p>
                             @endif
                         </div>
                     </div>
@@ -373,7 +373,7 @@
                         <div>
                             <div class="flex items-center gap-2.5">
                                 <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">Detail Berkas Tautan Digital</h4>
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800/60">
                                     Berkas Tersimpan
                                 </span>
                             </div>
@@ -431,7 +431,7 @@
                                                 </svg>
                                             </div>
                                             <div class="min-w-0">
-                                                <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                                <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                                                     {{ $info['category'] }}
                                                 </span>
                                                 <h5 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-snug truncate" title="{{ $info['label'] }}">
@@ -447,7 +447,7 @@
                                 </div>
 
                                 <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between gap-2 mt-auto">
-                                    <span class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
                                         <x-google-drive-icon class="w-3.5 h-3.5 shrink-0" />
                                         <span>Google Drive</span>
                                     </span>
@@ -459,7 +459,7 @@
                                             <svg class="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                         </a>
                                     @else
-                                        <span class="text-[11px] text-slate-400 italic">Belum diisi</span>
+                                        <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">Belum diisi</span>
                                     @endif
                                 </div>
                             </div>
@@ -554,10 +554,10 @@
                                         <label for="edit_final_thesis_file" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
                                             1. Naskah Skripsi Lengkap Final <span class="text-rose-500">*</span>
                                         </label>
-                                        <button type="button" @click="pasteSingle('final_thesis_file')" class="text-[10px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">Tempel</button>
+                                        <button type="button" @click="pasteSingle('final_thesis_file')" class="text-[11px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">Tempel</button>
                                     </div>
                                     <input type="url" name="final_thesis_file" id="edit_final_thesis_file" x-model="files.final_thesis_file" placeholder="https://drive.google.com/..." required class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-md border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 py-2 px-3 font-mono">
-                                    @error('final_thesis_file') <p class="text-[10px] text-rose-500 font-bold">{{ $message }}</p> @enderror
+                                    @error('final_thesis_file') <p class="text-[11px] text-rose-500 font-bold">{{ $message }}</p> @enderror
                                 </div>
 
                                 <!-- 2. journal_article_file -->
@@ -566,31 +566,31 @@
                                         <label for="edit_journal_article_file" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
                                             2. Artikel Jurnal Ilmiah <span class="text-rose-500">*</span>
                                         </label>
-                                        <button type="button" @click="pasteSingle('journal_article_file')" class="text-[10px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">Tempel</button>
+                                        <button type="button" @click="pasteSingle('journal_article_file')" class="text-[11px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">Tempel</button>
                                     </div>
                                     <input type="url" name="journal_article_file" id="edit_journal_article_file" x-model="files.journal_article_file" placeholder="https://drive.google.com/..." required class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-md border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 py-2 px-3 font-mono">
-                                    @error('journal_article_file') <p class="text-[10px] text-rose-500 font-bold">{{ $message }}</p> @enderror
+                                    @error('journal_article_file') <p class="text-[11px] text-rose-500 font-bold">{{ $message }}</p> @enderror
                                 </div>
 
                                 <!-- 3. plagiarism_file -->
                                 <div class="space-y-2">
                                     <div class="flex items-center justify-between">
                                         <label for="edit_plagiarism_file" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                                            3. Bukti Uji Plagiasi / Turnitin <span class="text-[10px] text-slate-400 font-normal uppercase">(Opsional)</span>
+                                            3. Bukti Uji Plagiasi / Turnitin <span class="text-[11px] text-slate-500 dark:text-slate-400 font-normal uppercase">(Opsional)</span>
                                         </label>
-                                        <button type="button" @click="pasteSingle('plagiarism_file')" class="text-[10px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">Tempel</button>
+                                        <button type="button" @click="pasteSingle('plagiarism_file')" class="text-[11px] text-slate-500 hover:text-orange-600 font-bold px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">Tempel</button>
                                     </div>
                                     <input type="url" name="plagiarism_file" id="edit_plagiarism_file" x-model="files.plagiarism_file" placeholder="https://drive.google.com/..." class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-md border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 py-2 px-3 font-mono">
-                                    @error('plagiarism_file') <p class="text-[10px] text-rose-500 font-bold">{{ $message }}</p> @enderror
+                                    @error('plagiarism_file') <p class="text-[11px] text-rose-500 font-bold">{{ $message }}</p> @enderror
                                 </div>
 
                                 <!-- 4. publication_link -->
                                 <div class="space-y-2">
                                     <label for="edit_publication_link" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                                        4. Tautan Publikasi Jurnal Online / OJS <span class="text-[10px] text-slate-400 font-normal uppercase">(Opsional)</span>
+                                        4. Tautan Publikasi Jurnal Online / OJS <span class="text-[11px] text-slate-500 dark:text-slate-400 font-normal uppercase">(Opsional)</span>
                                     </label>
                                     <input type="url" name="publication_link" id="edit_publication_link" x-model="files.publication_link" placeholder="https://ejournal.unsub.ac.id/..." class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-md border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900 py-2 px-3 font-mono">
-                                    @error('publication_link') <p class="text-[10px] text-rose-500 font-bold">{{ $message }}</p> @enderror
+                                    @error('publication_link') <p class="text-[11px] text-rose-500 font-bold">{{ $message }}</p> @enderror
                                 </div>
                             </div>
 
@@ -704,33 +704,33 @@
                                 <label for="final_thesis_file" class="block text-xs font-bold text-slate-800 dark:text-slate-100">
                                     1. Naskah Skripsi Lengkap Final <span class="text-rose-500">*</span>
                                 </label>
-                                <button type="button" @click="pasteSingle('final_thesis_file')" class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-600 dark:text-slate-300 rounded text-[10px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer">
+                                <button type="button" @click="pasteSingle('final_thesis_file')" class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-600 dark:text-slate-300 rounded text-[11px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer">
                                     Tempel
                                 </button>
                             </div>
-                            <p class="text-[11px] text-slate-400 dark:text-slate-500">
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
                                 Naskah Cover s.d. Lampiran yang telah memuat pengesahan tanda tangan asli / TTE.
                             </p>
                             <input type="url" name="final_thesis_file" id="final_thesis_file" x-model="files.final_thesis_file" placeholder="https://drive.google.com/..." required class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-xl border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-800 shadow-2xs py-2 px-3 font-mono">
                             
                             <div class="flex items-center justify-between pt-1">
                                 <template x-if="isDrive(files.final_thesis_file)">
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                         <span>Drive Valid</span>
                                     </span>
                                 </template>
                                 <template x-if="files.final_thesis_file && !isDrive(files.final_thesis_file)">
-                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">Link Terisi</span>
+                                    <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">Link Terisi</span>
                                 </template>
                                 <template x-if="!files.final_thesis_file">
-                                    <span class="text-[10px] text-slate-400 italic">Wajib diisi</span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">Wajib diisi</span>
                                 </template>
                                 <template x-if="files.final_thesis_file">
-                                    <a :href="files.final_thesis_file" target="_blank" class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Buka Link ↗</a>
+                                    <a :href="files.final_thesis_file" target="_blank" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Buka Link ↗</a>
                                 </template>
                             </div>
-                            @error('final_thesis_file') <p class="text-[10px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
+                            @error('final_thesis_file') <p class="text-[11px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- 2. Artikel Jurnal Ilmiah -->
@@ -739,95 +739,95 @@
                                 <label for="journal_article_file" class="block text-xs font-bold text-slate-800 dark:text-slate-100">
                                     2. Artikel Jurnal Ilmiah (Siap Publikasi) <span class="text-rose-500">*</span>
                                 </label>
-                                <button type="button" @click="pasteSingle('journal_article_file')" class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-600 dark:text-slate-300 rounded text-[10px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer">
+                                <button type="button" @click="pasteSingle('journal_article_file')" class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-600 dark:text-slate-300 rounded text-[11px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer">
                                     Tempel
                                 </button>
                             </div>
-                            <p class="text-[11px] text-slate-400 dark:text-slate-500">
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
                                 Format artikel jurnal ilmiah siap publikasi sesuai pedoman Program Studi.
                             </p>
                             <input type="url" name="journal_article_file" id="journal_article_file" x-model="files.journal_article_file" placeholder="https://drive.google.com/..." required class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-xl border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-800 shadow-2xs py-2 px-3 font-mono">
                             
                             <div class="flex items-center justify-between pt-1">
                                 <template x-if="isDrive(files.journal_article_file)">
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                         <span>Drive Valid</span>
                                     </span>
                                 </template>
                                 <template x-if="files.journal_article_file && !isDrive(files.journal_article_file)">
-                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">Link Terisi</span>
+                                    <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">Link Terisi</span>
                                 </template>
                                 <template x-if="!files.journal_article_file">
-                                    <span class="text-[10px] text-slate-400 italic">Wajib diisi</span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">Wajib diisi</span>
                                 </template>
                                 <template x-if="files.journal_article_file">
-                                    <a :href="files.journal_article_file" target="_blank" class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Buka Link ↗</a>
+                                    <a :href="files.journal_article_file" target="_blank" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Buka Link ↗</a>
                                 </template>
                             </div>
-                            @error('journal_article_file') <p class="text-[10px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
+                            @error('journal_article_file') <p class="text-[11px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- 3. Bukti Uji Plagiasi / Turnitin -->
                         <div class="p-4 bg-slate-50/70 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl space-y-2">
                             <div class="flex items-center justify-between gap-2">
                                 <label for="plagiarism_file" class="block text-xs font-bold text-slate-800 dark:text-slate-100">
-                                    3. Bukti Uji Plagiasi / Turnitin <span class="text-[10px] text-slate-400 font-normal uppercase">(Opsional)</span>
+                                    3. Bukti Uji Plagiasi / Turnitin <span class="text-[11px] text-slate-500 dark:text-slate-400 font-normal uppercase">(Opsional)</span>
                                 </label>
-                                <button type="button" @click="pasteSingle('plagiarism_file')" class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-600 dark:text-slate-300 rounded text-[10px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer">
+                                <button type="button" @click="pasteSingle('plagiarism_file')" class="px-2 py-0.5 bg-white dark:bg-slate-800 hover:bg-orange-50 text-slate-600 dark:text-slate-300 rounded text-[11px] font-bold border border-slate-200 dark:border-slate-700 shadow-2xs cursor-pointer">
                                     Tempel
                                 </button>
                             </div>
-                            <p class="text-[11px] text-slate-400 dark:text-slate-500">
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
                                 Sertifikat hasil uji kemiripan (Turnitin) yang telah disahkan bila dipersyaratkan.
                             </p>
                             <input type="url" name="plagiarism_file" id="plagiarism_file" x-model="files.plagiarism_file" placeholder="https://drive.google.com/..." class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-xl border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-800 shadow-2xs py-2 px-3 font-mono">
                             
                             <div class="flex items-center justify-between pt-1">
                                 <template x-if="isDrive(files.plagiarism_file)">
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                    <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                         <span>Drive Valid</span>
                                     </span>
                                 </template>
                                 <template x-if="files.plagiarism_file && !isDrive(files.plagiarism_file)">
-                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">Link Terisi</span>
+                                    <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">Link Terisi</span>
                                 </template>
                                 <template x-if="!files.plagiarism_file">
-                                    <span class="text-[10px] text-slate-400 italic">Opsional</span>
+                                    <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">Opsional</span>
                                 </template>
                                 <template x-if="files.plagiarism_file">
-                                    <a :href="files.plagiarism_file" target="_blank" class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Buka Link ↗</a>
+                                    <a :href="files.plagiarism_file" target="_blank" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Buka Link ↗</a>
                                 </template>
                             </div>
-                            @error('plagiarism_file') <p class="text-[10px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
+                            @error('plagiarism_file') <p class="text-[11px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- 4. Link Publikasi OJS -->
                         <div class="p-4 bg-slate-50/70 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl space-y-2">
                             <label for="publication_link" class="block text-xs font-bold text-slate-800 dark:text-slate-100">
-                                4. Tautan Publikasi Jurnal / OJS <span class="text-[10px] text-slate-400 font-normal uppercase">(Opsional)</span>
+                                4. Tautan Publikasi Jurnal / OJS <span class="text-[11px] text-slate-500 dark:text-slate-400 font-normal uppercase">(Opsional)</span>
                             </label>
-                            <p class="text-[11px] text-slate-400 dark:text-slate-500">
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">
                                 URL publikasi jika artikel telah terbit di jurnal elektronik (OJS) atau repositori kampus.
                             </p>
                             <input type="url" name="publication_link" id="publication_link" x-model="files.publication_link" placeholder="https://ejournal.unsub.ac.id/..." class="block w-full text-xs text-slate-700 dark:text-slate-200 rounded-xl border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-800 shadow-2xs py-2 px-3 font-mono">
-                            @error('publication_link') <p class="text-[10px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
+                            @error('publication_link') <p class="text-[11px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
                     <!-- Student Notes -->
                     <div class="space-y-1.5">
                         <label for="student_notes" class="block text-xs font-bold text-slate-700 dark:text-slate-300">
-                            Catatan Tambahan untuk Petugas BAAK / Prodi <span class="text-[10px] text-slate-400 font-normal uppercase tracking-wider">(Opsional)</span>
+                            Catatan Tambahan untuk Petugas BAAK / Prodi <span class="text-[11px] text-slate-500 dark:text-slate-400 font-normal uppercase tracking-wider">(Opsional)</span>
                         </label>
                         <textarea name="student_notes" id="student_notes" rows="3" placeholder="Tuliskan keterangan bila terdapat berkas fisik atau persyaratan khusus yang sudah diserahkan di loket..." class="w-full text-xs rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 focus:ring-orange-500 focus:border-orange-500 shadow-2xs p-3 leading-relaxed">{{ old('student_notes', $graduation->student_notes ?? '') }}</textarea>
-                        @error('student_notes') <p class="text-[10px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
+                        @error('student_notes') <p class="text-[11px] text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Submit Footer -->
                     <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100 dark:border-slate-700">
-                        <span class="text-[11px] text-slate-400">
+                        <span class="text-[11px] text-slate-500 dark:text-slate-400">
                             Pastikan seluruh link dapat diakses publik oleh petugas BAAK.
                         </span>
                         <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs uppercase tracking-wider rounded-md shadow-md transition-all cursor-pointer">

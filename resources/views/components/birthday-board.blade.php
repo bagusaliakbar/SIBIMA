@@ -19,7 +19,7 @@
                         <h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">
                             Ulang Tahun Hari Ini
                         </h3>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
                             {{ $birthdays->count() }} Orang Bertambah Usia
                         </span>
                     </div>
@@ -58,11 +58,11 @@
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border {{ $roleBadgeClass }}">
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider border {{ $roleBadgeClass }}">
                                     {{ $roleLabel }}
                                 </span>
                                 @if($isSelf)
-                                    <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                                    <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
                                         Anda
                                     </span>
                                 @endif
@@ -71,7 +71,7 @@
                                 {{ $bUser->name }}
                             </h4>
                             @if($bUser->identifier)
-                                <p class="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
+                                <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
                                     {{ $bUser->identifier }}
                                 </p>
                             @endif
@@ -200,10 +200,10 @@
                                     <img :src="activeRecipient?.avatar" :alt="activeRecipient?.name" class="w-full h-full object-cover">
                                 </div>
                                 <div class="min-w-0 flex-1">
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Penerima</span>
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Penerima</span>
                                     <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" x-text="activeRecipient?.name"></h4>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800 shrink-0" x-text="activeRecipient?.role"></span>
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-black uppercase tracking-wider bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800 shrink-0" x-text="activeRecipient?.role"></span>
                             </div>
 
                             <!-- Pilihan Template Ucapan Cepat -->
@@ -249,7 +249,7 @@
                                     <label for="birthday-wish-message" class="text-xs font-bold text-slate-700 dark:text-slate-300">
                                         Ucapan:
                                     </label>
-                                    <span class="text-[10px] font-mono text-slate-400" x-text="wishMessage.length + ' / 300'"></span>
+                                    <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400" x-text="wishMessage.length + ' / 300'"></span>
                                 </div>
                                 <textarea id="birthday-wish-message" 
                                           x-model="wishMessage" 
@@ -368,13 +368,13 @@
 
                             <!-- Empty State -->
                             <div x-show="!isLoadingReceived && receivedWishes.length === 0" class="py-12 text-center space-y-3">
-                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+                                <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center mx-auto">
                                     <svg aria-hidden="true" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                                     </svg>
                                 </div>
                                 <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300">Belum Ada Ucapan Masuk</h4>
-                                <p class="text-xs text-slate-400 max-w-xs mx-auto">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
                                     Jadilah orang pertama yang mengirimkan doa dan ucapan selamat ulang tahun!
                                 </p>
                             </div>
@@ -390,10 +390,10 @@
                                                 </div>
                                                 <div class="min-w-0">
                                                     <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate" x-text="wish.sender_name"></h5>
-                                                    <span class="text-[9px] font-black uppercase tracking-wider text-slate-400" x-text="wish.sender_role"></span>
+                                                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400" x-text="wish.sender_role"></span>
                                                 </div>
                                             </div>
-                                            <span class="text-[10px] font-medium text-slate-400 shrink-0" x-text="wish.time_ago"></span>
+                                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 shrink-0" x-text="wish.time_ago"></span>
                                         </div>
                                         <p class="text-xs text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900/60 p-3 rounded-xl border border-slate-200/60 dark:border-slate-800 font-medium leading-relaxed" x-text="wish.message"></p>
                                     </div>

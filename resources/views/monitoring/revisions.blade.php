@@ -65,7 +65,7 @@
                            placeholder="Cari mahasiswa atau judul..." 
                            class="w-full pl-10 pr-9 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all shadow-sm placeholder:text-slate-400/85">
                     @if($search)
-                        <a href="{{ route('monitoring.revisions', ['wave_id' => $selectedWaveId]) }}" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-rose-500 transition-colors">
+                        <a href="{{ route('monitoring.revisions', ['wave_id' => $selectedWaveId]) }}" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 dark:text-slate-400 hover:text-rose-500 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </a>
                     @endif
@@ -135,11 +135,11 @@
                             <th class="py-5 px-4 w-10 text-center border-r border-slate-200/60 dark:border-slate-700">
                                 <input type="checkbox" @click="toggleAll()" :checked="selectedIds.length === allIds.length && allIds.length > 0" class="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 dark:bg-slate-800 transition-all cursor-pointer">
                             </th>
-                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">MAHASISWA & SEMINAR</th>
-                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">STATUS REVISI (PENGUJI 1)</th>
-                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">STATUS REVISI (PENGUJI 2)</th>
-                            <th class="py-5 px-6 font-black text-[10px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap text-center">OVERALL STATUS</th>
-                            <th class="py-5 px-6 font-black text-[10px] uppercase tracking-[0.2em] whitespace-nowrap text-center">AKSI</th>
+                            <th class="py-5 px-6 font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">MAHASISWA & SEMINAR</th>
+                            <th class="py-5 px-6 font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">STATUS REVISI (PENGUJI 1)</th>
+                            <th class="py-5 px-6 font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap">STATUS REVISI (PENGUJI 2)</th>
+                            <th class="py-5 px-6 font-black text-[11px] border-r border-slate-200/60 dark:border-slate-700 uppercase tracking-[0.2em] whitespace-nowrap text-center">OVERALL STATUS</th>
+                            <th class="py-5 px-6 font-black text-[11px] uppercase tracking-[0.2em] whitespace-nowrap text-center">AKSI</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -154,18 +154,18 @@
                                 </td>
                                 <td class="py-4 px-6 border-r border-slate-50 dark:border-slate-800">
                                     <div class="font-black text-xs text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $detail->thesis->student->name ?? 'N/A' }}</div>
-                                    <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 tracking-tight font-bold uppercase">{{ $detail->thesis->student->identifier ?? 'N/A' }}</div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 tracking-tight font-bold uppercase">{{ $detail->thesis->student->identifier ?? 'N/A' }}</div>
                                     @if($detail->thesis && $detail->thesis->title)
-                                        <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 font-medium leading-relaxed italic">
+                                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 font-medium leading-relaxed italic">
                                             "{{ $detail->thesis->title }}"
                                         </div>
                                     @endif
                                     <div class="mt-3 space-y-1">
-                                        <div class="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                                             <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                             <span>{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>
                                         </div>
-                                        <div class="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                                        <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                                             <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                             <span>{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H:i') }} WIB</span>
                                         </div>
@@ -180,10 +180,10 @@
                                         </div>
                                         <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px] flex flex-col justify-between min-h-[58px]">
                                             <div class="flex items-center justify-between gap-1 mb-1">
-                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
+                                                <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revisi</span>
                                                 @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner1_id)
                                                     <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner1_id, 'redirect_to' => 'monitoring-revisions']) }}"
-                                                       class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
+                                                       class="p-1 -mr-1 -mt-1 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
                                                        title="Kelola / Input Revisi">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                     </a>
@@ -192,14 +192,14 @@
                                             <div>
                                                 @if($rev1)
                                                     @if($rev1->isApproved())
-                                                        <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block leading-none">Selesai</span>
+                                                        <span class="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase block leading-none">Selesai</span>
                                                     @elseif($rev1->isResubmitted())
-                                                        <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase block leading-none animate-pulse">Terkirim</span>
+                                                        <span class="text-[11px] font-black text-blue-600 dark:text-blue-400 uppercase block leading-none animate-pulse">Terkirim</span>
                                                     @else
-                                                        <span class="text-[9px] font-black text-orange-500 dark:text-orange-400 uppercase block leading-none">Dikirim</span>
+                                                        <span class="text-[11px] font-black text-orange-500 dark:text-orange-400 uppercase block leading-none">Dikirim</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase block leading-none">Belum Ada</span>
+                                                    <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase block leading-none">Belum Ada</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -214,10 +214,10 @@
                                         </div>
                                         <div class="bg-slate-50 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/60 max-w-[160px] flex flex-col justify-between min-h-[58px]">
                                             <div class="flex items-center justify-between gap-1 mb-1">
-                                                <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Revisi</span>
+                                                <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revisi</span>
                                                 @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $detail->examiner2_id)
                                                     <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $detail->examiner2_id, 'redirect_to' => 'monitoring-revisions']) }}"
-                                                       class="p-1 -mr-1 -mt-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
+                                                       class="p-1 -mr-1 -mt-1 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-md transition-all shrink-0" 
                                                        title="Kelola / Input Revisi">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                     </a>
@@ -226,14 +226,14 @@
                                             <div>
                                                 @if($rev2)
                                                     @if($rev2->isApproved())
-                                                        <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase block leading-none">Selesai</span>
+                                                        <span class="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase block leading-none">Selesai</span>
                                                     @elseif($rev2->isResubmitted())
-                                                        <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase block leading-none animate-pulse">Terkirim</span>
+                                                        <span class="text-[11px] font-black text-blue-600 dark:text-blue-400 uppercase block leading-none animate-pulse">Terkirim</span>
                                                     @else
-                                                        <span class="text-[9px] font-black text-orange-500 dark:text-orange-400 uppercase block leading-none">Dikirim</span>
+                                                        <span class="text-[11px] font-black text-orange-500 dark:text-orange-400 uppercase block leading-none">Dikirim</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase block leading-none">Belum Ada</span>
+                                                    <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase block leading-none">Belum Ada</span>
                                                 @endif
                                             </div>
                                         </div>
@@ -246,21 +246,21 @@
                                             <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white shadow-sm mx-auto">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                             </div>
-                                            <span class="text-[8px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">FINALIZED</span>
+                                            <span class="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">FINALIZED</span>
                                         </div>
                                     @elseif($detail->isRevisionStarted())
                                         <div class="flex flex-col items-center gap-1.5">
                                             <div class="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white shadow-sm mx-auto animate-pulse">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                             </div>
-                                            <span class="text-[8px] font-black text-orange-500 uppercase tracking-widest">IN PROGRESS</span>
+                                            <span class="text-[11px] font-black text-orange-500 uppercase tracking-widest">IN PROGRESS</span>
                                         </div>
                                     @else
                                        <div class="flex flex-col items-center gap-1.5">
-                                           <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 mx-auto">
+                                           <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 mx-auto">
                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
                                            </div>
-                                           <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">NOT STARTED</span>
+                                           <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">NOT STARTED</span>
                                        </div>
                                    @endif
                                </td>
@@ -269,7 +269,7 @@
                                     <div class="flex flex-col items-center gap-1.5 whitespace-nowrap min-w-[130px]">
                                         <!-- Tombol Cetak Revisi Lengkap (Penguji 1 & 2) -->
                                         <a href="{{ route('monitoring.seminar-revisions.print', $detail->id) }}" target="_blank"
-                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-extrabold uppercase tracking-wider transition-all shadow-sm w-full justify-center group"
+                                           class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[11px] font-extrabold uppercase tracking-wider transition-all shadow-sm w-full justify-center group"
                                            title="Cetak Lembar Revisi Lengkap (Penguji 1 & 2)">
                                             <svg class="w-3.5 h-3.5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -282,14 +282,14 @@
                                         <div class="flex items-center gap-1 w-full">
                                             @if($detail->examiner1_id)
                                                 <a href="{{ route('monitoring.seminar-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner1_id]) }}" target="_blank"
-                                                   class="flex-1 inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800 rounded-lg text-[8px] font-black uppercase tracking-wider transition-all shadow-xs"
+                                                   class="flex-1 inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs"
                                                    title="Cetak Lembar Revisi Penguji 1 ({{ $detail->examiner1?->name }})">
                                                     <span>Revisi P1</span>
                                                 </a>
                                             @endif
                                             @if($detail->examiner2_id)
                                                 <a href="{{ route('monitoring.seminar-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner2_id]) }}" target="_blank"
-                                                   class="flex-1 inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800 rounded-lg text-[8px] font-black uppercase tracking-wider transition-all shadow-xs"
+                                                   class="flex-1 inline-flex items-center justify-center gap-1 px-1.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs"
                                                    title="Cetak Lembar Revisi Penguji 2 ({{ $detail->examiner2?->name }})">
                                                     <span>Revisi P2</span>
                                                 </a>
@@ -299,7 +299,7 @@
                                         <!-- Berita Acara -->
                                         @if($detail->isAllRevisionsApproved())
                                             <a href="{{ route('monitoring.seminar-scores.berita-acara', $detail->id) }}" 
-                                               class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-[9px] font-extrabold uppercase tracking-wider transition-all border border-slate-200 dark:border-slate-700 w-full justify-center">
+                                               class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 rounded-lg text-[11px] font-extrabold uppercase tracking-wider transition-all border border-slate-200 dark:border-slate-700 w-full justify-center">
                                                 <span>Berita Acara</span>
                                             </a>
                                         @endif
@@ -347,11 +347,11 @@
                                 </div>
                                 <div class="shrink-0">
                                     @if($detail->isAllRevisionsApproved())
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800/60">Finalized</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800/60">Finalized</span>
                                     @elseif($detail->isRevisionStarted())
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800/60">In Progress</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800/60">In Progress</span>
                                     @else
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">Belum Mulai</span>
+                                        <span class="px-2 py-0.5 rounded-full text-[11px] font-black uppercase bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">Belum Mulai</span>
                                     @endif
                                 </div>
                             </div>
@@ -364,19 +364,19 @@
                                 @foreach([['label' => 'Penguji 1', 'name' => $detail->examiner1?->name, 'id' => $detail->examiner1_id, 'rev' => $rev1], ['label' => 'Penguji 2', 'name' => $detail->examiner2?->name, 'id' => $detail->examiner2_id, 'rev' => $rev2]] as $exItem)
                                     <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/80 flex items-center justify-between gap-2">
                                         <div class="min-w-0">
-                                            <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">{{ $exItem['label'] }}</div>
+                                            <div class="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400">{{ $exItem['label'] }}</div>
                                             <div class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ $exItem['name'] ?? '-' }}</div>
                                             <div class="mt-0.5">
                                                 @if($exItem['rev'])
                                                     @if($exItem['rev']->isApproved())
-                                                        <span class="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400">Selesai</span>
+                                                        <span class="text-[11px] font-black uppercase text-emerald-600 dark:text-emerald-400">Selesai</span>
                                                     @elseif($exItem['rev']->isResubmitted())
-                                                        <span class="text-[10px] font-black uppercase text-blue-600 dark:text-blue-400">Terkirim</span>
+                                                        <span class="text-[11px] font-black uppercase text-blue-600 dark:text-blue-400">Terkirim</span>
                                                     @else
-                                                        <span class="text-[10px] font-black uppercase text-orange-600 dark:text-orange-400">Dikirim</span>
+                                                        <span class="text-[11px] font-black uppercase text-orange-600 dark:text-orange-400">Dikirim</span>
                                                     @endif
                                                 @else
-                                                    <span class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Belum Ada</span>
+                                                    <span class="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400">Belum Ada</span>
                                                 @endif
                                             </div>
                                         </div>

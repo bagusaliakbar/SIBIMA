@@ -39,7 +39,7 @@
                                 <a href="https://wa.me/{{ $waNumber }}?text={{ $waMessage }}" 
                                    target="_blank" 
                                    rel="noopener noreferrer"
-                                   class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-[10px] font-bold transition-all shadow-2xs hover:scale-105"
+                                   class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-[11px] font-bold transition-all shadow-2xs hover:scale-105"
                                    title="Kirim Pesan WhatsApp ke {{ $thesis->student->name }} ({{ $thesis->student->phone_number }})">
                                     <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 fill-current shrink-0" viewBox="0 0 24 24">
                                         <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="flex items-center gap-2 self-start sm:self-auto">
-                    <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Status Skripsi:</span>
+                    <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Status Skripsi:</span>
                     @php
                         $thesisStatusLabel = match($thesis->status) {
                             'active' => 'AKTIF',
@@ -74,7 +74,7 @@
 
             <!-- Judul Skripsi -->
             <div class="space-y-1.5">
-                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Judul Skripsi:</span>
+                <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Judul Skripsi:</span>
                 <h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 leading-relaxed">
                     {{ $thesis->final_title ?? ($thesis->title ?: 'Judul skripsi belum diatur') }}
                 </h2>
@@ -105,7 +105,7 @@
                 <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700 flex flex-col justify-between gap-4">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-wider border border-indigo-200 dark:border-indigo-800">
+                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-[11px] font-black uppercase tracking-wider border border-indigo-200 dark:border-indigo-800">
                                 Pembimbing 1
                             </span>
                             <span class="text-xs font-black {{ $isP1Reached ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400' }}">
@@ -122,14 +122,14 @@
                                     <h4 class="text-xs font-black text-slate-900 dark:text-slate-100 truncate flex items-center gap-1">
                                         <span>{{ $thesis->pembimbing1->name }}</span>
                                         @if($thesis->pembimbing1_id === Auth::id())
-                                            <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/60 px-1 rounded">(Anda)</span>
+                                            <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-950/60 px-1 rounded">(Anda)</span>
                                         @endif
                                     </h4>
-                                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{{ $thesis->pembimbing1->identifier ?: 'NIP/NIDN -' }}</p>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{{ $thesis->pembimbing1->identifier ?: 'NIP/NIDN -' }}</p>
                                 </div>
                             </div>
                         @else
-                            <p class="text-xs text-slate-400 italic mb-3">Belum ditentukan</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 italic mb-3">Belum ditentukan</p>
                         @endif
 
                         <!-- Mini Progress Bar P1 -->
@@ -137,7 +137,7 @@
                             <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
                                 <div class="bg-indigo-600 dark:bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: {{ $progressP1 }}%"></div>
                             </div>
-                            <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                            <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                 <span>Target: 8 Sesi</span>
                                 <span class="{{ $isP1Reached ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-600 dark:text-slate-300 font-semibold' }}">
                                     {{ $isP1Reached ? '✓ Target Terpenuhi' : ($remainingP1 . ' sesi lagi') }}
@@ -147,7 +147,7 @@
                     </div>
 
                     <!-- ACC Badges P1 -->
-                    <div class="pt-3 border-t border-slate-200/60 dark:border-slate-700 flex items-center gap-2 flex-wrap text-[10px]">
+                    <div class="pt-3 border-t border-slate-200/60 dark:border-slate-700 flex items-center gap-2 flex-wrap text-[11px]">
                         @if($thesis->acc_up_p1)
                             <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-black uppercase">
                                 ✓ ACC Seminar
@@ -174,7 +174,7 @@
                 <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700 flex flex-col justify-between gap-4">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 text-[10px] font-black uppercase tracking-wider border border-purple-200 dark:border-purple-800">
+                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 text-[11px] font-black uppercase tracking-wider border border-purple-200 dark:border-purple-800">
                                 Pembimbing 2
                             </span>
                             <span class="text-xs font-black {{ $isP2Reached ? 'text-emerald-600 dark:text-emerald-400' : 'text-purple-600 dark:text-purple-400' }}">
@@ -191,14 +191,14 @@
                                     <h4 class="text-xs font-black text-slate-900 dark:text-slate-100 truncate flex items-center gap-1">
                                         <span>{{ $thesis->pembimbing2->name }}</span>
                                         @if($thesis->pembimbing2_id === Auth::id())
-                                            <span class="text-[9px] font-bold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-950/60 px-1 rounded">(Anda)</span>
+                                            <span class="text-[11px] font-bold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-950/60 px-1 rounded">(Anda)</span>
                                         @endif
                                     </h4>
-                                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{{ $thesis->pembimbing2->identifier ?: 'NIP/NIDN -' }}</p>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{{ $thesis->pembimbing2->identifier ?: 'NIP/NIDN -' }}</p>
                                 </div>
                             </div>
                         @else
-                            <p class="text-xs text-slate-400 italic mb-3">Belum ditentukan</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 italic mb-3">Belum ditentukan</p>
                         @endif
 
                         <!-- Mini Progress Bar P2 -->
@@ -206,7 +206,7 @@
                             <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
                                 <div class="bg-purple-600 dark:bg-purple-500 h-full rounded-full transition-all duration-500" style="width: {{ $progressP2 }}%"></div>
                             </div>
-                            <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                            <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                                 <span>Target: 8 Sesi</span>
                                 <span class="{{ $isP2Reached ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-600 dark:text-slate-300 font-semibold' }}">
                                     {{ $isP2Reached ? '✓ Target Terpenuhi' : ($remainingP2 . ' sesi lagi') }}
@@ -216,7 +216,7 @@
                     </div>
 
                     <!-- ACC Badges P2 -->
-                    <div class="pt-3 border-t border-slate-200/60 dark:border-slate-700 flex items-center gap-2 flex-wrap text-[10px]">
+                    <div class="pt-3 border-t border-slate-200/60 dark:border-slate-700 flex items-center gap-2 flex-wrap text-[11px]">
                         @if($thesis->acc_up_p2)
                             <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-black uppercase">
                                 ✓ ACC Seminar
@@ -243,7 +243,7 @@
                 <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-orange-200/80 dark:border-orange-900/40 flex flex-col justify-between gap-3">
                     <div>
                         <div class="flex items-center justify-between gap-2 mb-2">
-                            <span class="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-wider">
+                            <span class="text-[11px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-wider">
                                 Total Sesi Bimbingan
                             </span>
                             <span class="text-xs font-black text-slate-900 dark:text-slate-100">
@@ -264,7 +264,7 @@
                         </div>
                     </div>
 
-                    <div class="pt-2.5 border-t border-slate-200/80 dark:border-slate-700 text-[10px] text-slate-600 dark:text-slate-300 font-medium">
+                    <div class="pt-2.5 border-t border-slate-200/80 dark:border-slate-700 text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                         @if($isTargetReached)
                             <span class="text-emerald-700 dark:text-emerald-300 font-bold flex items-center gap-1">
                                 <svg class="w-3.5 h-3.5 shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
@@ -304,11 +304,11 @@
                         <div class="flex items-center gap-2">
                             <h4 class="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">Status Persetujuan Ujian (ACC)</h4>
                             @if($isFullyAccUp && $isFullyAccSidang)
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                     Lengkap (UP & Sidang)
                                 </span>
                             @elseif($isFullyAccUp)
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
                                     ACC Seminar Lengkap
                                 </span>
                             @endif
@@ -366,7 +366,7 @@
                                     @csrf
                                     <input type="hidden" name="slot" value="p1">
                                     <button type="submit" class="inline-flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P1">
-                                        <span class="text-[10px] font-mono {{ $thesis->acc_up_p1 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
+                                        <span class="text-[11px] font-mono {{ $thesis->acc_up_p1 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">P1</span>
                                         <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                     </button>
                                 </form>
@@ -377,17 +377,17 @@
                                     @csrf
                                     <input type="hidden" name="slot" value="p2">
                                     <button type="submit" class="inline-flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Seminar P2">
-                                        <span class="text-[10px] font-mono {{ $thesis->acc_up_p2 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
+                                        <span class="text-[11px] font-mono {{ $thesis->acc_up_p2 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">P2</span>
                                         <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                     </button>
                                 </form>
                             @else
                                 <div class="inline-flex items-center gap-1" title="Pembimbing 1: {{ $thesis->acc_up_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
-                                    <span class="text-[10px] font-mono {{ $thesis->acc_up_p1 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
+                                    <span class="text-[11px] font-mono {{ $thesis->acc_up_p1 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">P1</span>
                                     <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p1 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                 </div>
                                 <div class="inline-flex items-center gap-1 ml-1" title="Pembimbing 2: {{ $thesis->acc_up_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
-                                    <span class="text-[10px] font-mono {{ $thesis->acc_up_p2 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
+                                    <span class="text-[11px] font-mono {{ $thesis->acc_up_p2 ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">P2</span>
                                     <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_up_p2 ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                 </div>
                             @endif
@@ -436,7 +436,7 @@
                                     @csrf
                                     <input type="hidden" name="slot" value="p1">
                                     <button type="submit" class="inline-flex items-center gap-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P1">
-                                        <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p1 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
+                                        <span class="text-[11px] font-mono {{ $thesis->acc_sidang_p1 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">P1</span>
                                         <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p1 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                     </button>
                                 </form>
@@ -447,17 +447,17 @@
                                     @csrf
                                     <input type="hidden" name="slot" value="p2">
                                     <button type="submit" class="inline-flex items-center gap-1 ml-1 cursor-pointer hover:opacity-80" title="Klik untuk toggle status ACC Sidang P2">
-                                        <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p2 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
+                                        <span class="text-[11px] font-mono {{ $thesis->acc_sidang_p2 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">P2</span>
                                         <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p2 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                     </button>
                                 </form>
                             @else
                                 <div class="inline-flex items-center gap-1" title="Pembimbing 1: {{ $thesis->acc_sidang_p1 ? 'Sudah ACC' : 'Belum ACC' }}">
-                                    <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p1 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P1</span>
+                                    <span class="text-[11px] font-mono {{ $thesis->acc_sidang_p1 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">P1</span>
                                     <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p1 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                 </div>
                                 <div class="inline-flex items-center gap-1 ml-1" title="Pembimbing 2: {{ $thesis->acc_sidang_p2 ? 'Sudah ACC' : 'Belum ACC' }}">
-                                    <span class="text-[10px] font-mono {{ $thesis->acc_sidang_p2 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-400 dark:text-slate-500' }}">P2</span>
+                                    <span class="text-[11px] font-mono {{ $thesis->acc_sidang_p2 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">P2</span>
                                     <div class="w-2.5 h-2.5 rounded-full {{ $thesis->acc_sidang_p2 ? 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'bg-slate-300 dark:bg-slate-600' }}"></div>
                                 </div>
                             @endif
@@ -531,7 +531,7 @@
                             @endif
 
                             @if($session->dosen)
-                                <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-[10px]">
+                                <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-[11px]">
                                     <span class="font-bold text-slate-700 dark:text-slate-300">
                                         {{ $session->dosen->name }} {{ $isMyActive ? '(Anda)' : '' }}
                                     </span>
@@ -597,7 +597,7 @@
             <!-- Filter Pembimbing Tabs -->
             @if($thesis->pembimbing1 || $thesis->pembimbing2)
                 <div class="px-4 sm:px-6 py-2.5 sm:py-3.5 bg-slate-100/70 dark:bg-slate-900/70 border-b border-slate-200/80 dark:border-slate-700 flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                    <span class="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1">
+                    <span class="text-[11px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0 mr-1">
                         <span class="hidden sm:inline">Filter Pembimbing:</span>
                         <span class="sm:hidden">Filter:</span>
                     </span>
@@ -606,7 +606,7 @@
                     <a href="{{ route('theses.logbooks', array_filter(['thesis' => $thesis->id, 'search' => $search, 'dosen' => 'all'])) }}"
                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}">
                         <span>Semua</span>
-                        <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black tabular-nums {{ ($filterDosen ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                        <span class="px-1.5 py-0.2 rounded-md text-[11px] font-black tabular-nums {{ ($filterDosen ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                             {{ $totalCompletedCount }}
                         </span>
                     </a>
@@ -617,7 +617,7 @@
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
                            title="Pembimbing 1: {{ $thesis->pembimbing1->name }}">
                             <span>Pembimbing 1{{ $thesis->pembimbing1_id === Auth::id() ? ' • Anda' : '' }}</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black tabular-nums {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                            <span class="px-1.5 py-0.2 rounded-md text-[11px] font-black tabular-nums {{ ($filterDosen ?? 'all') === 'p1' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                 {{ $p1SessionCount }}
                             </span>
                         </a>
@@ -629,7 +629,7 @@
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-orange-500 text-white shadow-xs' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700' }}"
                            title="Pembimbing 2: {{ $thesis->pembimbing2->name }}">
                             <span>Pembimbing 2{{ $thesis->pembimbing2_id === Auth::id() ? ' • Anda' : '' }}</span>
-                            <span class="px-1.5 py-0.2 rounded-md text-[10px] font-black tabular-nums {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                            <span class="px-1.5 py-0.2 rounded-md text-[11px] font-black tabular-nums {{ ($filterDosen ?? 'all') === 'p2' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
                                 {{ $p2SessionCount }}
                             </span>
                         </a>
@@ -722,7 +722,7 @@
 
                                 <!-- Topik Sesi -->
                                 <div>
-                                    <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400 block mb-1">Topik Diskusi / Bahasan:</span>
+                                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Topik Diskusi / Bahasan:</span>
                                     <h4 class="text-base sm:text-lg font-black text-slate-900 dark:text-slate-100 leading-snug">
                                         {{ $session->topic }}
                                     </h4>
@@ -731,7 +731,7 @@
                                 <!-- Hasil & Catatan Pembimbing (Highlight Box) -->
                                 <div class="p-4 sm:p-5 rounded-2xl bg-amber-50/60 dark:bg-slate-900/80 border border-amber-200/80 dark:border-amber-500/30 space-y-2">
                                     <div class="flex items-center justify-between gap-2">
-                                        <h5 class="text-[10px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                                        <h5 class="text-[11px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             <span>Hasil & Catatan Pembimbing</span>
                                         </h5>
@@ -758,7 +758,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                 </svg>
                                             </div>
-                                            <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Catatan Pengajuan Mahasiswa</span>
+                                            <span class="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Catatan Pengajuan Mahasiswa</span>
                                         </div>
                                         <div class="px-0.5">
                                             <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal whitespace-pre-line">
@@ -791,14 +791,14 @@
                                             <div>
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-xs font-bold text-slate-800 dark:text-slate-100">{{ $session->dosen->name }}</span>
-                                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider {{ $isP1 ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300' : ($isP2 ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400') }}">
+                                                    <span class="px-1.5 py-0.2 rounded text-[11px] font-black uppercase tracking-wider {{ $isP1 ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300' : ($isP2 ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400') }}">
                                                         {{ $pembimbingLabel }}
                                                     </span>
                                                     @if($isMySession)
-                                                        <span class="text-[9px] font-bold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-950/60 px-1 rounded">(Anda)</span>
+                                                        <span class="text-[11px] font-bold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-950/60 px-1 rounded">(Anda)</span>
                                                     @endif
                                                 </div>
-                                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{{ $session->dosen->identifier ?: 'NIP/NIDN -' }}</p>
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{{ $session->dosen->identifier ?: 'NIP/NIDN -' }}</p>
                                             </div>
                                         </div>
                                     </div>

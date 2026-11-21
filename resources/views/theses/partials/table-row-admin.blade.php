@@ -23,7 +23,7 @@
                                         <!-- Baris 2: Chip NPM & Tombol Kontak WhatsApp Sejajar -->
                                         <div class="flex items-center gap-1.5 flex-wrap">
                                             <!-- Chip NPM -->
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs"
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs"
                                                   title="Nomor Pokok Mahasiswa (NPM)">
                                                 <svg class="w-2.5 h-2.5 text-slate-400 dark:text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
                                                 <span>{{ $thesis->student->identifier ?? 'NPM -' }}</span>
@@ -34,7 +34,7 @@
                                                 <a href="https://wa.me/{{ $waNumber }}?text={{ $waMessage }}" 
                                                    target="_blank" 
                                                    rel="noopener noreferrer"
-                                                   class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60 shadow-2xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                                                   class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60 shadow-2xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
                                                    title="Kirim Pesan WhatsApp ke {{ $thesis->student->name }} ({{ $thesis->student->phone_number }})">
                                                     <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400 fill-current shrink-0" viewBox="0 0 24 24">
                                                         <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
@@ -42,7 +42,7 @@
                                                     <span>Chat WA</span>
                                                 </a>
                                             @else
-                                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-medium bg-slate-100/80 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 border border-slate-200/50 dark:border-slate-700/50" 
+                                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] font-medium bg-slate-100/80 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200/50 dark:border-slate-700/50" 
                                                       title="Nomor WhatsApp belum didaftarkan oleh mahasiswa">
                                                     <svg class="w-2.5 h-2.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                                                     <span>No WA</span>
@@ -54,18 +54,18 @@
                                                 <span class="text-slate-300 dark:text-slate-600 font-bold">•</span>
                                                 @if($thesis->isOldCohort())
                                                     @if($thesis->student->is_critical_semester)
-                                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-500/10 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300" title="Masa studi kritis (Semester {{ $thesis->student->current_semester }})">
+                                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold bg-rose-500/10 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300" title="Masa studi kritis (Semester {{ $thesis->student->current_semester }})">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                                                             Angkatan Lama '{{ substr($thesis->student->entry_year, -2) }} (Smt {{ $thesis->student->current_semester }})
                                                         </span>
                                                     @else
-                                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300" title="Angkatan Lama / Senior (Semester {{ $thesis->student->current_semester }})">
+                                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300" title="Angkatan Lama / Senior (Semester {{ $thesis->student->current_semester }})">
                                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                                             Angkatan Lama '{{ substr($thesis->student->entry_year, -2) }} (Smt {{ $thesis->student->current_semester }})
                                                         </span>
                                                     @endif
                                                 @else
-                                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" title="Angkatan Baru (Semester {{ $thesis->student->current_semester ?? '-' }})">
+                                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/10 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" title="Angkatan Baru (Semester {{ $thesis->student->current_semester ?? '-' }})">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                         Angkatan {{ $thesis->student->entry_year }}
                                                     </span>
@@ -105,19 +105,19 @@
                                             matches: {{ json_encode($simMatches->values()->toArray()) }}
                                         })' class="group focus:outline-hidden cursor-pointer">
                                             @if($simScore >= 66)
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 hover:bg-rose-500/20 dark:bg-rose-500/15 dark:hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 transition-all hover:scale-105 active:scale-95" title="Klik untuk lihat rincian data kemiripan">
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping shrink-0"></span>
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/10 hover:bg-rose-500/20 dark:bg-rose-500/15 dark:hover:bg-rose-500/25 text-rose-700 dark:text-rose-300 transition-all hover:scale-105 active:scale-95" title="Klik untuk lihat rincian data kemiripan">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span>
                                                     <span>{{ $simScore }}% Sangat Mirip</span>
                                                     <svg class="w-3 h-3 opacity-60 ml-0.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                                 </span>
                                             @elseif($simScore >= 35)
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 hover:bg-amber-500/20 dark:bg-amber-500/15 dark:hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 transition-all hover:scale-105 active:scale-95" title="Klik untuk lihat rincian data kemiripan">
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 hover:bg-amber-500/20 dark:bg-amber-500/15 dark:hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 transition-all hover:scale-105 active:scale-95" title="Klik untuk lihat rincian data kemiripan">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
                                                     <span>{{ $simScore }}% Kemiripan</span>
                                                     <svg class="w-3 h-3 opacity-60 ml-0.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                                 </span>
                                             @else
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 hover:bg-emerald-500/20 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 transition-all hover:scale-105 active:scale-95" title="Klik untuk lihat rincian data kemiripan">
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 hover:bg-emerald-500/20 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 transition-all hover:scale-105 active:scale-95" title="Klik untuk lihat rincian data kemiripan">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
                                                     <span>{{ 100 - $simScore }}% Unik</span>
                                                     <svg class="w-3 h-3 opacity-60 ml-0.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -148,24 +148,24 @@
                                                 <div class="inline-block align-middle bg-white dark:bg-slate-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl w-full border border-slate-200 dark:border-slate-700 relative z-10">
                                                     <div class="px-8 py-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
                                                         <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 uppercase tracking-widest">Detail Deskripsi Skripsi</h3>
-                                                        <button type="button" @click="openAbstract = false" aria-label="Tutup detail deskripsi skripsi" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                                                        <button type="button" @click="openAbstract = false" aria-label="Tutup detail deskripsi skripsi" class="text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer">
                                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                         </button>
                                                     </div>
                                                     <div class="px-8 py-8 max-h-[60vh] overflow-y-auto">
                                                         <div class="mb-8">
-                                                            <p class="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-2">Judul Pengajuan</p>
+                                                            <p class="text-[11px] font-bold text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-2">Judul Pengajuan</p>
                                                             <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight uppercase">{{ $thesis->final_title ?? $thesis->title }}</h4>
                                                         </div>
                                                         <div class="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                                            <p class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-3">Deskripsi / Rencana</p>
+                                                            <p class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-3">Deskripsi / Rencana</p>
                                                             <div class="text-xs text-slate-600 dark:text-slate-400 leading-loose text-justify font-medium whitespace-pre-line">
                                                                 {{ $thesis->abstract }}
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                                                        <button type="button" @click="openAbstract = false" class="px-8 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm cursor-pointer">
+                                                        <button type="button" @click="openAbstract = false" class="px-8 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm cursor-pointer">
                                                             Tutup
                                                         </button>
                                                     </div>
@@ -199,7 +199,7 @@
                                     </span>
 
                                     <!-- 2. Milestone Stepper: Seminar & Sidang Tracker -->
-                                    <div class="w-full inline-flex items-center justify-between p-1 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-[10px]">
+                                    <div class="w-full inline-flex items-center justify-between p-1 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-[11px]">
                                         <!-- Seminar Milestone -->
                                         @if($hasSeminar)
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/60 shrink-0 shadow-2xs" title="Seminar Proposal: Selesai">
@@ -212,7 +212,7 @@
                                                 <span>ACC Seminar</span>
                                             </span>
                                         @else
-                                            <span class="px-2 py-0.5 rounded-lg font-medium text-slate-400 dark:text-slate-500 shrink-0" title="Seminar Proposal: Belum">
+                                            <span class="px-2 py-0.5 rounded-lg font-medium text-slate-500 dark:text-slate-400 shrink-0" title="Seminar Proposal: Belum">
                                                 Seminar : Belum
                                             </span>
                                         @endif
@@ -231,7 +231,7 @@
                                                 <span>ACC Sidang</span>
                                             </span>
                                         @else
-                                            <span class="px-2 py-0.5 rounded-lg font-medium text-slate-400 dark:text-slate-500 shrink-0" title="Sidang Skripsi: Belum">
+                                            <span class="px-2 py-0.5 rounded-lg font-medium text-slate-500 dark:text-slate-400 shrink-0" title="Sidang Skripsi: Belum">
                                                 Sidang : Belum
                                             </span>
                                         @endif
@@ -239,11 +239,11 @@
 
                                     <!-- 3. Rincian ACC Pembimbing (P1 & P2 Status) -->
                                     @if($thesis->status !== 'completed' && !$hasDefense)
-                                        <div class="flex items-center justify-center gap-1.5 w-full text-[10px]">
+                                        <div class="flex items-center justify-center gap-1.5 w-full text-[11px]">
                                             <!-- P1 Status -->
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-bold border transition-all {{ $p1Acc ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60' }} {{ $isMyP1 ? 'ring-1 ring-orange-500/40' : '' }}"
                                                   title="Pembimbing 1 ACC {{ $targetAccLabel }}: {{ $p1Acc ? 'Sudah Disetujui' : 'Belum' }} {{ $isMyP1 ? '(Anda)' : '' }}">
-                                                <span class="text-[9px] font-black {{ $isMyP1 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500' }}">P1{{ $isMyP1 ? '*' : '' }}</span>
+                                                <span class="text-[11px] font-black {{ $isMyP1 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400' }}">P1{{ $isMyP1 ? '*' : '' }}</span>
                                                 @if($p1Acc)
                                                     <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                 @else
@@ -254,7 +254,7 @@
                                             <!-- P2 Status -->
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-bold border transition-all {{ $p2Acc ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20' : 'bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60' }} {{ $isMyP2 ? 'ring-1 ring-orange-500/40' : '' }}"
                                                   title="Pembimbing 2 ACC {{ $targetAccLabel }}: {{ $p2Acc ? 'Sudah Disetujui' : 'Belum' }} {{ $isMyP2 ? '(Anda)' : '' }}">
-                                                <span class="text-[9px] font-black {{ $isMyP2 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500' }}">P2{{ $isMyP2 ? '*' : '' }}</span>
+                                                <span class="text-[11px] font-black {{ $isMyP2 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400' }}">P2{{ $isMyP2 ? '*' : '' }}</span>
                                                 @if($p2Acc)
                                                     <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                 @else
@@ -275,7 +275,7 @@
                                             $healthDotClass = $healthColor === 'rose' ? 'bg-rose-500 animate-pulse' : ($healthColor === 'amber' ? 'bg-amber-500' : 'bg-emerald-500');
                                         @endphp
                                         <div class="flex items-center justify-center">
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $healthBgClass }}"
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold {{ $healthBgClass }}"
                                                   title="Aktivitas Bimbingan: Terakhir bimbingan {{ $thesis->days_since_last_mentoring ?? 0 }} hari lalu">
                                                 <span class="w-1.5 h-1.5 rounded-full {{ $healthDotClass }}"></span>
                                                 <span>{{ $healthBadge['label'] }}</span>
@@ -285,7 +285,7 @@
 
                                     <!-- 5. Tombol Shortcut ke Logbook Mahasiswa -->
                                     <a href="{{ route('theses.logbooks', $thesis->id) }}" 
-                                       class="inline-flex items-center gap-1 text-[10px] font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 group/link transition-colors mt-0.5 cursor-pointer"
+                                       class="inline-flex items-center gap-1 text-[11px] font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 group/link transition-colors mt-0.5 cursor-pointer"
                                        title="Buka catatan bimbingan & logbook {{ $thesis->student->name }}">
                                         <span>Buka Logbook</span>
                                         <svg class="w-3 h-3 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
@@ -299,11 +299,11 @@
                                         @if($thesis->pembimbing1)
                                             @php $isMeP1 = (Auth::id() === $thesis->pembimbing1_id); @endphp
                                             <div class="flex items-center gap-2">
-                                                <span class="w-4 h-4 rounded {{ $isMeP1 ? 'bg-orange-500 text-white font-extrabold shadow-2xs' : 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30' }} flex items-center justify-center text-[9px] font-bold shrink-0">1</span>
-                                                <span class="font-medium text-[10px] uppercase tracking-tight {{ $isMeP1 ? 'font-bold text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300' }}">
+                                                <span class="w-4 h-4 rounded {{ $isMeP1 ? 'bg-orange-500 text-white font-extrabold shadow-2xs' : 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30' }} flex items-center justify-center text-[11px] font-bold shrink-0">1</span>
+                                                <span class="font-medium text-[11px] uppercase tracking-tight {{ $isMeP1 ? 'font-bold text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300' }}">
                                                     {{ $thesis->pembimbing1->name }}
                                                     @if($isMeP1)
-                                                        <span class="text-[9px] font-bold text-orange-500 dark:text-orange-400 lowercase">(anda)</span>
+                                                        <span class="text-[11px] font-bold text-orange-500 dark:text-orange-400 lowercase">(anda)</span>
                                                     @endif
                                                 </span>
                                             </div>
@@ -311,11 +311,11 @@
                                         @if($thesis->pembimbing2)
                                             @php $isMeP2 = (Auth::id() === $thesis->pembimbing2_id); @endphp
                                             <div class="flex items-center gap-2">
-                                                <span class="w-4 h-4 rounded {{ $isMeP2 ? 'bg-orange-500 text-white font-extrabold shadow-2xs' : 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30' }} flex items-center justify-center text-[9px] font-bold shrink-0">2</span>
-                                                <span class="font-medium text-[10px] uppercase tracking-tight {{ $isMeP2 ? 'font-bold text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300' }}">
+                                                <span class="w-4 h-4 rounded {{ $isMeP2 ? 'bg-orange-500 text-white font-extrabold shadow-2xs' : 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30' }} flex items-center justify-center text-[11px] font-bold shrink-0">2</span>
+                                                <span class="font-medium text-[11px] uppercase tracking-tight {{ $isMeP2 ? 'font-bold text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300' }}">
                                                     {{ $thesis->pembimbing2->name }}
                                                     @if($isMeP2)
-                                                        <span class="text-[9px] font-bold text-orange-500 dark:text-orange-400 lowercase">(anda)</span>
+                                                        <span class="text-[11px] font-bold text-orange-500 dark:text-orange-400 lowercase">(anda)</span>
                                                     @endif
                                                 </span>
                                             </div>
@@ -360,7 +360,7 @@
                                                                     <!-- Suggestions Chips Header -->
                                                                     @if($thesis->requestedPembimbing1 || $thesis->requestedPembimbing2)
                                                                         <div class="p-4 bg-indigo-50/80 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 space-y-2">
-                                                                            <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                                            <span class="text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
                                                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                                                                 Usulan Pembimbing dari Mahasiswa:
                                                                             </span>
@@ -370,7 +370,7 @@
                                                                                     <div class="px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase border flex items-center gap-2 {{ $p1Full ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50' : 'bg-white text-indigo-700 border-indigo-200 dark:bg-slate-900 dark:text-indigo-400 dark:border-indigo-800 shadow-2xs' }}">
                                                                                         <span>P1: {{ $thesis->requestedPembimbing1->name }}</span>
                                                                                         <span class="font-black">({{ $thesis->requestedPembimbing1->total_workload }}/{{ $thesis->requestedPembimbing1->max_quota }})</span>
-                                                                                        @if($p1Full)<span class="px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-black text-[10px]">Penuh</span>@endif
+                                                                                        @if($p1Full)<span class="px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-black text-[11px]">Penuh</span>@endif
                                                                                     </div>
                                                                                 @endif
                                                                                 @if($thesis->requestedPembimbing2)
@@ -378,7 +378,7 @@
                                                                                     <div class="px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase border flex items-center gap-2 {{ $p2Full ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/40 dark:border-rose-900/50' : 'bg-white text-indigo-700 border-indigo-200 dark:bg-slate-900 dark:text-indigo-400 dark:border-indigo-800 shadow-2xs' }}">
                                                                                         <span>P2: {{ $thesis->requestedPembimbing2->name }}</span>
                                                                                         <span class="font-black">({{ $thesis->requestedPembimbing2->total_workload }}/{{ $thesis->requestedPembimbing2->max_quota }})</span>
-                                                                                        @if($p2Full)<span class="px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-black text-[10px]">Penuh</span>@endif
+                                                                                        @if($p2Full)<span class="px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-black text-[11px]">Penuh</span>@endif
                                                                                     </div>
                                                                                 @endif
                                                                             </div>
@@ -387,7 +387,7 @@
 
                                                                     <!-- Select P1 -->
                                                                     <div>
-                                                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Pilih Dosen Pembimbing 1</label>
+                                                                        <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Pilih Dosen Pembimbing 1</label>
                                                                         <select name="pembimbing1_id" x-model="p1_id" required class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-100">
                                                                             <option value="">Pilih P1...</option>
                                                                             @foreach($dosens as $dosen)
@@ -401,7 +401,7 @@
                                                                             @endforeach
                                                                         </select>
                                                                         <template x-if="p1_id && dosens[p1_id]">
-                                                                            <div class="mt-1.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'text-rose-600 dark:text-rose-400' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400')">
+                                                                            <div class="mt-1.5 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'text-rose-600 dark:text-rose-400' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400')">
                                                                                 <span class="w-2 h-2 rounded-full shrink-0" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'bg-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></span>
                                                                                 <span x-text="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'Quota Penuh (' + dosens[p1_id].total_workload + '/' + dosens[p1_id].max_quota + ')' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia (' + dosens[p1_id].total_workload + '/' + dosens[p1_id].max_quota + ')')"></span>
                                                                             </div>
@@ -410,7 +410,7 @@
 
                                                                     <!-- Select P2 -->
                                                                     <div>
-                                                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Pilih Dosen Pembimbing 2</label>
+                                                                        <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Pilih Dosen Pembimbing 2</label>
                                                                         <select name="pembimbing2_id" x-model="p2_id" required class="w-full py-2.5 px-3 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all text-slate-800 dark:text-slate-100">
                                                                             <option value="">Pilih P2...</option>
                                                                             @foreach($dosens as $dosen)
@@ -424,7 +424,7 @@
                                                                             @endforeach
                                                                         </select>
                                                                         <template x-if="p2_id && dosens[p2_id]">
-                                                                            <div class="mt-1.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'text-rose-600 dark:text-rose-400' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400')">
+                                                                            <div class="mt-1.5 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'text-rose-600 dark:text-rose-400' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400')">
                                                                                 <span class="w-2 h-2 rounded-full shrink-0" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'bg-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></span>
                                                                                 <span x-text="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'Quota Penuh (' + dosens[p2_id].total_workload + '/' + dosens[p2_id].max_quota + ')' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia (' + dosens[p2_id].total_workload + '/' + dosens[p2_id].max_quota + ')')"></span>
                                                                             </div>
@@ -481,14 +481,14 @@
                                                         <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 dark:border-slate-700 relative z-10">
                                                             <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
                                                                 <h3 class="text-base font-black text-slate-800 dark:text-slate-100 uppercase tracking-widest">Edit Data Skripsi</h3>
-                                                                <p class="text-[10px] text-slate-500 uppercase font-black mt-1">Mahasiswa: {{ $thesis->student->name }}</p>
+                                                                <p class="text-[11px] text-slate-500 uppercase font-black mt-1">Mahasiswa: {{ $thesis->student->name }}</p>
                                                             </div>
                                                             <form action="{{ route('theses.update', $thesis->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('PUT')
                                                                 <div class="px-8 py-8 space-y-6">
                                                                     <div>
-                                                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Judul Final Skripsi</label>
+                                                                        <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Judul Final Skripsi</label>
                                                                         <textarea name="final_title" rows="3" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all uppercase leading-relaxed p-4 text-slate-800 dark:text-slate-100" required>{{ $thesis->final_title ?? $thesis->title }}</textarea>
                                                                     </div>
                                                                     <div x-data='{ 
@@ -497,8 +497,8 @@
                                                                         dosens: {{ $dosens->mapWithKeys(fn($d) => [$d->id => $d])->toJson() }}
                                                                     }' class="grid grid-cols-2 gap-4">
                                                                         <div>
-                                                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pembimbing 1</label>
-                                                                            <select name="pembimbing1_id" x-model="p1_id" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3 text-slate-800 dark:text-slate-100" required>
+                                                                            <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Pembimbing 1</label>
+                                                                            <select name="pembimbing1_id" x-model="p1_id" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3 text-slate-800 dark:text-slate-100" required>
                                                                                 @foreach($dosens as $dosen)
                                                                                     @php $score = $thesis->getMatchScore($dosen); @endphp
                                                                                     <option value="{{ $dosen->id }}" 
@@ -510,15 +510,15 @@
                                                                             <template x-if="p1_id && dosens[p1_id]">
                                                                                 <div class="mt-2 flex items-center gap-1.5">
                                                                                     <div class="w-2 h-2 rounded-full" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'bg-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
-                                                                                    <span class="text-[9px] font-black uppercase tracking-widest" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'text-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500')">
+                                                                                    <span class="text-[11px] font-black uppercase tracking-widest" :class="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'text-rose-500' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500')">
                                                                                         <span x-text="dosens[p1_id].total_workload >= dosens[p1_id].max_quota ? 'Quota Penuh' : (dosens[p1_id].total_workload >= dosens[p1_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia')"></span>
                                                                                     </span>
                                                                                 </div>
                                                                             </template>
                                                                         </div>
                                                                         <div>
-                                                                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pembimbing 2</label>
-                                                                            <select name="pembimbing2_id" x-model="p2_id" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[10px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3 text-slate-800 dark:text-slate-100" required>
+                                                                            <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Pembimbing 2</label>
+                                                                            <select name="pembimbing2_id" x-model="p2_id" class="w-full bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black uppercase tracking-tighter focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all p-3 text-slate-800 dark:text-slate-100" required>
                                                                                 @foreach($dosens as $dosen)
                                                                                     @php $score = $thesis->getMatchScore($dosen); @endphp
                                                                                     <option value="{{ $dosen->id }}" 
@@ -530,7 +530,7 @@
                                                                             <template x-if="p2_id && dosens[p2_id]">
                                                                                 <div class="mt-2 flex items-center gap-1.5">
                                                                                     <div class="w-2 h-2 rounded-full" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'bg-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'bg-amber-500' : 'bg-emerald-500')"></div>
-                                                                                    <span class="text-[9px] font-black uppercase tracking-widest" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'text-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500')">
+                                                                                    <span class="text-[11px] font-black uppercase tracking-widest" :class="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'text-rose-500' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'text-amber-500' : 'text-emerald-500')">
                                                                                         <span x-text="dosens[p2_id].total_workload >= dosens[p2_id].max_quota ? 'Quota Penuh' : (dosens[p2_id].total_workload >= dosens[p2_id].max_quota * 0.75 ? 'Hampir Penuh' : 'Tersedia')"></span>
                                                                                     </span>
                                                                                 </div>
@@ -539,8 +539,8 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                                                                    <button type="button" @click="openEditModal = false" class="px-6 py-2.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Batal</button>
-                                                                    <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all">Simpan</button>
+                                                                    <button type="button" @click="openEditModal = false" class="px-6 py-2.5 text-[11px] font-black text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Batal</button>
+                                                                    <button type="submit" class="px-6 py-2.5 bg-orange-600 text-white text-[11px] font-black rounded-xl uppercase tracking-widest hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all">Simpan</button>
                                                                 </div>
                                                             </form>
                                                         </div>
