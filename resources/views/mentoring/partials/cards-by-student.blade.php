@@ -326,7 +326,7 @@
                                                                     @if($session->student_attendance_status === 'attending')
                                                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700">
                                                                             <svg class="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                                                            Akan Hadir
+                                                                            Akan Hadir{{ $session->formatted_arrival_time ? ' • ' . $session->formatted_arrival_time : '' }}
                                                                         </span>
                                                                     @elseif($session->student_attendance_status === 'permission')
                                                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[11px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-700">

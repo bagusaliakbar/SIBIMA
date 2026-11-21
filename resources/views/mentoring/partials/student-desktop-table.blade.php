@@ -168,14 +168,32 @@
                                                     Belum Konfirmasi
                                                 </span>
                                                 <div class="flex items-center gap-1.5">
-                                                    <form action="{{ route('mentoring-sessions.confirm-attendance', $session->id) }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="status" value="attending">
-                                                        <button type="submit" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 cursor-pointer" title="Konfirmasi Akan Hadir">
+                                                    @if($session->scheduled_end_at)
+                                                        <button type="button"
+                                                                @click="openAttendModalFromEl($el)"
+                                                                data-session-id="{{ $session->id }}"
+                                                                data-topic="{{ $session->topic }}"
+                                                                data-dosen-name="{{ $session->dosen?->name ?? 'Dosen Pembimbing' }}"
+                                                                data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                data-start-time="{{ $session->scheduled_at->format('H:i') }}"
+                                                                data-end-time="{{ $session->scheduled_end_at->format('H:i') }}"
+                                                                data-time-range="{{ $session->time_range }}"
+                                                                data-current-arrival="{{ $session->student_arrival_time ?? '' }}"
+                                                                data-peer-counts="{{ json_encode($peerArrivalCounts[$session->id] ?? []) }}"
+                                                                class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 cursor-pointer" title="Konfirmasi Akan Hadir & Pilih Jam Kedatangan">
                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                                             <span>Akan Hadir</span>
                                                         </button>
-                                                    </form>
+                                                    @else
+                                                        <form action="{{ route('mentoring-sessions.confirm-attendance', $session->id) }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="status" value="attending">
+                                                            <button type="submit" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 cursor-pointer" title="Konfirmasi Akan Hadir">
+                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                                <span>Akan Hadir</span>
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                     <button type="button" 
                                                             @click="openPermissionModal({{ json_encode($session) }})" 
                                                             class="px-2.5 py-1 bg-slate-100 hover:bg-rose-50 dark:bg-slate-800 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 cursor-pointer" title="Ajukan Izin dengan Alasan">
@@ -186,20 +204,43 @@
                                             </div>
                                         @elseif($session->student_attendance_status === 'attending')
                                             <div class="space-y-1">
-                                                <div class="flex items-center gap-1">
+                                                <div class="flex items-center gap-1 flex-wrap">
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 text-[11px] font-black uppercase tracking-wider">
                                                         <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                                                         <span>Akan Hadir</span>
                                                     </span>
+                                                    @if($session->formatted_arrival_time)
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 text-[11px] font-bold font-mono">
+                                                            {{ $session->formatted_arrival_time }}
+                                                        </span>
+                                                    @endif
                                                 </div>
                                                 @if($session->student_confirmed_at)
                                                     <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Dikonfirmasi: {{ $session->student_confirmed_at->format('d/m H:i') }} WIB</p>
                                                 @endif
-                                                <button type="button" 
-                                                        @click="openPermissionModal({{ json_encode($session) }})" 
-                                                        class="text-[11px] font-bold text-slate-400 hover:text-rose-600 dark:text-slate-500 dark:hover:text-rose-400 underline decoration-dotted transition-colors cursor-pointer">
-                                                    Ubah ke Izin
-                                                </button>
+                                                <div class="flex items-center gap-2.5 flex-wrap">
+                                                    @if($session->scheduled_end_at)
+                                                        <button type="button"
+                                                                @click="openAttendModalFromEl($el)"
+                                                                data-session-id="{{ $session->id }}"
+                                                                data-topic="{{ $session->topic }}"
+                                                                data-dosen-name="{{ $session->dosen?->name ?? 'Dosen Pembimbing' }}"
+                                                                data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                                data-start-time="{{ $session->scheduled_at->format('H:i') }}"
+                                                                data-end-time="{{ $session->scheduled_end_at->format('H:i') }}"
+                                                                data-time-range="{{ $session->time_range }}"
+                                                                data-current-arrival="{{ $session->student_arrival_time ?? '' }}"
+                                                                data-peer-counts="{{ json_encode($peerArrivalCounts[$session->id] ?? []) }}"
+                                                                class="text-[11px] font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 underline decoration-dotted transition-colors cursor-pointer">
+                                                            Ubah Jam Hadir
+                                                        </button>
+                                                    @endif
+                                                    <button type="button" 
+                                                            @click="openPermissionModal({{ json_encode($session) }})" 
+                                                            class="text-[11px] font-bold text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 underline decoration-dotted transition-colors cursor-pointer">
+                                                        Ubah ke Izin
+                                                    </button>
+                                                </div>
                                             </div>
                                         @elseif($session->student_attendance_status === 'permission')
                                             <div class="space-y-1">
@@ -214,13 +255,30 @@
                                                         "{{ $session->student_attendance_reason }}"
                                                     </p>
                                                 @endif
-                                                <form action="{{ route('mentoring-sessions.confirm-attendance', $session->id) }}" method="POST" class="inline-block">
-                                                    @csrf
-                                                    <input type="hidden" name="status" value="attending">
-                                                    <button type="submit" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 underline decoration-dotted transition-colors cursor-pointer">
+                                                @if($session->scheduled_end_at)
+                                                    <button type="button"
+                                                            @click="openAttendModalFromEl($el)"
+                                                            data-session-id="{{ $session->id }}"
+                                                            data-topic="{{ $session->topic }}"
+                                                            data-dosen-name="{{ $session->dosen?->name ?? 'Dosen Pembimbing' }}"
+                                                            data-scheduled-date="{{ $session->scheduled_at->locale('id')->translatedFormat('l, d F Y') }}"
+                                                            data-start-time="{{ $session->scheduled_at->format('H:i') }}"
+                                                            data-end-time="{{ $session->scheduled_end_at->format('H:i') }}"
+                                                            data-time-range="{{ $session->time_range }}"
+                                                            data-current-arrival=""
+                                                            data-peer-counts="{{ json_encode($peerArrivalCounts[$session->id] ?? []) }}"
+                                                            class="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 underline decoration-dotted transition-colors cursor-pointer">
                                                         Ubah Siap Hadir
                                                     </button>
-                                                </form>
+                                                @else
+                                                    <form action="{{ route('mentoring-sessions.confirm-attendance', $session->id) }}" method="POST" class="inline-block">
+                                                        @csrf
+                                                        <input type="hidden" name="status" value="attending">
+                                                        <button type="submit" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 underline decoration-dotted transition-colors cursor-pointer">
+                                                            Ubah Siap Hadir
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </div>
                                         @endif
                                     @endif

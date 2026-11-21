@@ -230,6 +230,7 @@ class MentoringService
                         'location'         => $data['location'] ?? null,
                         'notes'            => $data['notes'] ?? null,
                         'student_attendance_status' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? 'pending' : $existingSession->student_attendance_status,
+                        'student_arrival_time'      => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $existingSession->student_arrival_time,
                         'student_attendance_reason' => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $existingSession->student_attendance_reason,
                         'student_confirmed_at'      => ($timeChanged && in_array($user->role, ['dosen', 'admin', 'kaprodi'])) ? null : $existingSession->student_confirmed_at,
                     ]);
@@ -537,14 +538,17 @@ class MentoringService
     {
         $status = $data['status']; // 'attending' or 'permission'
         $reason = $status === 'permission' ? ($data['reason'] ?? null) : null;
+        $arrivalTime = $status === 'attending' ? ($data['arrival_time'] ?? null) : null;
 
         $session->update([
             'student_attendance_status' => $status,
+            'student_arrival_time' => $arrivalTime,
             'student_attendance_reason' => $reason,
             'student_confirmed_at' => now(),
         ]);
 
-        $statusText = $status === 'attending' ? 'Akan Hadir' : 'Izin (Berhalangan Hadir)';
+        $arrivalText = ($status === 'attending' && $arrivalTime) ? " (estimasi tiba pukul {$arrivalTime} WIB)" : '';
+        $statusText = $status === 'attending' ? "Akan Hadir{$arrivalText}" : 'Izin (Berhalangan Hadir)';
         $studentName = $session->thesis->student->name ?? Auth::user()->name;
 
         // Log Activity
@@ -565,8 +569,10 @@ class MentoringService
             ));
         }
 
-        return $status === 'attending' 
-            ? 'Terima kasih, konfirmasi kehadiran (Akan Hadir) berhasil disimpan.' 
+        return $status === 'attending'
+            ? ($arrivalTime
+                ? "Terima kasih, konfirmasi kehadiran (Akan Hadir pukul {$arrivalTime} WIB) berhasil disimpan."
+                : 'Terima kasih, konfirmasi kehadiran (Akan Hadir) berhasil disimpan.')
             : 'Konfirmasi izin berhasil dikirimkan ke Dosen Pembimbing.';
     }
 

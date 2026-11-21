@@ -294,7 +294,7 @@
                                                     <template x-if="item.attendance_status === 'attending'">
                                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700/80">
                                                             <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                                            <span>Akan Hadir</span>
+                                                            <span x-text="item.arrival_time_formatted ? 'Akan Hadir • ' + item.arrival_time_formatted : 'Akan Hadir'"></span>
                                                         </span>
                                                     </template>
                                                     <template x-if="item.attendance_status === 'permission'">
@@ -393,7 +393,7 @@
                                         <template x-if="item.attendance_status === 'attending'">
                                             <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-black uppercase tracking-wider border border-emerald-200 dark:border-emerald-700/80">
                                                 <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                                <span>Akan Hadir</span>
+                                                <span x-text="item.arrival_time_formatted ? 'Akan Hadir • ' + item.arrival_time_formatted : 'Akan Hadir'"></span>
                                             </span>
                                         </template>
                                         <template x-if="item.attendance_status === 'permission'">

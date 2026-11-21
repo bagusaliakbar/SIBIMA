@@ -213,10 +213,37 @@ class MentoringSessionController extends Controller
             $sessions = MentoringSession::forUser($user)
                 ->search($search)
                 ->orderBy('scheduled_at', 'desc')
-                ->with('thesis.pembimbing1', 'thesis.pembimbing2')
+                ->with('thesis.pembimbing1', 'thesis.pembimbing2', 'dosen')
                 ->paginate(10)
                 ->appends(['search' => $search]);
-            return view('mentoring.student_index', compact('sessions', 'search'));
+
+            // Compute peer arrival-time slot counts for active sessions that have a time range
+            $peerArrivalCounts = [];
+            $rangeSessions = $sessions->getCollection()->filter(fn ($s) => $s->scheduled_end_at && in_array($s->status, ['pending', 'approved']));
+            if ($rangeSessions->isNotEmpty()) {
+                $dosenIds = $rangeSessions->pluck('dosen_id')->filter()->unique()->values();
+                $scheduledTimes = $rangeSessions->pluck('scheduled_at')->filter()->unique()->values();
+
+                $peerSessions = MentoringSession::whereIn('dosen_id', $dosenIds)
+                    ->whereIn('scheduled_at', $scheduledTimes)
+                    ->where('student_attendance_status', 'attending')
+                    ->whereNotNull('student_arrival_time')
+                    ->where('status', '!=', 'rejected')
+                    ->get(['id', 'dosen_id', 'scheduled_at', 'student_arrival_time']);
+
+                foreach ($rangeSessions as $rs) {
+                    $counts = $peerSessions
+                        ->filter(fn ($p) => $p->dosen_id === $rs->dosen_id
+                            && $p->scheduled_at->equalTo($rs->scheduled_at)
+                            && $p->id !== $rs->id)
+                        ->groupBy('student_arrival_time')
+                        ->map->count()
+                        ->toArray();
+                    $peerArrivalCounts[$rs->id] = $counts;
+                }
+            }
+
+            return view('mentoring.student_index', compact('sessions', 'search', 'peerArrivalCounts'));
         } elseif ($user->role === 'admin' || $user->role === 'kaprodi') {
             $dosenId = $request->input('dosen_id');
 
@@ -310,10 +337,12 @@ class MentoringSessionController extends Controller
                 'location' => $s->location,
                 'scheduled_at' => $s->scheduled_at->format('Y-m-d H:i:s'),
                 'scheduled_date_formatted' => $s->scheduled_at->locale('id')->translatedFormat('d M Y'),
-                'scheduled_time_formatted' => $s->scheduled_at->format('H:i') . ' WIB',
+                'scheduled_time_formatted' => $s->time_range,
                 'is_today' => $s->scheduled_at->isToday(),
                 'status' => $s->status,
                 'attendance_status' => $s->student_attendance_status ?? 'pending',
+                'arrival_time' => $s->student_arrival_time,
+                'arrival_time_formatted' => $s->formatted_arrival_time,
                 'attendance_reason' => $s->student_attendance_reason,
                 'confirmed_at_formatted' => $s->student_confirmed_at ? $s->student_confirmed_at->locale('id')->translatedFormat('d M H:i') . ' WIB' : null,
             ];
@@ -549,11 +578,23 @@ class MentoringSessionController extends Controller
         $validated = $request->validate([
             'status' => 'required|in:attending,permission',
             'reason' => 'nullable|required_if:status,permission|string|max:500',
+            'arrival_time' => ['nullable', 'regex:/^([01]\d|2[0-3]):[0-5]\d$/'],
         ], [
             'status.required' => 'Pilihan kehadiran wajib ditentukan.',
             'reason.required_if' => 'Mohon sertakan alasan / keterangan jika Anda berhalangan hadir (izin).',
             'reason.max' => 'Alasan izin maksimal 500 karakter.',
+            'arrival_time.regex' => 'Format jam kedatangan tidak valid (gunakan format HH:MM).',
         ]);
+
+        if ($validated['status'] === 'attending' && !empty($validated['arrival_time']) && $session->scheduled_end_at) {
+            $startStr = $session->scheduled_at->format('H:i');
+            $endStr = $session->scheduled_end_at->format('H:i');
+            if ($validated['arrival_time'] < $startStr || $validated['arrival_time'] > $endStr) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'arrival_time' => "Jam kedatangan harus berada dalam rentang jadwal dosen ({$startStr} - {$endStr} WIB).",
+                ]);
+            }
+        }
 
         $message = $this->mentoringService->confirmAttendance($session, $validated);
 

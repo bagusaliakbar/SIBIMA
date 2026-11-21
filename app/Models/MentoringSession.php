@@ -19,6 +19,7 @@ class MentoringSession extends Model
         'location',
         'status',
         'student_attendance_status',
+        'student_arrival_time',
         'student_attendance_reason',
         'student_confirmed_at',
         'is_absent',
@@ -88,6 +89,15 @@ class MentoringSession extends Model
         }
 
         return $start;
+    }
+
+    public function getFormattedArrivalTimeAttribute(): ?string
+    {
+        if (empty($this->student_arrival_time)) {
+            return null;
+        }
+
+        return $this->student_arrival_time . ' WIB';
     }
 
     public function isStudentConfirmed(): bool

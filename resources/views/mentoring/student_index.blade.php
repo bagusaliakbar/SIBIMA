@@ -12,6 +12,18 @@
             activeSessionId: null, 
             activeSessionTopic: '', 
             permissionReason: '',
+            attendModalOpen: false,
+            attendData: {
+                id: null,
+                topic: '',
+                dosen_name: '',
+                scheduled_date: '',
+                start_time: '',
+                end_time: '',
+                time_range: '',
+                arrival_time: '',
+                peer_counts: {},
+            },
             studentStatusFilter: 'all',
             matchesStudentFilter(status) {
                 if (this.studentStatusFilter === 'all') return true;
@@ -23,6 +35,69 @@
                 this.activeSessionTopic = session.topic;
                 this.permissionReason = session.student_attendance_reason || '';
                 this.permissionModalOpen = true;
+            },
+            timeToMinutes(t) {
+                if (!t || !t.includes(':')) return 0;
+                const [h, m] = t.split(':').map(Number);
+                return (h || 0) * 60 + (m || 0);
+            },
+            minutesToTime(total) {
+                const h = String(Math.floor(total / 60)).padStart(2, '0');
+                const m = String(total % 60).padStart(2, '0');
+                return `${h}:${m}`;
+            },
+            get attendSlots() {
+                const startMin = this.timeToMinutes(this.attendData.start_time);
+                const endMin = this.timeToMinutes(this.attendData.end_time);
+                if (!this.attendData.start_time || !this.attendData.end_time || endMin <= startMin) {
+                    return this.attendData.start_time ? [this.attendData.start_time] : [];
+                }
+                const slots = [];
+                for (let m = startMin; m < endMin; m += 30) {
+                    slots.push(this.minutesToTime(m));
+                }
+                if (slots.length === 0) {
+                    slots.push(this.attendData.start_time);
+                }
+                return slots;
+            },
+            openAttendModalFromEl(el) {
+                let peerCounts = {};
+                try {
+                    peerCounts = JSON.parse(el.getAttribute('data-peer-counts') || '{}') || {};
+                } catch (e) {
+                    peerCounts = {};
+                }
+                const startTime = el.getAttribute('data-start-time') || '';
+                const endTime = el.getAttribute('data-end-time') || '';
+                const currentArrival = el.getAttribute('data-current-arrival') || '';
+                this.attendData = {
+                    id: el.getAttribute('data-session-id'),
+                    topic: el.getAttribute('data-topic') || '-',
+                    dosen_name: el.getAttribute('data-dosen-name') || 'Dosen Pembimbing',
+                    scheduled_date: el.getAttribute('data-scheduled-date') || '-',
+                    start_time: startTime,
+                    end_time: endTime,
+                    time_range: el.getAttribute('data-time-range') || '',
+                    arrival_time: currentArrival || startTime,
+                    peer_counts: peerCounts,
+                };
+                this.attendModalOpen = true;
+            },
+            validateManualArrivalTime() {
+                const startMin = this.timeToMinutes(this.attendData.start_time);
+                const endMin = this.timeToMinutes(this.attendData.end_time);
+                const curMin = this.timeToMinutes(this.attendData.arrival_time);
+                if (!this.attendData.arrival_time || curMin < startMin || curMin > endMin) {
+                    if (typeof window.sibimaToast === 'function') {
+                        window.sibimaToast(
+                            'Jam kedatangan harus dalam rentang ' + this.attendData.start_time + ' – ' + this.attendData.end_time + ' WIB.',
+                            'warning',
+                            'Di Luar Rentang Jadwal'
+                        );
+                    }
+                    this.attendData.arrival_time = curMin > endMin ? this.attendData.end_time : this.attendData.start_time;
+                }
             },
             cancelModalOpen: false,
             cancelData: {

@@ -122,7 +122,7 @@
                                                 @elseif($session->student_attendance_status === 'attending')
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-black uppercase border border-emerald-200 dark:border-emerald-700">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                        <span>Akan Hadir</span>
+                                                        <span>Akan Hadir{{ $session->formatted_arrival_time ? ' • ' . $session->formatted_arrival_time : '' }}</span>
                                                     </span>
                                                 @elseif($session->student_attendance_status === 'permission')
                                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[11px] font-black uppercase border border-amber-200 dark:border-amber-700" title="{{ $session->student_attendance_reason }}">

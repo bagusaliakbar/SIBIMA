@@ -388,10 +388,17 @@
                                                         <span>Hadir</span>
                                                     </span>
                                                 @elseif($session->student_attendance_status === 'attending')
-                                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-black uppercase border border-emerald-200 dark:border-emerald-700">
-                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                        <span>Akan Hadir</span>
-                                                    </span>
+                                                    <div class="inline-flex flex-col items-center gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[11px] font-black uppercase border border-emerald-200 dark:border-emerald-700">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                            <span>Akan Hadir</span>
+                                                        </span>
+                                                        @if($session->formatted_arrival_time)
+                                                            <span class="text-[11px] font-bold font-mono text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800/60">
+                                                                {{ $session->formatted_arrival_time }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
                                                 @elseif($session->student_attendance_status === 'permission')
                                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 text-[11px] font-black uppercase border border-amber-200 dark:border-amber-700" title="{{ $session->student_attendance_reason }}">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
@@ -513,9 +520,12 @@
                                                         <div class="pt-2 border-t border-slate-100 dark:border-slate-700 space-y-1">
                                                             <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Status Kehadiran Mahasiswa:</span>
                                                             @if($session->student_attendance_status === 'attending')
-                                                                <p class="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5">
+                                                                <p class="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 flex-wrap">
                                                                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                                                                     <span>Konfirmasi Hadir</span>
+                                                                    @if($session->formatted_arrival_time)
+                                                                        <span class="px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 text-[11px] font-mono">Tiba {{ $session->formatted_arrival_time }}</span>
+                                                                    @endif
                                                                     @if($session->student_confirmed_at)
                                                                         <span class="text-[11px] font-normal text-slate-500 dark:text-slate-400">({{ $session->student_confirmed_at->locale('id')->translatedFormat('d M, H:i') }})</span>
                                                                     @endif
