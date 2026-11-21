@@ -139,7 +139,8 @@
                 @endif
             </div>
 
-            <div class="overflow-x-auto">
+            {{-- Desktop Table View --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[10px]">
                         <tr>
@@ -224,6 +225,48 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Mobile Card View --}}
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($logs as $index => $log)
+                    <div class="p-4 space-y-2.5 bg-white dark:bg-slate-800" x-data="{ showMsg: false }">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-slate-900 dark:text-white">{{ $log->recipient_name }}</div>
+                                <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                                    {{ $log->recipient_identifier ?? '-' }} &bull; {{ $log->recipient_phone ?: 'Nomor Kosong' }}
+                                </div>
+                            </div>
+                            @if($log->status === 'sent')
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">Terkirim</span>
+                            @elseif($log->status === 'failed')
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 shrink-0">Gagal</span>
+                            @else
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 shrink-0">Menunggu</span>
+                            @endif
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2 text-xs pt-1">
+                            @if($log->status === 'sent')
+                                <span class="text-slate-500 dark:text-slate-400">{{ $log->sent_at ? $log->sent_at->locale('id')->translatedFormat('d M Y, H:i') : '-' }} WIB</span>
+                            @else
+                                <span class="text-rose-600 dark:text-rose-400 font-medium text-[11px]">{{ $log->error_message ?? 'Gagal mengirim pesan.' }}</span>
+                            @endif
+                            <button type="button" @click="showMsg = !showMsg" class="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline shrink-0 cursor-pointer">
+                                <span x-text="showMsg ? 'Tutup' : 'Lihat Pesan'"></span>
+                            </button>
+                        </div>
+
+                        <div x-show="showMsg" x-cloak class="bg-slate-900 text-slate-100 p-3 rounded-xl font-mono text-[11px] whitespace-pre-wrap border border-slate-700">
+                            {{ $log->message_content }}
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                        Belum ada log penerima untuk siaran ini.
+                    </div>
+                @endforelse
             </div>
 
             @if($logs->hasPages())

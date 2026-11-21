@@ -326,7 +326,8 @@
                 </div>
             </x-slot>
 
-            <div class="overflow-x-auto">
+            {{-- Desktop Table View --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead>
                         <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 text-[11px] font-bold uppercase tracking-wider">
@@ -517,6 +518,140 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Mobile Card View --}}
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+                @forelse($theses as $thesis)
+                    <div class="p-4 space-y-3 bg-white dark:bg-slate-900">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <div class="font-bold text-sm text-slate-900 dark:text-white tracking-tight">
+                                        {{ ucwords(strtolower($thesis->student->name)) }}
+                                    </div>
+                                    @if($thesis->isGraduated())
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                                            Lulus
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
+                                    <span class="font-mono">{{ $thesis->student->identifier }}</span>
+                                    @if($thesis->student->entry_year)
+                                        &bull; Angkatan {{ $thesis->student->entry_year }}
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end shrink-0">
+                                <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-xl font-black text-xs {{ $thesis->total_sessions >= 8 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : ($thesis->total_sessions >= 4 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300') }}">
+                                    {{ $thesis->total_sessions }} Sesi
+                                </span>
+                                <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
+                                    P1: {{ $thesis->sessions_p1 }}x &bull; P2: {{ $thesis->sessions_p2 }}x
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                            {{ $thesis->final_title ?? $thesis->title }}
+                        </p>
+
+                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/80 space-y-1.5 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-950/60 text-[10px] font-bold text-orange-700 dark:text-orange-300 shrink-0">1</span>
+                                <span class="font-semibold text-slate-800 dark:text-slate-100 truncate">{{ $thesis->pembimbing1 ? ($thesis->pembimbing1->name === strtoupper($thesis->pembimbing1->name) ? ucwords(strtolower($thesis->pembimbing1->name)) : $thesis->pembimbing1->name) : 'Belum Ditugaskan' }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-[10px] font-bold text-slate-700 dark:text-slate-300 shrink-0">2</span>
+                                <span class="font-semibold text-slate-700 dark:text-slate-200 truncate">{{ $thesis->pembimbing2 ? ($thesis->pembimbing2->name === strtoupper($thesis->pembimbing2->name) ? ucwords(strtolower($thesis->pembimbing2->name)) : $thesis->pembimbing2->name) : 'Belum Ditugaskan' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <!-- ACC UP -->
+                            <div class="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/70 space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">ACC UP</span>
+                                    @if(!$thesis->isGraduated() && in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                                        <button type="button"
+                                                @click="openModal({
+                                                    thesisId: {{ $thesis->id }},
+                                                    type: 'up',
+                                                    typeName: 'Seminar UP',
+                                                    studentName: '{{ addslashes(ucwords(strtolower($thesis->student->name))) }}',
+                                                    studentNpm: '{{ $thesis->student->identifier }}',
+                                                    isFinal: {{ $thesis->isAccUpFinal() ? 'true' : 'false' }},
+                                                    accP1: {{ $thesis->acc_up_p1 ? 'true' : 'false' }},
+                                                    accP2: {{ $thesis->acc_up_p2 ? 'true' : 'false' }},
+                                                    p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
+                                                    p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
+                                                })"
+                                                class="p-1 rounded-md text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 cursor-pointer"
+                                                title="Kelola ACC Seminar" aria-label="Kelola ACC Seminar {{ $thesis->student->name }}">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        </button>
+                                    @endif
+                                </div>
+                                @if($thesis->isGraduated())
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Selesai</span>
+                                @elseif($thesis->isAccUpFinal())
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Siap Seminar (2/2)</span>
+                                @else
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold {{ ($thesis->acc_up_p1 || $thesis->acc_up_p2) ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                        Progres ({{ ($thesis->acc_up_p1 ? 1 : 0) + ($thesis->acc_up_p2 ? 1 : 0) }}/2)
+                                    </span>
+                                @endif
+                            </div>
+
+                            <!-- ACC Sidang -->
+                            <div class="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/70 space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">ACC Sidang</span>
+                                    @if(!$thesis->isGraduated() && in_array(Auth::user()->role, ['admin', 'kaprodi']))
+                                        <button type="button"
+                                                @click="openModal({
+                                                    thesisId: {{ $thesis->id }},
+                                                    type: 'sidang',
+                                                    typeName: 'Sidang Akhir',
+                                                    studentName: '{{ addslashes(ucwords(strtolower($thesis->student->name))) }}',
+                                                    studentNpm: '{{ $thesis->student->identifier }}',
+                                                    isFinal: {{ $thesis->isAccSidangFinal() ? 'true' : 'false' }},
+                                                    accP1: {{ $thesis->acc_sidang_p1 ? 'true' : 'false' }},
+                                                    accP2: {{ $thesis->acc_sidang_p2 ? 'true' : 'false' }},
+                                                    p1Name: '{{ addslashes($thesis->pembimbing1->name ?? 'Dosen 1') }}',
+                                                    p2Name: '{{ addslashes($thesis->pembimbing2->name ?? 'Dosen 2') }}'
+                                                })"
+                                                class="p-1 rounded-md text-slate-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-slate-700 cursor-pointer"
+                                                title="Kelola ACC Sidang" aria-label="Kelola ACC Sidang {{ $thesis->student->name }}">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        </button>
+                                    @endif
+                                </div>
+                                @if($thesis->isGraduated())
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Lulus Sidang</span>
+                                @elseif($thesis->isAccSidangFinal())
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">Siap Sidang (2/2)</span>
+                                @else
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold {{ ($thesis->acc_sidang_p1 || $thesis->acc_sidang_p2) ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                        Progres ({{ ($thesis->acc_sidang_p1 ? 1 : 0) + ($thesis->acc_sidang_p2 ? 1 : 0) }}/2)
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end pt-1">
+                            <a href="{{ route('theses.logbooks', $thesis->id) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                Detail Logbook
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-12 px-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        Tidak ditemukan data monitoring yang cocok dengan filter pencarian.
+                    </div>
+                @endforelse
             </div>
         </x-table-card>
 

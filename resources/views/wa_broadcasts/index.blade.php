@@ -68,7 +68,8 @@
                 </a>
             </div>
 
-            <div class="overflow-x-auto">
+            {{-- Desktop Table View --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead class="bg-slate-50 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[10px]">
                         <tr>
@@ -206,6 +207,59 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Mobile Card View --}}
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($broadcasts as $bc)
+                    <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="font-black text-sm text-slate-900 dark:text-white">{{ $bc->title }}</div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                    {{ $bc->created_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB &bull; {{ $bc->sender->name ?? 'Admin' }}
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black shrink-0 {{ $bc->status === 'completed' && $bc->failed_count == 0 ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' : ($bc->status === 'completed' ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300' : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300') }}">
+                                {{ $bc->status === 'completed' ? ($bc->failed_count == 0 ? 'Selesai 100%' : 'Sebagian') : ucfirst($bc->status) }}
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px]">
+                            <span class="px-2 py-0.5 rounded-full font-bold bg-orange-50 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">{{ $bc->target_type_label }}</span>
+                            <span class="font-bold text-slate-700 dark:text-slate-200">{{ $bc->total_recipients }} Kontak</span>
+                            <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ $bc->successful_count }} Sukses</span>
+                            @if($bc->failed_count > 0)
+                                <span class="font-bold text-rose-600 dark:text-rose-400">{{ $bc->failed_count }} Gagal</span>
+                            @endif
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                            <a href="{{ route('wa-broadcasts.show', $bc) }}" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold">
+                                Detail Laporan
+                            </a>
+                            @if($bc->failed_count > 0)
+                                <form action="{{ route('wa-broadcasts.resend-failed', $bc) }}" method="POST" data-confirm="Kirim ulang pesan hanya ke kontak yang gagal sebelumnya?" data-confirm-title="Kirim Ulang Pesan Gagal" data-confirm-type="warning" data-confirm-button="Ya, Kirim Ulang">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 rounded-lg text-xs font-bold cursor-pointer">
+                                        Kirim Ulang
+                                    </button>
+                                </form>
+                            @endif
+                            <form action="{{ route('wa-broadcasts.destroy', $bc) }}" method="POST" data-confirm="Apakah Anda yakin ingin menghapus data siaran ini beserta seluruh log pengirimannya?" data-confirm-title="Hapus Riwayat Siaran" data-confirm-type="danger" data-confirm-button="Ya, Hapus">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" title="Hapus Riwayat Siaran" aria-label="Hapus Riwayat Siaran {{ $bc->title }}" class="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-12 px-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        Belum ada riwayat siaran WhatsApp.
+                    </div>
+                @endforelse
             </div>
 
             @if($broadcasts->hasPages())

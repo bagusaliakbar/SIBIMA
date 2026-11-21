@@ -116,7 +116,8 @@
                 </span>
             </div>
 
-            <div class="overflow-x-auto">
+            {{-- Desktop Table View --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead class="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[10px] border-y border-slate-100 dark:border-slate-800">
                         <tr>
@@ -162,6 +163,42 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Mobile Card View --}}
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-800 border-t border-slate-100 dark:border-slate-800">
+                @foreach($advisorDecree->theses_data as $index => $item)
+                    <div class="p-4 space-y-2.5">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="font-black text-sm text-slate-900 dark:text-white">{{ $item['student_name'] ?? '-' }}</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                                    {{ $item['student_npm'] ?? '-' }}
+                                    @if(!empty($item['student_cohort']))
+                                        &bull; Angkatan {{ $item['student_cohort'] }}
+                                    @endif
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-300 shrink-0">#{{ $index + 1 }}</span>
+                        </div>
+                        <p class="text-xs text-slate-700 dark:text-slate-300 italic leading-relaxed">"{{ $item['title'] ?? '-' }}"</p>
+                        @if(!empty($item['topic']) && $item['topic'] !== '-')
+                            <div class="text-[11px] text-orange-600 dark:text-orange-400 font-bold">Bidang/Topik: {{ $item['topic'] }}</div>
+                        @endif
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                                <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Pembimbing 1</div>
+                                <div class="font-bold text-slate-900 dark:text-white mt-0.5">{{ $item['pembimbing1_name'] ?? '-' }}</div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400">NIDN: {{ $item['pembimbing1_nidn'] ?? '-' }}</div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                                <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Pembimbing 2</div>
+                                <div class="font-bold text-slate-900 dark:text-white mt-0.5">{{ $item['pembimbing2_name'] ?? '-' }}</div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400">NIDN: {{ $item['pembimbing2_nidn'] ?? '-' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>

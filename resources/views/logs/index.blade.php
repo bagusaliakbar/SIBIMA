@@ -42,7 +42,9 @@
                 </div>
             </x-slot>
 
-            <table class="w-full text-sm text-left">
+            {{-- Desktop Table View --}}
+            <div class="hidden md:block overflow-x-auto">
+                <table class="w-full text-sm text-left">
                 <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                     <tr>
                         <th scope="col" class="py-4 px-6">Waktu</th>
@@ -169,6 +171,50 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
+
+            {{-- Mobile Card View --}}
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700">
+                @forelse($logs as $log)
+                    <div class="p-4 space-y-2.5 bg-white dark:bg-slate-800">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                @if($log->user)
+                                    <div class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0">
+                                        <img src="{{ $log->user->avatar_url }}" alt="{{ $log->user->name }}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ $log->user->name }}</p>
+                                        <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">{{ $log->user->role }}</p>
+                                    </div>
+                                @else
+                                    <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 shrink-0">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    </div>
+                                    <p class="text-xs italic font-medium text-slate-500 dark:text-slate-400">Guest / System</p>
+                                @endif
+                            </div>
+                            <x-status-badge
+                                :type="$log->module === 'Auth' ? 'blue' : ($log->module === 'Skripsi' ? 'orange' : ($log->module === 'User' ? 'emerald' : ($log->module === 'Seminar' ? 'purple' : 'slate')))"
+                                :label="$log->module ?: 'General'" />
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="text-xs font-black text-slate-800 dark:text-slate-100">{{ $log->activity }}</div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{{ $log->description }}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1.5 border-t border-slate-100 dark:border-slate-700/80">
+                            <span>{{ $log->created_at->locale('id')->translatedFormat('d M Y, H:i:s') }}</span>
+                            <span class="font-mono">{{ $log->ip_address }}</span>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-12 px-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                        Sistem akan mencatat aktivitas secara otomatis.
+                    </div>
+                @endforelse
+            </div>
         </x-table-card>
     </div>
 </x-app-layout>

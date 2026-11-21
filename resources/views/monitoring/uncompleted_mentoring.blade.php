@@ -254,8 +254,8 @@
                                 </div>
                             </div>
 
-                            <!-- Sessions Table inside Lecturer Card -->
-                            <div class="overflow-x-auto">
+                            <!-- Sessions Table inside Lecturer Card (Desktop) -->
+                            <div class="hidden md:block overflow-x-auto">
                                 <table class="w-full text-xs text-left">
                                     <thead class="text-[10px] text-slate-400 dark:text-slate-500 uppercase bg-slate-50/70 dark:bg-slate-900/40 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                                         <tr>
@@ -328,6 +328,53 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- Sessions Card View inside Lecturer Card (Mobile) -->
+                            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/60">
+                                @foreach($item['sessions'] as $session)
+                                    @php
+                                        $student = $session->thesis?->student;
+                                        $isOverdue = $session->scheduled_at->isPast();
+                                        $daysOver = $isOverdue ? (int) $session->scheduled_at->copy()->startOfDay()->diffInDays(now()->startOfDay()) : 0;
+                                    @endphp
+                                    <div class="p-4 space-y-2.5">
+                                        <div class="flex items-start justify-between gap-2">
+                                            <div class="flex items-center gap-2.5 min-w-0">
+                                                <img src="{{ $student?->avatar_url }}" alt="{{ $student?->name ?? 'Mahasiswa' }}" class="w-8 h-8 rounded-lg object-cover shrink-0 border border-slate-200 dark:border-slate-700">
+                                                <div class="min-w-0">
+                                                    <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ $student?->name ?? '-' }}</p>
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $student?->identifier ?? '-' }}</p>
+                                                </div>
+                                            </div>
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 shrink-0">
+                                                {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
+                                            </span>
+                                        </div>
+                                        <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/70 space-y-1">
+                                            <p class="text-xs font-bold text-slate-800 dark:text-slate-100">{{ $session->topic }}</p>
+                                            <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">{{ $session->thesis?->title ?? '-' }}</p>
+                                            <p class="text-[11px] font-semibold text-slate-600 dark:text-slate-300 pt-1">
+                                                {{ $session->scheduled_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB &bull; {{ ucfirst($session->type ?? 'offline') }}{{ $session->location ? " ({$session->location})" : '' }}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center justify-between pt-1">
+                                            <div>
+                                                @if($session->student_attendance_status === 'attending')
+                                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">Hadir</span>
+                                                @elseif($session->student_attendance_status === 'permission')
+                                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">Izin</span>
+                                                @else
+                                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">Pending</span>
+                                                @endif
+                                            </div>
+                                            <a href="{{ route('mentoring-sessions.edit', $session) }}"
+                                               class="px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 dark:bg-slate-700 dark:hover:bg-slate-600 rounded-lg transition-colors">
+                                                Detail / Edit
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     @empty
                         <div class="py-16 text-center">
@@ -342,8 +389,8 @@
                     @endforelse
                 </div>
             @else
-                <!-- VIEW 2: FLAT SESSION LIST -->
-                <div class="overflow-x-auto">
+                <!-- VIEW 2: FLAT SESSION LIST (Desktop) -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-sm text-left">
                         <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                             <tr>
@@ -445,6 +492,70 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <!-- VIEW 2: FLAT SESSION LIST (Mobile Cards) -->
+                <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($all_sessions as $index => $session)
+                        @php
+                            $student = $session->thesis?->student;
+                            $dosen = $session->dosen ?? $session->thesis?->pembimbing1;
+                            $isOverdue = $session->scheduled_at->isPast();
+                            $daysOver = $isOverdue ? (int) $session->scheduled_at->copy()->startOfDay()->diffInDays(now()->startOfDay()) : 0;
+                        @endphp
+                        <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <img src="{{ $student?->avatar_url }}" alt="{{ $student?->name ?? 'Mahasiswa' }}" class="w-9 h-9 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700">
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{{ $student?->name ?? '-' }}</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">{{ $student?->identifier ?? '-' }}</p>
+                                    </div>
+                                </div>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 shrink-0">
+                                    {{ $daysOver > 0 ? "Lewat {$daysOver} Hari" : "Lewat Hari Ini" }}
+                                </span>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/80 space-y-1.5 text-xs">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="font-bold text-slate-700 dark:text-slate-200 truncate">Dosen: {{ $dosen?->name ?? '-' }}</span>
+                                    @if($session->student_attendance_status === 'attending')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">Hadir</span>
+                                    @elseif($session->student_attendance_status === 'permission')
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 shrink-0">Izin</span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 shrink-0">Pending</span>
+                                    @endif
+                                </div>
+                                <p class="font-semibold text-slate-800 dark:text-slate-100">{{ $session->topic }}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">{{ $session->thesis?->title ?? '-' }}</p>
+                                <p class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                                    {{ $session->scheduled_at->locale('id')->translatedFormat('d M Y, H:i') }} WIB &bull; {{ ucfirst($session->type ?? 'offline') }}{{ $session->location ? " ({$session->location})" : '' }}
+                                </p>
+                            </div>
+
+                            <div class="flex items-center justify-end gap-2">
+                                @if($dosen)
+                                    <button type="button"
+                                            @click="openReminderModal(@js($dosen->id), @js($dosen->name), @js($dosen->phone_number), 1, [@js($session)])"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors cursor-pointer">
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771z"></path></svg>
+                                        Ingatkan WA
+                                    </button>
+                                @endif
+                                <a href="{{ route('mentoring-sessions.edit', $session) }}"
+                                   class="px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 rounded-xl transition-colors">
+                                    Detail
+                                </a>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-12 px-6 text-center">
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">Semua Sesi Selesai</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Tidak ada sesi bimbingan yang tertunda untuk filter ini.</p>
+                        </div>
+                    @endforelse
                 </div>
             @endif
         </div>

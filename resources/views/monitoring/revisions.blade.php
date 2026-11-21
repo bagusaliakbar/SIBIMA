@@ -127,7 +127,8 @@
 
         <!-- Table Card -->
         <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 overflow-hidden">
-            <div class="overflow-x-auto">
+            {{-- Desktop Table View --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
@@ -310,6 +311,117 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Mobile Card View --}}
+            <div class="md:hidden">
+                @if($seminarDetails->count() > 0)
+                    <div class="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                        <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer">
+                            <input type="checkbox" @click="toggleAll()" :checked="selectedIds.length === allIds.length && allIds.length > 0" class="rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500 dark:bg-slate-800 cursor-pointer">
+                            <span>Pilih Semua ({{ $seminarDetails->count() }})</span>
+                        </label>
+                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400" x-show="selectedIds.length > 0" x-text="selectedIds.length + ' terpilih'"></span>
+                    </div>
+                @endif
+
+                <div class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($seminarDetails as $detail)
+                        @php
+                            $rev1 = $detail->getRevisionFor($detail->examiner1_id);
+                            $rev2 = $detail->getRevisionFor($detail->examiner2_id);
+                        @endphp
+                        <div class="p-4 space-y-3 transition-colors" :class="selectedIds.includes({{ $detail->id }}) ? 'bg-orange-50/40 dark:bg-orange-950/20' : 'bg-white dark:bg-slate-800'">
+                            <div class="flex items-start justify-between gap-2.5">
+                                <div class="flex items-start gap-2.5 min-w-0">
+                                    <input type="checkbox" x-model="selectedIds" value="{{ $detail->id }}" aria-label="Pilih {{ $detail->thesis->student->name ?? 'Mahasiswa' }}" class="mt-1 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500 dark:bg-slate-800 cursor-pointer shrink-0">
+                                    <div class="min-w-0">
+                                        <div class="font-black text-sm text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $detail->thesis->student->name ?? 'N/A' }}</div>
+                                        <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">{{ $detail->thesis->student->identifier ?? 'N/A' }}</div>
+                                        <div class="mt-1 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                                            <span>{{ \Carbon\Carbon::parse($detail->schedule->date)->locale('id')->translatedFormat('d M Y') }}</span>
+                                            <span>&bull;</span>
+                                            <span>{{ \Carbon\Carbon::parse($detail->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H:i') }} WIB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="shrink-0">
+                                    @if($detail->isAllRevisionsApproved())
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800/60">Finalized</span>
+                                    @elseif($detail->isRevisionStarted())
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800/60">In Progress</span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">Belum Mulai</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            @if($detail->thesis && $detail->thesis->title)
+                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 italic">"{{ $detail->thesis->title }}"</p>
+                            @endif
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                @foreach([['label' => 'Penguji 1', 'name' => $detail->examiner1?->name, 'id' => $detail->examiner1_id, 'rev' => $rev1], ['label' => 'Penguji 2', 'name' => $detail->examiner2?->name, 'id' => $detail->examiner2_id, 'rev' => $rev2]] as $exItem)
+                                    <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/80 flex items-center justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">{{ $exItem['label'] }}</div>
+                                            <div class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ $exItem['name'] ?? '-' }}</div>
+                                            <div class="mt-0.5">
+                                                @if($exItem['rev'])
+                                                    @if($exItem['rev']->isApproved())
+                                                        <span class="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400">Selesai</span>
+                                                    @elseif($exItem['rev']->isResubmitted())
+                                                        <span class="text-[10px] font-black uppercase text-blue-600 dark:text-blue-400">Terkirim</span>
+                                                    @else
+                                                        <span class="text-[10px] font-black uppercase text-orange-600 dark:text-orange-400">Dikirim</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Belum Ada</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $exItem['id'])
+                                            <a href="{{ route('seminar-examiner.show', ['detail' => $detail->id, 'target_examiner_id' => $exItem['id'], 'redirect_to' => 'monitoring-revisions']) }}"
+                                               class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-orange-600 shrink-0"
+                                               title="Kelola / Input Revisi {{ $exItem['label'] }}" aria-label="Kelola revisi {{ $exItem['name'] ?? $exItem['label'] }}">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                            </a>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                                <a href="{{ route('monitoring.seminar-revisions.print', $detail->id) }}" target="_blank"
+                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors">
+                                    Cetak Revisi
+                                </a>
+                                @if($detail->examiner1_id)
+                                    <a href="{{ route('monitoring.seminar-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner1_id]) }}" target="_blank"
+                                       class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 rounded-xl text-xs font-bold">
+                                        Revisi P1
+                                    </a>
+                                @endif
+                                @if($detail->examiner2_id)
+                                    <a href="{{ route('monitoring.seminar-revisions.print', ['detail' => $detail->id, 'examiner_id' => $detail->examiner2_id]) }}" target="_blank"
+                                       class="inline-flex items-center px-2.5 py-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 rounded-xl text-xs font-bold">
+                                        Revisi P2
+                                    </a>
+                                @endif
+                                @if($detail->isAllRevisionsApproved())
+                                    <a href="{{ route('monitoring.seminar-scores.berita-acara', $detail->id) }}"
+                                       class="inline-flex items-center px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 rounded-xl text-xs font-bold">
+                                        Berita Acara
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-12 px-6 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
+                            Belum ada mahasiswa yang dijadwalkan seminar.
+                        </div>
+                    @endforelse
+                </div>
             </div>
             
             @if($seminarDetails->hasPages())

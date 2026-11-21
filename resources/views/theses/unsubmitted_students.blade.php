@@ -156,8 +156,8 @@
                 </form>
             </div>
 
-            <!-- Table -->
-            <div class="overflow-x-auto">
+            <!-- Table (Desktop) -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-sm whitespace-nowrap">
                     <thead>
                         <tr class="bg-slate-50/80 dark:bg-slate-900/60 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
@@ -314,6 +314,85 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700">
+                @forelse($students as $student)
+                    @php
+                        $semester = $student->current_semester;
+                        $isCritical = $student->is_critical_semester;
+                        $isWarning = $semester >= 7 && !$isCritical;
+                        $daysSinceCreation = $student->created_at ? (int) $student->created_at->diffInDays(now()) : 0;
+                        $formattedPhone = $student->phone_number ? \App\Helpers\PhoneHelper::formatForWhatsApp($student->phone_number) : null;
+                        $waMessage = "Halo {$student->name} (NPM: {$student->identifier}), kami dari Program Studi menginformasikan bahwa akun SIBIMA Anda telah aktif sejak " . ($student->created_at ? $student->created_at->translatedFormat('d M Y') : 'beberapa waktu lalu') . ", namun hingga saat ini Anda belum mengajukan judul skripsi. Mohon segera melengkapi pengajuan judul skripsi Anda di SIBIMA: " . route('theses.create');
+                    @endphp
+                    <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 shrink-0">
+                                    <img src="{{ $student->avatar_url }}" alt="{{ $student->name }}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="font-bold text-sm text-slate-800 dark:text-slate-100 truncate">{{ $student->name }}</div>
+                                    <div class="text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400">
+                                        {{ $student->identifier ?? '-' }}
+                                        @if($student->entry_year) &bull; Angkatan {{ $student->entry_year }} @endif
+                                    </div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ $student->email }}</div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-1 shrink-0">
+                                @if($semester)
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black border {{ $isCritical ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200 dark:border-rose-800' : ($isWarning ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800') }}">
+                                        Sem {{ $semester }}{{ $isCritical ? ' (Kritis)' : '' }}
+                                    </span>
+                                @endif
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $student->is_active ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400' }}">
+                                    {{ $student->is_active ? 'Aktif' : 'Nonaktif' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">
+                                Daftar: <strong class="text-slate-700 dark:text-slate-200">{{ $student->created_at ? $student->created_at->translatedFormat('d M Y') : '-' }}</strong> ({{ $daysSinceCreation }} hr lalu)
+                            </span>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                @if($formattedPhone)
+                                    <a href="https://wa.me/{{ $formattedPhone }}?text={{ urlencode($waMessage) }}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold">
+                                        WA
+                                    </a>
+                                @endif
+                                <a href="{{ route('chat.show', $student->id) }}"
+                                   class="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-xl"
+                                   title="Chat Internal SIBIMA" aria-label="Chat Internal dengan {{ $student->name }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                                </a>
+                                <form action="{{ route('users.destroy', $student->id) }}"
+                                      method="POST"
+                                      data-confirm="Apakah Anda yakin ingin menghapus akun mahasiswa {{ $student->name }} ({{ $student->identifier }})?"
+                                      data-confirm-title="Hapus Akun Mahasiswa"
+                                      data-confirm-type="danger"
+                                      data-confirm-button="Ya, Hapus">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 rounded-xl cursor-pointer" title="Hapus Akun Mahasiswa" aria-label="Hapus Akun Mahasiswa {{ $student->name }}">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-12 px-6 text-center">
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-white">Semua Mahasiswa Sudah Mengajukan!</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Tidak ditemukan mahasiswa yang belum mengajukan judul skripsi.</p>
+                    </div>
+                @endforelse
             </div>
 
             <!-- Footer Pagination -->

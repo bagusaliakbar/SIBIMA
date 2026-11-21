@@ -226,7 +226,8 @@
 
         <!-- VIEW MODE 2: LIST VIEW (TABLE) -->
         <div x-show="viewMode === 'list'" x-cloak class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
+            {{-- Desktop Table View --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead class="bg-slate-50/80 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700/80 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         <tr>
@@ -339,6 +340,40 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Mobile Compact List View --}}
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($templates as $template)
+                    <div class="p-4 space-y-2.5 {{ !$template->is_active ? 'opacity-75' : '' }}">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-slate-900 dark:text-white">{{ $template->name }}</div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate">{{ $template->category }} &bull; {{ $template->code }}</div>
+                            </div>
+                            <form action="{{ route('wa-templates.toggle-status', $template) }}" method="POST" class="shrink-0">
+                                @csrf
+                                <button type="submit" class="px-2.5 py-1 rounded-xl text-[11px] font-black border cursor-pointer {{ $template->is_active ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' : 'bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700' }}">
+                                    {{ $template->is_active ? 'ON' : 'OFF' }}
+                                </button>
+                            </form>
+                        </div>
+                        <p class="font-mono text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2 bg-slate-50 dark:bg-slate-900/70 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">{{ $template->content }}</p>
+                        <div class="flex items-center justify-end gap-2">
+                            <a href="{{ route('wa-templates.edit', $template) }}" class="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold">Edit</a>
+                            @if($template->is_customized)
+                                <form action="{{ route('wa-templates.reset', $template) }}" method="POST" data-confirm="Apakah Anda yakin ingin mengembalikan format teks ini ke versi default bawaan?" data-confirm-title="Reset Template WhatsApp" data-confirm-type="warning" data-confirm-button="Ya, Reset">
+                                    @csrf
+                                    <button type="submit" title="Reset ke Default Bawaan" aria-label="Reset template {{ $template->name }} ke default bawaan" class="p-1.5 text-slate-500 hover:text-rose-600 bg-slate-100 dark:bg-slate-700/60 rounded-xl cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-12 text-center text-xs text-slate-500 dark:text-slate-400">Tidak ada template pada kategori ini.</div>
+                @endforelse
             </div>
         </div>
     </div>

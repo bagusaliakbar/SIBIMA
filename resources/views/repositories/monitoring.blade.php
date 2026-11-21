@@ -227,7 +227,7 @@
                 </div>
             @else
                 <!-- Desktop Table View -->
-                <div class="overflow-x-auto">
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-slate-200/80 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-900/50 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -359,6 +359,50 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @foreach($users as $user)
+                        <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                            <div class="flex items-start justify-between gap-2.5">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-10 h-10 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-700 shrink-0">
+                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-sm text-slate-900 dark:text-white truncate">{{ $user->name }}</div>
+                                        <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate">{{ $user->identifier ?: $user->email }}</div>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shrink-0">
+                                    {{ ucfirst($user->role) }}
+                                </span>
+                            </div>
+
+                            @if($user->role === 'mahasiswa' && $user->thesis)
+                                <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{{ $user->thesis->judul }}</p>
+                            @endif
+
+                            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="px-2.5 py-1 rounded-xl font-black bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60">
+                                        {{ number_format($user->bookmarks_count) }} Koleksi
+                                    </span>
+                                    @if($user->folders_count > 0)
+                                        <span class="px-2.5 py-1 rounded-xl font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+                                            {{ $user->folders_count }} Folder
+                                        </span>
+                                    @endif
+                                </div>
+                                <button type="button"
+                                        @click="inspectUser({{ $user->id }})"
+                                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white cursor-pointer">
+                                    Lihat Koleksi
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
 
                 <!-- Pagination footer -->

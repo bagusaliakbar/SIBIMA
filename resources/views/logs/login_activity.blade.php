@@ -185,8 +185,8 @@
 
             <!-- Content Tables -->
             @if($tab !== 'inactive')
-                <!-- TAB 1: LEADERBOARD USER TERAKTIF -->
-                <div class="overflow-x-auto">
+                <!-- TAB 1: LEADERBOARD USER TERAKTIF (Desktop) -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-sm text-left">
                         <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                             <tr>
@@ -322,9 +322,58 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- TAB 1: LEADERBOARD USER TERAKTIF (Mobile Cards) -->
+                <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($users as $index => $user)
+                        @php $rank = ($users->currentPage() - 1) * $users->perPage() + $index + 1; @endphp
+                        <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                            <div class="flex items-start justify-between gap-2.5">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black shrink-0 {{ $rank <= 3 ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' }}">
+                                        #{{ $rank }}
+                                    </span>
+                                    <div class="relative shrink-0">
+                                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-9 h-9 rounded-xl object-cover border border-slate-200 dark:border-slate-700">
+                                        <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-slate-800 {{ $user->is_online ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600' }}"></span>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{{ $user->name }}</div>
+                                        <div class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ $user->identifier ?: $user->email }}</div>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-black uppercase bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shrink-0">{{ ucfirst($user->role) }}</span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="p-2 rounded-xl bg-orange-50/70 dark:bg-orange-950/30 border border-orange-200/60 dark:border-orange-800/40">
+                                    <div class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Periode Ini</div>
+                                    <div class="font-black text-orange-600 dark:text-orange-400">{{ number_format($user->period_logins_count) }} kali</div>
+                                </div>
+                                <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/80">
+                                    <div class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Total All-Time</div>
+                                    <div class="font-black text-slate-800 dark:text-slate-100">{{ number_format($user->total_logins_count) }} kali</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400">
+                                    {{ $user->last_login_at ? $user->last_login_at->locale('id')->translatedFormat('d M Y, H:i') : 'Belum pernah login' }}
+                                </span>
+                                <button type="button" @click="openModal({{ $user->id }})" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-orange-600 hover:text-white dark:bg-slate-700 transition-colors cursor-pointer">
+                                    Riwayat Sesi
+                                </button>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-12 px-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                            Tidak ditemukan aktivitas login untuk filter periode dan peran yang dipilih.
+                        </div>
+                    @endforelse
+                </div>
             @else
-                <!-- TAB 2: USER BELUM / TIDAK AKTIF -->
-                <div class="overflow-x-auto">
+                <!-- TAB 2: USER BELUM / TIDAK AKTIF (Desktop) -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-sm text-left">
                         <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                             <tr>
@@ -427,6 +476,54 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <!-- TAB 2: USER BELUM / TIDAK AKTIF (Mobile Cards) -->
+                <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($users as $index => $user)
+                        @php
+                            $isNever = is_null($user->last_login_at);
+                            $daysInactive = $user->last_login_at ? (int) $user->last_login_at->copy()->startOfDay()->diffInDays(now()->startOfDay()) : null;
+                        @endphp
+                        <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                            <div class="flex items-start justify-between gap-2.5">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-9 h-9 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0">
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{{ $user->name }}</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ $user->identifier ?: $user->email }}</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase border shrink-0 {{ $isNever ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800/60' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/60' }}">
+                                    {{ $isNever ? 'Belum Login' : "Pasif {$daysInactive} Hr" }}
+                                </span>
+                            </div>
+
+                            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400">
+                                    {{ ucfirst($user->role) }} &bull; {{ $user->last_login_at ? $user->last_login_at->locale('id')->translatedFormat('d M Y') : '-' }}
+                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    @if($user->phone_number)
+                                        @php
+                                            $waNumber = preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $user->phone_number));
+                                            $waText = urlencode("Halo {$user->name}, kami dari Program Studi mengingatkan untuk aktif mengakses akun sistem SIBIMA Anda untuk memantau aktivitas akademik skripsi.");
+                                        @endphp
+                                        <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold">
+                                            WA
+                                        </a>
+                                    @endif
+                                    <button type="button" @click="openModal({{ $user->id }})" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-orange-600 hover:text-white dark:bg-slate-700 cursor-pointer">
+                                        Riwayat Sesi
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-12 px-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                            Semua user aktif login!
+                        </div>
+                    @endforelse
                 </div>
             @endif
 

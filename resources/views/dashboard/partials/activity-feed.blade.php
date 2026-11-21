@@ -13,6 +13,8 @@
                         </a>
                     </x-slot>
 
+                    {{-- Desktop Table View --}}
+                    <div class="hidden sm:block overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead>
                             <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest border-b border-slate-50 dark:border-slate-700">
@@ -77,6 +79,49 @@
                             @endforelse
                         </tbody>
                     </table>
+                    </div>
+
+                    {{-- Mobile Card View --}}
+                    <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                        @forelse(isset($upcomingSessions) ? $upcomingSessions : [] as $session)
+                            <div class="p-4 space-y-2.5 bg-white dark:bg-slate-800/60">
+                                <div class="flex items-start justify-between gap-2.5">
+                                    <div class="flex items-center gap-2.5 min-w-0">
+                                        <div class="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold text-xs shrink-0">
+                                            {{ substr($session->topic, 0, 1) }}
+                                        </div>
+                                        <div class="min-w-0">
+                                            <h4 class="font-bold text-slate-800 dark:text-slate-100 text-xs truncate">{{ $session->topic }}</h4>
+                                            @if(Auth::user()->role !== 'mahasiswa')
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">{{ $session->thesis->student->name }}</p>
+                                            @else
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Dosen: {{ $session->dosen->name }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <x-status-badge
+                                        :type="$session->status === 'approved' ? 'emerald' : 'orange'"
+                                        :label="$session->status === 'approved' ? 'Disetujui' : 'Menunggu'" />
+                                </div>
+                                <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1">
+                                    <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $session->scheduled_at->locale('id')->translatedFormat('d M Y') }} &bull; {{ $session->scheduled_at->format('H:i') }} WIB</span>
+                                    @if($session->status === 'approved')
+                                        @if($session->student_attendance_status === 'attending')
+                                            <span class="font-bold text-emerald-600 dark:text-emerald-400">Akan Hadir</span>
+                                        @elseif($session->student_attendance_status === 'permission')
+                                            <span class="font-bold text-amber-600 dark:text-amber-400">Izin</span>
+                                        @else
+                                            <span class="font-bold text-slate-500 dark:text-slate-400">Perlu Konfirmasi</span>
+                                        @endif
+                                    @endif
+                                </div>
+                            </div>
+                        @empty
+                            <div class="py-10 px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                                Belum ada jadwal bimbingan terdekat.
+                            </div>
+                        @endforelse
+                    </div>
                 </x-table-card>
 
                 <!-- Recent Activity / Logbook -->

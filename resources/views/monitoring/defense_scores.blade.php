@@ -97,7 +97,8 @@
         </div>
 
         <div class="bg-white dark:bg-slate-800/50 dark:backdrop-blur-xl rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700/50 overflow-hidden">
-        <div class="overflow-x-auto">
+        {{-- Desktop Table View --}}
+        <div class="hidden lg:block overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
@@ -276,6 +277,113 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        {{-- Mobile & Tablet Card View --}}
+        <div class="lg:hidden">
+            @if($defenseDetails->count() > 0)
+                <div class="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                    <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer">
+                        <input type="checkbox" @click="toggleAll()" :checked="selectedIds.length === allIds.length && allIds.length > 0" class="rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500 dark:bg-slate-800 cursor-pointer">
+                        <span>Pilih Semua ({{ $defenseDetails->count() }})</span>
+                    </label>
+                    <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400" x-show="selectedIds.length > 0" x-text="selectedIds.length + ' terpilih'"></span>
+                </div>
+            @endif
+
+            <div class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($defenseDetails as $index => $detail)
+                    @php
+                        $revP1 = $detail->revisions->where('examiner_id', $detail->thesis->pembimbing1_id)->first();
+                        $revE1 = $detail->revisions->where('examiner_id', $detail->examiner1_id)->first();
+                        $revE2 = $detail->revisions->where('examiner_id', $detail->examiner2_id)->first();
+                        $calc = function($rev) {
+                            if (!$rev || $rev->score_presentation === null) return null;
+                            return ($rev->score_presentation * 0.25) + ($rev->score_explanation * 0.40) + ($rev->score_writing * 0.35);
+                        };
+                        $scoreP1 = $calc($revP1);
+                        $scoreE1 = $calc($revE1);
+                        $scoreE2 = $calc($revE2);
+                        $scores = collect([$scoreP1, $scoreE1, $scoreE2])->filter(fn($s) => $s !== null);
+                        $totalScore = $scores->sum();
+                        $finalScore = $scores->count() > 0 ? $totalScore / $scores->count() : 0;
+                        $finalGrade = $scores->count() > 0
+                            ? ($finalScore >= 80 ? 'A' : ($finalScore >= 70 ? 'B' : ($finalScore >= 60 ? 'C' : ($finalScore >= 50 ? 'D' : 'E'))))
+                            : '-';
+                        $gradePillClass = match($finalGrade) {
+                            'A' => 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800/60',
+                            'B' => 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800/60',
+                            'C' => 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800/60',
+                            default => 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
+                        };
+                        $evaluators = [
+                            ['code' => 'P1', 'name' => $detail->thesis->pembimbing1?->name ?? '-', 'id' => $detail->thesis?->pembimbing1_id, 'rev' => $revP1, 'score' => $scoreP1],
+                            ['code' => 'E1', 'name' => $detail->examiner1?->name ?? '-', 'id' => $detail->examiner1_id, 'rev' => $revE1, 'score' => $scoreE1],
+                            ['code' => 'E2', 'name' => $detail->examiner2?->name ?? '-', 'id' => $detail->examiner2_id, 'rev' => $revE2, 'score' => $scoreE2],
+                        ];
+                    @endphp
+                    <div class="p-4 space-y-3 transition-colors" :class="selectedIds.includes({{ $detail->id }}) ? 'bg-orange-50/40 dark:bg-orange-950/20' : 'bg-white dark:bg-slate-800'">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-3 min-w-0">
+                                <input type="checkbox" x-model="selectedIds" value="{{ $detail->id }}" aria-label="Pilih {{ $detail->thesis->student->name }}" class="mt-1 rounded border-slate-300 dark:border-slate-600 text-orange-600 focus:ring-orange-500 dark:bg-slate-800 cursor-pointer shrink-0">
+                                <div class="min-w-0">
+                                    <div class="font-black text-sm text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ $detail->thesis->student->name }}</div>
+                                    <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">{{ $detail->thesis->student->identifier }}</div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 italic">"{{ $detail->thesis->title }}"</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end shrink-0">
+                                <span class="px-3 py-1 rounded-xl border text-base font-black {{ $gradePillClass }}">{{ $finalGrade }}</span>
+                                <span class="text-[11px] font-black text-slate-700 dark:text-slate-200 mt-1">{{ number_format($finalScore, 1) }}</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            @foreach($evaluators as $ev)
+                                <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/80 flex items-center justify-between gap-2">
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-black bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 shrink-0">{{ $ev['code'] }}</span>
+                                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">{{ $ev['name'] }}</span>
+                                        </div>
+                                        <div class="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                                            <span>Pres: <strong class="text-slate-700 dark:text-slate-200">{{ $ev['rev']->score_presentation ?? '-' }}</strong></span>
+                                            <span>Penj: <strong class="text-slate-700 dark:text-slate-200">{{ $ev['rev']->score_explanation ?? '-' }}</strong></span>
+                                            <span>Tulis: <strong class="text-slate-700 dark:text-slate-200">{{ $ev['rev']->score_writing ?? '-' }}</strong></span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <span class="px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-black">
+                                            {{ $ev['score'] ? number_format($ev['score'], 1) : '-' }}
+                                        </span>
+                                        @if(in_array(auth()->user()->role, ['admin', 'kaprodi']) && $ev['id'])
+                                            <a href="{{ route('defense-examiner.grading', ['detail' => $detail->id, 'target_examiner_id' => $ev['id'], 'redirect_to' => 'monitoring']) }}"
+                                               class="p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-emerald-600"
+                                               title="Input / Ubah Nilai {{ $ev['code'] }}" aria-label="Input atau ubah nilai {{ $ev['name'] }}">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Total Skor: <strong class="text-slate-800 dark:text-slate-100">{{ number_format($totalScore, 1) }}</strong></span>
+                            <a href="{{ route('monitoring.defense-scores.berita-acara', $detail->id) }}"
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                Cetak Berita Acara
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-16 px-6 text-center">
+                        <h3 class="text-slate-500 dark:text-slate-400 font-bold text-sm uppercase tracking-widest">Belum Ada Data Nilai</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 italic">Data nilai mahasiswa akan muncul setelah diinput oleh dosen penelaah.</p>
+                    </div>
+                @endforelse
+            </div>
         </div>
         
         @if($defenseDetails->hasPages())

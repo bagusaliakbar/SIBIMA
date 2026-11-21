@@ -149,16 +149,17 @@
 
                     @if(request()->hasAny(['search', 'academic_year', 'semester']) && (request('search') || (request('academic_year') && request('academic_year') !== 'all') || (request('semester') && request('semester') !== 'all')))
                         <a href="{{ route('advisor-decrees.index', ['target_type' => $targetType ?? 'all']) }}" 
-                           class="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold transition shadow-xs"
-                           title="Reset Filter">
-                            ✕
+                           class="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold transition shadow-xs inline-flex items-center justify-center"
+                           title="Reset Filter" aria-label="Reset Filter">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </a>
                     @endif
                 </form>
             </x-slot>
 
             @if($decrees->count() > 0)
-                <div class="overflow-x-auto">
+                {{-- Desktop Table View --}}
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead class="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[10px]">
                             <tr>
@@ -250,6 +251,67 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
+                {{-- Mobile Card View --}}
+                <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @foreach($decrees as $decree)
+                        <div class="p-4 space-y-3 bg-white dark:bg-slate-900">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="font-black text-slate-900 dark:text-white text-xs tracking-tight">{{ $decree->decree_number }}</div>
+                                    <div class="mt-1">
+                                        @if($decree->target_type === 'individual_dosen' && $decree->dosen)
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-900">
+                                                Surat Tugas: {{ Str::limit($decree->dosen->name, 24) }}
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900">
+                                                SK Kolektif Prodi
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-black bg-orange-50 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200 dark:border-orange-800 shrink-0">
+                                    {{ $decree->total_students }} Mhs
+                                </span>
+                            </div>
+
+                            <a href="{{ route('advisor-decrees.show', $decree) }}" class="font-bold text-sm text-slate-900 dark:text-white hover:text-orange-600 transition block">
+                                {{ $decree->title }}
+                            </a>
+
+                            <div class="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">{{ $decree->academic_year }} ({{ $decree->semester }})</span>
+                                <span>&bull; {{ $decree->formatted_decree_date }}</span>
+                                <span>&bull; {{ $decree->signatory_name }}</span>
+                            </div>
+
+                            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                                <a href="{{ route('advisor-decrees.show', $decree) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200">
+                                    Detail
+                                </a>
+                                <a href="{{ route('advisor-decrees.pdf', $decree) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white">
+                                    Cetak PDF
+                                </a>
+                                @if($isStaff)
+                                    <form action="{{ route('advisor-decrees.destroy', $decree) }}"
+                                          method="POST"
+                                          class="inline"
+                                          data-confirm="Apakah Anda yakin ingin menghapus arsip SK Pembimbing ini?"
+                                          data-confirm-title="Hapus Arsip SK"
+                                          data-confirm-type="danger"
+                                          data-confirm-button="Ya, Hapus">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-2 text-slate-500 hover:text-rose-600 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition cursor-pointer" title="Hapus Arsip" aria-label="Hapus Arsip">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             @else
                 <div class="py-16 text-center w-full">

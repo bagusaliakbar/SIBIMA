@@ -68,7 +68,8 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            {{-- Desktop Table View --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead>
                         <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/30">
@@ -84,7 +85,9 @@
                         @forelse($students as $student)
                             @php 
                                 $sem = $student->current_semester;
-                                $riskColor = $sem >= 14 ? 'red' : 'orange';
+                                $riskBadgeClass = $sem >= 14
+                                    ? 'bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-500/20'
+                                    : 'bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/20';
                             @endphp
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors align-middle">
                                 <td class="py-5 px-6">
@@ -128,11 +131,11 @@
                                 </td>
                                 <td class="py-5 px-6 text-center">
                                     <div class="flex flex-col items-center gap-1">
-                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-{{ $riskColor }}-100 dark:bg-{{ $riskColor }}-500/10 text-{{ $riskColor }}-700 dark:text-{{ $riskColor }}-400 text-[9px] font-black uppercase tracking-widest border border-{{ $riskColor }}-200 dark:border-{{ $riskColor }}-500/20 shadow-sm">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $riskBadgeClass }} text-[9px] font-black uppercase tracking-widest border shadow-sm">
                                             {{ $sem >= 14 ? 'Sangat Tinggi' : 'Tinggi' }}
                                         </span>
                                         @if($sem >= 14)
-                                            <span class="text-[8px] text-red-500 font-black animate-pulse">DROP OUT RISK</span>
+                                            <span class="text-[8px] text-rose-600 dark:text-rose-400 font-black animate-pulse">DROP OUT RISK</span>
                                         @endif
                                     </div>
                                 </td>
@@ -152,6 +155,72 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            {{-- Mobile Card View --}}
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                @forelse($students as $student)
+                    @php
+                        $sem = $student->current_semester;
+                        $thesis = $student->thesis;
+                        $riskBadgeClass = $sem >= 14
+                            ? 'bg-rose-100 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-500/20'
+                            : 'bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/20';
+                    @endphp
+                    <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="font-bold text-sm text-slate-800 dark:text-slate-100">{{ $student->name }}</div>
+                                <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5 uppercase tracking-tight">
+                                    {{ $student->identifier }} &bull; Angkatan {{ $student->entry_year }}
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-1 shrink-0">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full {{ $riskBadgeClass }} text-[10px] font-black uppercase tracking-wider border">
+                                    {{ $sem >= 14 ? 'Sangat Tinggi' : 'Tinggi' }}
+                                </span>
+                                <span class="text-[11px] font-black text-slate-700 dark:text-slate-200">Semester {{ $sem }}</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/80 space-y-1">
+                            <div class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tahapan Terakhir</div>
+                            @if($thesis)
+                                <div class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase">
+                                    @if($thesis->status === 'completed') Lulus
+                                    @elseif($thesis->acc_sidang_p1) Siap Sidang
+                                    @elseif($thesis->acc_up_p1) Siap Penelitian
+                                    @else Pengerjaan Bab 1-3
+                                    @endif
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 italic">"{{ $thesis->final_title ?? $thesis->title }}"</p>
+                            @else
+                                <span class="text-xs text-slate-500 dark:text-slate-400 italic">Belum Mengajukan Judul</span>
+                            @endif
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-1.5 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-black px-1.5 py-0.5 rounded bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20 shrink-0">P1</span>
+                                <span class="text-slate-700 dark:text-slate-200 font-semibold truncate">{{ $student->thesis->pembimbing1->name ?? '-' }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-black px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 shrink-0">P2</span>
+                                <span class="text-slate-600 dark:text-slate-300 font-medium truncate">{{ $student->thesis->pembimbing2->name ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-16 px-6 text-center">
+                        <div class="w-16 h-16 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-emerald-100 dark:border-emerald-500/20">
+                            <svg class="h-8 w-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase">Tidak Ada Mahasiswa Kritikal</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1.5">Saat ini tidak ditemukan mahasiswa yang berada di ambang batas masa studi.</p>
+                    </div>
+                @endforelse
             </div>
 
             @if($students->hasPages())

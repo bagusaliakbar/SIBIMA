@@ -65,7 +65,8 @@
                     </div>
                 </div>
 
-                <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                {{-- Desktop Table View --}}
+                <div class="hidden md:block overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                     <table class="w-full text-sm text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-center">
@@ -157,6 +158,63 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
+                {{-- Mobile Card View --}}
+                <div class="md:hidden space-y-3">
+                    @php $mobileNo = 1; @endphp
+                    @foreach($seminarSchedule->details as $detail)
+                        @if($detail->thesis_id)
+                            @php
+                                $isExaminer = auth()->user()->role === 'dosen' && (
+                                    $detail->examiner1_id === auth()->id() ||
+                                    $detail->examiner2_id === auth()->id()
+                                );
+                            @endphp
+                            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 space-y-3 shadow-2xs">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Peserta #{{ $mobileNo++ }} &bull; {{ $detail->thesis->student->identifier }}</span>
+                                        <div class="text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">{{ $detail->thesis->student->name }}</div>
+                                    </div>
+                                    <span class="inline-flex items-center px-2.5 py-1 bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 shrink-0">
+                                        {{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{{ $detail->thesis->title }}</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-700 text-xs">
+                                    <div class="space-y-1">
+                                        <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Pembimbing</div>
+                                        <div class="font-semibold text-slate-700 dark:text-slate-200">1. {{ $detail->thesis->pembimbing1?->name ?? '-' }}</div>
+                                        @if($detail->thesis->pembimbing2)
+                                            <div class="font-semibold text-slate-700 dark:text-slate-200">2. {{ $detail->thesis->pembimbing2->name }}</div>
+                                        @endif
+                                    </div>
+                                    <div class="space-y-1">
+                                        <div class="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">Penguji</div>
+                                        @if($detail->examiner1)
+                                            <div class="font-semibold text-slate-700 dark:text-slate-200">1. {{ $detail->examiner1->name }}</div>
+                                        @endif
+                                        @if($detail->examiner2)
+                                            <div class="font-semibold text-slate-700 dark:text-slate-200">2. {{ $detail->examiner2->name }}</div>
+                                        @endif
+                                    </div>
+                                </div>
+                                @if($isExaminer)
+                                    <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                                        <a href="{{ route('seminar-examiner.show', $detail->id) }}" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-xs font-bold text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                                            Catatan & Revisi &rarr;
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2">
+                                <span class="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider">{{ $detail->activity_name }}</span>
+                                <span class="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">{{ \Carbon\Carbon::parse($detail->start_time)->format('H.i') }} - {{ \Carbon\Carbon::parse($detail->end_time)->format('H.i') }}</span>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
             </div>
         </div>

@@ -173,6 +173,8 @@
             </x-slot>
 
             @if(count($backups) > 0)
+                {{-- Desktop Table View --}}
+                <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="text-[10px] text-slate-500 dark:text-slate-400 uppercase bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-700 font-black tracking-wider">
                         <tr>
@@ -261,6 +263,54 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
+
+                {{-- Mobile Card View --}}
+                <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @foreach($backups as $backup)
+                        <div class="p-4 space-y-3 bg-white dark:bg-slate-800">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="flex items-start gap-2.5 min-w-0">
+                                    <div class="w-9 h-9 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 border border-orange-200/50 dark:border-orange-800/40">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-slate-800 dark:text-slate-100 text-xs break-all">{{ $backup['filename'] }}</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{{ $backup['created_at_formatted'] }} ({{ $backup['created_at_human'] }})</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-orange-100/70 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200/50 shrink-0">
+                                    {{ $backup['is_compressed'] ? 'SQL GZ' : 'SQL DUMP' }}
+                                </span>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/80">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200">
+                                    {{ $backup['size_formatted'] }}
+                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <a href="{{ route('admin.backups.download', $backup['filename']) }}"
+                                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold">
+                                        Unduh
+                                    </a>
+                                    @if(Auth::user()?->role === 'admin')
+                                        <button type="button"
+                                                @click="restoreTarget = '{{ $backup['filename'] }}'; restoreTargetFormatted = '{{ $backup['filename'] }} ({{ $backup['size_formatted'] }})'; $dispatch('open-modal', 'confirm-restore-modal')"
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/50 text-xs font-bold cursor-pointer">
+                                            Pulihkan
+                                        </button>
+                                        <button type="button"
+                                                @click="deleteTarget = '{{ $backup['filename'] }}'; deleteTargetFormatted = '{{ $backup['filename'] }}'; $dispatch('open-modal', 'confirm-delete-modal')"
+                                                title="Hapus Berkas Backup" aria-label="Hapus Berkas Backup {{ $backup['filename'] }}"
+                                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-800/50 cursor-pointer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             @else
                 <div class="py-16 px-4 text-center w-full">
                     <x-empty-state 

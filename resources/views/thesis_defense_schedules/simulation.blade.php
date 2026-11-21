@@ -322,8 +322,8 @@
                                 </div>
                             </div>
 
-                            <!-- Sessions Table -->
-                            <div class="overflow-x-auto">
+                            <!-- Sessions Table (Desktop) -->
+                            <div class="hidden md:block overflow-x-auto">
                                 <table class="w-full text-xs text-left">
                                     <thead>
                                         <tr class="bg-slate-50/50 dark:bg-slate-900/50 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-200 dark:border-slate-700">
@@ -379,6 +379,51 @@
                                         </template>
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <!-- Sessions Card View (Mobile) -->
+                            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/60">
+                                <template x-for="(session, sIdx) in room.sessions" :key="'mob-' + sIdx">
+                                    <div class="p-4 space-y-3">
+                                        <div class="flex items-start justify-between gap-2">
+                                            <div class="min-w-0">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-900 text-[10px] font-black text-slate-600 dark:text-slate-300" x-text="'#' + (sIdx + 1)"></span>
+                                                    <span class="text-xs font-bold text-slate-800 dark:text-slate-100" x-text="session.start_time + ' - ' + session.end_time + ' WIB'"></span>
+                                                </div>
+                                                <div class="font-bold text-sm text-slate-800 dark:text-slate-100 mt-1" x-text="session.thesis.student_name"></div>
+                                                <div class="text-[11px] text-slate-500 dark:text-slate-400" x-text="'NIM: ' + session.thesis.student_nim"></div>
+                                            </div>
+                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shrink-0">Aman</span>
+                                        </div>
+
+                                        <p class="text-xs text-slate-600 dark:text-slate-300 italic line-clamp-2" x-text="session.thesis.title"></p>
+
+                                        <div class="text-[11px] text-slate-600 dark:text-slate-300 space-y-0.5">
+                                            <div class="font-bold" x-text="'P1: ' + session.thesis.pembimbing1_name"></div>
+                                            <div x-show="session.thesis.pembimbing2_name" class="text-slate-500 dark:text-slate-400" x-text="'P2: ' + session.thesis.pembimbing2_name"></div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                                            <div>
+                                                <label class="block text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1">Penguji 1</label>
+                                                <select x-model="session.examiner1_id" class="w-full text-xs py-1.5 px-2.5 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-slate-700 dark:text-slate-200">
+                                                    <template x-for="d in simulationResult?.dosens" :key="'m1-' + d.id">
+                                                        <option :value="d.id" :selected="d.id == session.examiner1_id" x-text="d.name"></option>
+                                                    </template>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 mb-1">Penguji 2</label>
+                                                <select x-model="session.examiner2_id" class="w-full text-xs py-1.5 px-2.5 rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-900 text-slate-700 dark:text-slate-200">
+                                                    <template x-for="d in simulationResult?.dosens" :key="'m2-' + d.id">
+                                                        <option :value="d.id" :selected="d.id == session.examiner2_id" x-text="d.name"></option>
+                                                    </template>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </template>

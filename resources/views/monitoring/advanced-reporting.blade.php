@@ -515,7 +515,8 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            {{-- Desktop Table Previews --}}
+            <div class="hidden md:block overflow-x-auto">
                 <!-- Preview 1: Akademik & Mahasiswa -->
                 <div x-show="activeTab === 'akademik'">
                     <table class="w-full text-left text-xs">
@@ -846,6 +847,206 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            {{-- Mobile Card Previews --}}
+            <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/80">
+                <!-- Mobile Preview 1: Akademik -->
+                <div x-show="activeTab === 'akademik'" class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($previewAkademik as $t)
+                        <div class="p-4 space-y-2">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="text-xs font-bold text-slate-900 dark:text-white">{{ $t->student->name ?? '-' }}</div>
+                                    <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">{{ $t->student->identifier ?? '-' }} &bull; Angkatan {{ $t->student->entry_year ?? '-' }}</div>
+                                </div>
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-orange-50 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300 shrink-0">{{ ucfirst($t->status) }}</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{{ $t->final_title ?? $t->title }}</p>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5">
+                                <div>P1: <strong class="text-slate-700 dark:text-slate-200">{{ $t->pembimbing1->name ?? '-' }}</strong></div>
+                                <div>P2: <strong class="text-slate-700 dark:text-slate-200">{{ $t->pembimbing2->name ?? '-' }}</strong></div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-1.5 pt-1 text-[10px] font-bold">
+                                <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">{{ ($t->sessions_p1 ?? 0) + ($t->sessions_p2 ?? 0) }} Sesi</span>
+                                <span class="px-2 py-0.5 rounded-full {{ $t->isAccUpFinal() ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">UP: {{ $t->isAccUpFinal() ? 'Siap Seminar' : 'Belum ACC' }}</span>
+                                <span class="px-2 py-0.5 rounded-full {{ $t->isAccSidangFinal() ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300' }}">Sidang: {{ $t->isAccSidangFinal() ? 'Siap Sidang' : 'Belum ACC' }}</span>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center text-xs text-slate-500 dark:text-slate-400">Belum ada data skripsi aktif.</div>
+                    @endforelse
+                </div>
+
+                <!-- Mobile Preview 2: Nilai Sidang -->
+                <div x-show="activeTab === 'nilai_sidang'" class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @php $monitoringServiceMob = app(\App\Services\MonitoringService::class); @endphp
+                    @forelse($previewNilaiSidang as $d)
+                        @php $sc = $monitoringServiceMob->calculateDefenseScores($d); @endphp
+                        <div class="p-4 space-y-2">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="text-xs font-bold text-slate-900 dark:text-white">{{ $d->thesis->student->name ?? '-' }}</div>
+                                    <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">{{ $d->thesis->student->identifier ?? '-' }}</div>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <span class="text-sm font-black text-slate-900 dark:text-white">{{ $sc['finalScore'] > 0 ? number_format($sc['finalScore'], 1) : '-' }} ({{ $sc['finalGrade'] ?? '-' }})</span>
+                                    <div class="mt-0.5">
+                                        @if($sc['finalScore'] >= 60)
+                                            <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">LULUS</span>
+                                        @elseif($sc['finalScore'] > 0)
+                                            <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">TIDAK LULUS</span>
+                                        @else
+                                            <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">BELUM LENGKAP</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{{ $d->thesis->final_title ?? $d->thesis->title ?? '-' }}</p>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400">
+                                P1: {{ $d->thesis->pembimbing1->name ?? '-' }} &bull; E1: {{ $d->examiner1->name ?? '-' }} &bull; E2: {{ $d->examiner2->name ?? '-' }}
+                            </div>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center text-xs text-slate-500 dark:text-slate-400">Belum ada data sidang skripsi.</div>
+                    @endforelse
+                </div>
+
+                <!-- Mobile Preview 3: Beban Dosen -->
+                <div x-show="activeTab === 'beban_dosen'" class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($previewBebanDosen as $dos)
+                        @php $totDos = ($dos->theses_as_p1_count ?? 0) + ($dos->theses_as_p2_count ?? 0); @endphp
+                        <div class="p-4 flex items-center justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold text-slate-900 dark:text-white truncate">{{ $dos->name }}</div>
+                                <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">{{ $dos->identifier ?? '-' }}</div>
+                                <div class="text-[11px] text-slate-600 dark:text-slate-300 mt-1">P1: <strong>{{ $dos->theses_as_p1_count ?? 0 }}</strong> &bull; P2: <strong>{{ $dos->theses_as_p2_count ?? 0 }}</strong> &bull; Total: <strong>{{ $totDos }}</strong></div>
+                            </div>
+                            <div class="shrink-0">
+                                @if($totDos >= 10)
+                                    <span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">Padat (&ge;10)</span>
+                                @elseif($totDos >= 5)
+                                    <span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">Normal</span>
+                                @else
+                                    <span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">Tersedia</span>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center text-xs text-slate-500 dark:text-slate-400">Belum ada data dosen pengajar.</div>
+                    @endforelse
+                </div>
+
+                <!-- Mobile Preview 4: Kepatuhan -->
+                <div x-show="activeTab === 'kepatuhan'" class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($previewKepatuhan as $kp)
+                        @php $daysInactive = $kp->days_since_last_mentoring; @endphp
+                        <div class="p-4 space-y-1.5">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="text-xs font-bold text-slate-900 dark:text-white">{{ $kp->student->name ?? '-' }}</div>
+                                    <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">{{ $kp->student->identifier ?? '-' }}</div>
+                                </div>
+                                @if($daysInactive === null || $daysInactive > 14)
+                                    <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 shrink-0">KRITIS</span>
+                                @elseif($daysInactive > 7)
+                                    <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 shrink-0">PERINGATAN</span>
+                                @else
+                                    <span class="px-2 py-0.5 text-[10px] font-black rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 shrink-0">AKTIF</span>
+                                @endif
+                            </div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400">
+                                P1: {{ $kp->pembimbing1->name ?? '-' }} &bull; Total: <strong>{{ ($kp->sessions_p1 ?? 0) + ($kp->sessions_p2 ?? 0) }} sesi</strong> &bull; Terakhir: <strong>{{ $daysInactive !== null ? $daysInactive . ' Hari Lalu' : 'Belum Pernah' }}</strong>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center text-xs text-slate-500 dark:text-slate-400">Semua mahasiswa aktif melakukan bimbingan secara teratur.</div>
+                    @endforelse
+                </div>
+
+                <!-- Mobile Preview 5: Topik -->
+                <div x-show="activeTab === 'topik'" class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($previewTopik as $top)
+                        <div class="p-4 space-y-1.5">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="text-xs font-bold text-slate-900 dark:text-white">{{ $top->student->name ?? '-' }}</div>
+                                    <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">{{ $top->student->identifier ?? '-' }}</div>
+                                </div>
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 shrink-0">{{ strtoupper($top->topic ?? 'UMUM') }}</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{{ $top->final_title ?? $top->title }}</p>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400">P1: {{ $top->pembimbing1->name ?? '-' }} &bull; Status: <strong>{{ ucfirst($top->status) }}</strong></div>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center text-xs text-slate-500 dark:text-slate-400">Belum ada data topik skripsi.</div>
+                    @endforelse
+                </div>
+
+                <!-- Mobile Preview 6: Kelulusan -->
+                <div x-show="activeTab === 'kelulusan'" class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($previewKelulusan as $kel)
+                        @php
+                            $studyY = ($kel->student?->entry_year && $kel->updated_at)
+                                ? round($kel->updated_at->year - $kel->student->entry_year, 1) . ' Tahun'
+                                : '-';
+                        @endphp
+                        <div class="p-4 space-y-1.5">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <div class="text-xs font-bold text-slate-900 dark:text-white">{{ $kel->student->name ?? '-' }}</div>
+                                    <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400">{{ $kel->student->identifier ?? '-' }} &bull; Angkatan {{ $kel->student->entry_year ?? '-' }}</div>
+                                </div>
+                                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 shrink-0">{{ $kel->updated_at ? $kel->updated_at->format('d/m/Y') : '-' }}</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">{{ $kel->final_title ?? $kel->title }}</p>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400">Masa Studi: <strong class="text-slate-700 dark:text-slate-200">{{ $studyY }}</strong></div>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center text-xs text-slate-500 dark:text-slate-400">Belum ada data kelulusan yang tercatat.</div>
+                    @endforelse
+                </div>
+
+                <!-- Mobile Preview 7: Waktu & Tren -->
+                <div x-show="activeTab === 'waktu'" class="p-4 space-y-4">
+                    <div class="space-y-2">
+                        <h5 class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Rata-Rata Durasi per Gelombang</h5>
+                        @forelse($waveDurationStats ?? [] as $wName => $avgM)
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/60 text-xs">
+                                <span class="font-bold text-slate-700 dark:text-slate-200">{{ $wName }}</span>
+                                <span class="font-black text-orange-600 dark:text-orange-400">{{ $avgM }} Bulan</span>
+                            </div>
+                        @empty
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Belum ada data gelombang kelulusan.</p>
+                        @endforelse
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="p-3.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-800/40 text-center">
+                            <p class="text-xl font-black text-emerald-600 dark:text-emerald-400">{{ $onTimeStats['Tepat Waktu'] ?? 0 }}</p>
+                            <p class="text-[11px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">Tepat Waktu (&le;4 Thn)</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-rose-50/60 dark:bg-rose-950/30 border border-rose-200/70 dark:border-rose-800/40 text-center">
+                            <p class="text-xl font-black text-rose-600 dark:text-rose-400">{{ $onTimeStats['Terlambat'] ?? 0 }}</p>
+                            <p class="text-[11px] font-bold text-slate-600 dark:text-slate-300 mt-0.5">Terlambat (>4 Thn)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Preview 8: Logs -->
+                <div x-show="activeTab === 'logs'" class="divide-y divide-slate-100 dark:divide-slate-700/80">
+                    @forelse($previewLogs as $lg)
+                        <div class="p-4 space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">{{ $lg->user->name ?? 'System' }}</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ $lg->created_at ? $lg->created_at->format('d/m/Y H:i') : '-' }}</span>
+                            </div>
+                            <span class="inline-block px-2 py-0.5 text-[10px] font-mono font-bold rounded-md bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">{{ strtoupper($lg->activity ?? '-') }}</span>
+                            <p class="text-xs text-slate-600 dark:text-slate-300">{{ $lg->description }}</p>
+                        </div>
+                    @empty
+                        <div class="p-8 text-center text-xs text-slate-500 dark:text-slate-400">Belum ada riwayat aktivitas log.</div>
+                    @endforelse
                 </div>
             </div>
         </div>

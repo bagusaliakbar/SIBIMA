@@ -414,13 +414,18 @@
                             <span class="text-xs font-bold">Menganalisis data sasaran...</span>
                         </div>
 
-                        <!-- Recipient List Table -->
-                        <div x-show="!isLoadingRecipients" class="border border-slate-200 dark:border-slate-700 rounded-2xl max-h-72 overflow-x-auto overflow-y-auto custom-scrollbar">
+                        <!-- Canonical Hidden Inputs for Selected Recipients (No Duplicate Submission) -->
+                        <template x-for="uid in selectedUserIds" :key="'selected-uid-' + uid">
+                            <input type="hidden" name="selected_user_ids[]" :value="uid">
+                        </template>
+
+                        <!-- Recipient List Table (Desktop) -->
+                        <div x-show="!isLoadingRecipients" class="hidden md:block border border-slate-200 dark:border-slate-700 rounded-2xl max-h-72 overflow-x-auto overflow-y-auto custom-scrollbar">
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10 text-[10px] uppercase">
                                     <tr>
                                         <th class="p-3 w-10 text-center">
-                                            <input type="checkbox" @change="toggleSelectAll($event)" :checked="isAllSelected()" class="rounded border-slate-300 text-orange-600 focus:ring-orange-500">
+                                            <input type="checkbox" @change="toggleSelectAll($event)" :checked="isAllSelected()" aria-label="Pilih semua penerima" class="rounded border-slate-300 text-orange-600 focus:ring-orange-500">
                                         </th>
                                         <th class="p-3">Nama & Identitas</th>
                                         <th class="p-3">Nomor WhatsApp</th>
@@ -431,7 +436,7 @@
                                     <template x-for="rec in recipients" :key="rec.user_id">
                                         <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-700/30 transition-colors">
                                             <td class="p-3 text-center">
-                                                <input type="checkbox" name="selected_user_ids[]" :value="rec.user_id" x-model="selectedUserIds" class="rounded border-slate-300 text-orange-600 focus:ring-orange-500 cursor-pointer">
+                                                <input type="checkbox" :value="rec.user_id" x-model="selectedUserIds" :aria-label="'Pilih ' + rec.name" class="rounded border-slate-300 text-orange-600 focus:ring-orange-500 cursor-pointer">
                                             </td>
                                             <td class="p-3 whitespace-nowrap">
                                                 <div class="font-bold text-slate-900 dark:text-white" x-text="rec.name"></div>
@@ -466,6 +471,40 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Recipient List Cards (Mobile) -->
+                        <div x-show="!isLoadingRecipients" class="md:hidden border border-slate-200 dark:border-slate-700 rounded-2xl max-h-80 overflow-y-auto custom-scrollbar">
+                            <div x-show="recipients.length > 0" class="px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10 flex items-center justify-between">
+                                <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer">
+                                    <input type="checkbox" @change="toggleSelectAll($event)" :checked="isAllSelected()" class="rounded border-slate-300 text-orange-600 focus:ring-orange-500">
+                                    <span>Pilih Semua</span>
+                                </label>
+                                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400" x-text="selectedUserIds.length + ' / ' + recipients.length"></span>
+                            </div>
+                            <div class="divide-y divide-slate-100 dark:divide-slate-700/60">
+                                <template x-for="rec in recipients" :key="'mob-' + rec.user_id">
+                                    <label class="p-3.5 flex items-start gap-3 cursor-pointer hover:bg-slate-50/70 dark:hover:bg-slate-700/30 transition-colors">
+                                        <input type="checkbox" :value="rec.user_id" x-model="selectedUserIds" class="mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500 shrink-0 cursor-pointer">
+                                        <div class="min-w-0 flex-1 space-y-1">
+                                            <div class="flex items-start justify-between gap-2">
+                                                <div class="font-bold text-xs text-slate-900 dark:text-white truncate" x-text="rec.name"></div>
+                                                <template x-if="rec.has_phone">
+                                                    <span class="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-bold shrink-0" x-text="rec.phone"></span>
+                                                </template>
+                                                <template x-if="!rec.has_phone">
+                                                    <span class="text-[10px] text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/40 px-1.5 py-0.5 rounded shrink-0">No WA Kosong</span>
+                                                </template>
+                                            </div>
+                                            <div class="text-[11px] text-slate-500 dark:text-slate-400" x-text="rec.identifier + (rec.cohort && rec.cohort !== '-' ? ' • Angk. ' + rec.cohort : '')"></div>
+                                            <div class="text-[11px] text-slate-600 dark:text-slate-300" x-text="rec.status_info"></div>
+                                        </div>
+                                    </label>
+                                </template>
+                                <div x-show="recipients.length === 0" class="p-6 text-center text-xs text-slate-500 dark:text-slate-400">
+                                    Tidak ada kontak yang cocok dengan filter sasaran ini.
+                                </div>
+                            </div>
                         </div>
                     </div>
 
