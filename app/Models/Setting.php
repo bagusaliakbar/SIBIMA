@@ -158,6 +158,37 @@ class Setting extends Model
     }
 
     /**
+     * Resolve effective maintenance countdown target timestamp (ISO-8601).
+     * Uses explicit `ends_at` first, or deterministically parses an explicit wall-clock
+     * time (e.g. "Sampai 12.00" or "23:00 WIB") from `estimate` as today's target time.
+     */
+    public static function resolveMaintenanceEndsAt(?array $config = null): ?string
+    {
+        $cfg = $config ?? self::getMaintenanceConfig();
+        $tz = config('app.timezone', 'Asia/Jakarta');
+
+        if (!empty($cfg['ends_at'])) {
+            try {
+                return \Carbon\Carbon::parse($cfg['ends_at'], $tz)->timezone($tz)->toIso8601String();
+            } catch (\Throwable $e) {
+                // Fall through to estimate parsing
+            }
+        }
+
+        $estimate = trim((string) ($cfg['estimate'] ?? ''));
+        if ($estimate !== '' && preg_match('/\b([01]?\d|2[0-3])[:.]([0-5]\d)\b/', $estimate, $matches)) {
+            $hour = (int) $matches[1];
+            $minute = (int) $matches[2];
+
+            return \Carbon\Carbon::now($tz)
+                ->setTime($hour, $minute, 0)
+                ->toIso8601String();
+        }
+
+        return null;
+    }
+
+    /**
      * Determine whether maintenance mode applies to a given user role.
      * Admin and Kaprodi are never locked out or targeted.
      */

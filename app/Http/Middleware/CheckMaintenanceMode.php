@@ -36,7 +36,7 @@ class CheckMaintenanceMode
                     'message' => $config['message'] ?: 'SIBIMA sedang dalam pemeliharaan sistem.',
                     'maintenance' => true,
                     'estimate' => $config['estimate'] ?: null,
-                    'ends_at' => $config['ends_at'] ?: null,
+                    'ends_at' => Setting::resolveMaintenanceEndsAt($config),
                 ], 503);
             }
 

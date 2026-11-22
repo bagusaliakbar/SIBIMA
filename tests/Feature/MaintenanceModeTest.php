@@ -107,4 +107,29 @@ class MaintenanceModeTest extends TestCase
         $this->actingAs($student)->get(route('admin.maintenance.index'))->assertStatus(403);
         $this->actingAs($dosen)->get(route('admin.maintenance.index'))->assertStatus(403);
     }
+
+    public function test_estimate_clock_time_automatically_activates_countdown_when_ends_at_is_empty(): void
+    {
+        $student = User::factory()->create(['role' => 'mahasiswa', 'is_active' => true]);
+
+        Setting::saveMaintenanceConfig([
+            'enabled' => true,
+            'mode' => 'lock',
+            'target' => 'both',
+            'title' => 'Pemeliharaan Sistem SIBIMA',
+            'message' => 'Upgrade server.',
+            'estimate' => 'Sampai 12.00',
+            'ends_at' => '',
+        ]);
+
+        $resolved = Setting::resolveMaintenanceEndsAt();
+        $this->assertNotNull($resolved);
+        $this->assertStringContainsString('T12:00:00', $resolved);
+
+        $this->actingAs($student)
+            ->get(route('dashboard'))
+            ->assertStatus(503)
+            ->assertSee('Hitung Mundur Estimasi Selesai')
+            ->assertSee('Estimasi selesai: Sampai 12.00');
+    }
 }

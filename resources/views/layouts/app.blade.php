@@ -104,7 +104,7 @@
 
                 @if($showUserMaintenanceBanner)
                     @php
-                        $bannerEndsAtIso = $maintenanceConfig['ends_at'] ?? '';
+                        $bannerEndsAtIso = \App\Models\Setting::resolveMaintenanceEndsAt($maintenanceConfig) ?? '';
                     @endphp
                     <div role="status"
                          x-data="{
