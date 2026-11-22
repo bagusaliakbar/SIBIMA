@@ -12,12 +12,6 @@
             $endsAtIso = '';
         }
     }
-
-    $targetLabel = match ($config['target'] ?? 'both') {
-        'mahasiswa' => 'Halaman Mahasiswa',
-        'dosen' => 'Halaman Dosen',
-        default => 'Mahasiswa & Dosen',
-    };
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
@@ -240,45 +234,6 @@
                         </div>
                     @endif
 
-                    <!-- Enterprise Status Strip -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-left">
-                        <div class="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200/80 dark:border-amber-800/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"></path>
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Layanan</p>
-                                <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">Pemeliharaan Aktif</p>
-                            </div>
-                        </div>
-
-                        <div class="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Data Akademik</p>
-                                <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">Aman &amp; Terjaga</p>
-                            </div>
-                        </div>
-
-                        <div class="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-800/60 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Cakupan</p>
-                                <p class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{{ $targetLabel }}</p>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Actions -->
                     <div class="pt-5 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-center gap-2.5">
                         @if(session()->has(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID))
@@ -302,14 +257,6 @@
                             </svg>
                             <span x-text="reloading ? 'Memeriksa...' : 'Cek Status Sekarang'"></span>
                         </button>
-
-                        <a href="{{ route('faqs.index') }}"
-                           class="w-full sm:w-auto h-10 px-4 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold transition-colors inline-flex items-center justify-center gap-1.5">
-                            <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <span>Pusat Bantuan</span>
-                        </a>
 
                         <form action="{{ route('logout') }}" method="POST" class="w-full sm:w-auto">
                             @csrf
