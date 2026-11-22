@@ -46,15 +46,105 @@
             .dark .maintenance-grid-bg {
                 background-image: radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px);
             }
-            @keyframes slow-spin {
+
+            /* Construction Scene Theme Tokens */
+            .maint-scene {
+                --scene-ink: #1e293b;
+                --scene-ink-soft: #475569;
+                --scene-surface: #ffffff;
+                --scene-surface-alt: #f1f5f9;
+                --scene-depth: #cbd5e1;
+                --scene-steel: #94a3b8;
+                --scene-sky: #fff7ed;
+                --scene-ground: #cbd5e1;
+                --scene-shadow: rgba(15, 23, 42, 0.08);
+            }
+            .dark .maint-scene {
+                --scene-ink: #e2e8f0;
+                --scene-ink-soft: #94a3b8;
+                --scene-surface: #1e293b;
+                --scene-surface-alt: #0f172a;
+                --scene-depth: #334155;
+                --scene-steel: #64748b;
+                --scene-sky: rgba(234, 88, 12, 0.09);
+                --scene-ground: #334155;
+                --scene-shadow: rgba(0, 0, 0, 0.35);
+            }
+
+            @keyframes gear-cw {
                 from { transform: rotate(0deg); }
                 to { transform: rotate(360deg); }
             }
-            .animate-slow-spin {
-                animation: slow-spin 18s linear infinite;
+            @keyframes gear-ccw {
+                from { transform: rotate(360deg); }
+                to { transform: rotate(0deg); }
             }
+            @keyframes crane-trolley {
+                0%, 100% { transform: translateX(-6px); }
+                50% { transform: translateX(8px); }
+            }
+            @keyframes crane-hoist {
+                0%, 100% { transform: translateY(0px) rotate(-1.4deg); }
+                30% { transform: translateY(5px) rotate(1.2deg); }
+                60% { transform: translateY(8px) rotate(-1deg); }
+                85% { transform: translateY(2px) rotate(1deg); }
+            }
+            @keyframes worker-hammer {
+                0%, 100% { transform: rotate(-28deg); }
+                35% { transform: rotate(18deg); }
+                50% { transform: rotate(14deg); }
+                75% { transform: rotate(-28deg); }
+            }
+            @keyframes worker-wave {
+                0%, 100% { transform: rotate(-18deg); }
+                25% { transform: rotate(-42deg); }
+                50% { transform: rotate(-16deg); }
+                75% { transform: rotate(-40deg); }
+            }
+            @keyframes worker-nod {
+                0%, 100% { transform: rotate(0deg); }
+                50% { transform: rotate(-6deg); }
+            }
+            @keyframes spark-pop {
+                0%, 30%, 58%, 100% { opacity: 0; transform: scale(0.4); }
+                38% { opacity: 1; transform: scale(1.15); }
+                48% { opacity: 0.7; transform: scale(1); }
+            }
+            @keyframes beacon-blink {
+                0%, 100% { opacity: 0.35; }
+                50% { opacity: 1; }
+            }
+            @keyframes float-slow {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-5px); }
+            }
+            @keyframes cloud-drift {
+                0%, 100% { transform: translateX(0px); }
+                50% { transform: translateX(10px); }
+            }
+            @keyframes progress-scan {
+                0% { transform: scaleX(0.32); }
+                50% { transform: scaleX(0.88); }
+                100% { transform: scaleX(0.32); }
+            }
+
+            .anim-gear-cw { animation: gear-cw 10s linear infinite; }
+            .anim-gear-ccw { animation: gear-ccw 6.5s linear infinite; }
+            .anim-trolley { animation: crane-trolley 9s ease-in-out infinite; }
+            .anim-hoist { animation: crane-hoist 5.2s ease-in-out infinite; }
+            .anim-hammer { animation: worker-hammer 1.5s ease-in-out infinite; }
+            .anim-wave { animation: worker-wave 2.6s ease-in-out infinite; }
+            .anim-nod { animation: worker-nod 3.4s ease-in-out infinite; }
+            .anim-spark { animation: spark-pop 1.5s ease-out infinite; }
+            .anim-beacon { animation: beacon-blink 1.4s ease-in-out infinite; }
+            .anim-float { animation: float-slow 3.8s ease-in-out infinite; }
+            .anim-cloud { animation: cloud-drift 11s ease-in-out infinite; }
+            .anim-progress { animation: progress-scan 3.4s ease-in-out infinite; }
+
             @media (prefers-reduced-motion: reduce) {
-                .animate-slow-spin {
+                .anim-gear-cw, .anim-gear-ccw, .anim-trolley, .anim-hoist,
+                .anim-hammer, .anim-wave, .anim-nod, .anim-spark,
+                .anim-beacon, .anim-float, .anim-cloud, .anim-progress {
                     animation: none;
                 }
             }
@@ -98,26 +188,327 @@
                 <!-- Precision Top Accent Bar -->
                 <div class="h-1.5 w-full bg-orange-600 dark:bg-orange-500"></div>
 
-                <div class="p-6 sm:p-10 space-y-7 text-center">
-                    <!-- Precision Emblem + Live Status Badge -->
+                <div class="p-6 sm:p-10 space-y-6 text-center">
+                    <!-- Animated 3D-Depth Construction Scene + Live Status Badge -->
                     <div class="flex flex-col items-center gap-4">
-                        <div class="relative flex items-center justify-center">
-                            <div class="w-20 h-20 rounded-3xl border border-dashed border-orange-300/80 dark:border-orange-700/60 flex items-center justify-center bg-orange-50/40 dark:bg-orange-950/20">
-                                <div class="w-14 h-14 rounded-2xl bg-orange-600/10 dark:bg-orange-500/15 border border-orange-200 dark:border-orange-800/70 text-orange-600 dark:text-orange-400 flex items-center justify-center shadow-xs">
-                                    <svg class="w-7 h-7 animate-slow-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <span class="absolute -top-1 -right-1 flex h-4 w-4">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-500 border-2 border-white dark:border-slate-900"></span>
-                            </span>
+                        <div class="w-full max-w-[490px] mx-auto">
+                            <svg class="maint-scene w-full h-auto overflow-visible select-none" viewBox="0 0 520 222" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustrasi tim teknisi sedang mengerjakan proyek pemeliharaan sistem SIBIMA">
+                                <defs>
+                                    <linearGradient id="maint-orange-grad" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stop-color="#fb923c" />
+                                        <stop offset="100%" stop-color="#ea580c" />
+                                    </linearGradient>
+                                    <linearGradient id="maint-amber-grad" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#fcd34d" />
+                                        <stop offset="100%" stop-color="#f59e0b" />
+                                    </linearGradient>
+                                    <linearGradient id="maint-building-front" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="var(--scene-surface)" />
+                                        <stop offset="100%" stop-color="var(--scene-surface-alt)" />
+                                    </linearGradient>
+                                    <linearGradient id="maint-beacon-glow" x1="0.5" y1="0" x2="0.5" y2="1">
+                                        <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.65" />
+                                        <stop offset="100%" stop-color="#f59e0b" stop-opacity="0" />
+                                    </linearGradient>
+                                </defs>
+
+                                <!-- Soft Ambient Backdrop Stage -->
+                                <ellipse cx="260" cy="138" rx="215" ry="74" fill="var(--scene-sky)" />
+
+                                <!-- Soft Drifting Clouds -->
+                                <g class="anim-cloud" opacity="0.75">
+                                    <path d="M54 52h38a8 8 0 0 0 0-16 11 11 0 0 0-21-3 9 9 0 0 0-17 4 7.5 7.5 0 0 0 0 15Z" fill="var(--scene-surface-alt)" stroke="var(--scene-depth)" stroke-width="1.2" />
+                                    <path d="M188 30h28a6 6 0 0 0 0-12 8.5 8.5 0 0 0-16-2 7 7 0 0 0-12 3 5.5 5.5 0 0 0 0 11Z" fill="var(--scene-surface-alt)" stroke="var(--scene-depth)" stroke-width="1.1" />
+                                </g>
+
+                                <!-- Floating Accent Particles -->
+                                <g class="anim-float">
+                                    <rect x="308" y="20" width="7" height="7" rx="1.5" fill="#fbbf24" stroke="var(--scene-ink)" stroke-width="1.3" />
+                                    <circle cx="88" cy="84" r="3" fill="#fb923c" />
+                                    <path d="M116 32v7M112.5 35.5h7" stroke="var(--scene-steel)" stroke-width="1.6" stroke-linecap="round" />
+                                    <path d="M472 96v6M469 99h6" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round" />
+                                    <!-- Floating Code Token Badge -->
+                                    <g transform="translate(106, 98)">
+                                        <circle cx="0" cy="0" r="12" fill="url(#maint-amber-grad)" stroke="var(--scene-ink)" stroke-width="1.6" />
+                                        <path d="M-4.5 -2.5L-7.5 0l3 2.5M4.5 -2.5L7.5 0l-3 2.5M1.2 -4l-2.4 8" stroke="#1e293b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </g>
+                                </g>
+
+                                <!-- Interlocking Animated Gears -->
+                                <g transform="translate(140, 62)">
+                                    <g class="anim-gear-cw">
+                                        <path d="M-3 -17h6l1.2 3.8a13.2 13.2 0 0 1 3.3 1.4l3.5-1.8 4.2 4.2-1.8 3.5a13.2 13.2 0 0 1 1.4 3.3L17 -3v6l-3.8 1.2a13.2 13.2 0 0 1-1.4 3.3l1.8 3.5-4.2 4.2-3.5-1.8a13.2 13.2 0 0 1-3.3 1.4L3 17h-6l-1.2-3.8a13.2 13.2 0 0 1-3.3-1.4l-3.5 1.8-4.2-4.2 1.8-3.5a13.2 13.2 0 0 1-1.4-3.3L-17 3v-6l3.8-1.2a13.2 13.2 0 0 1 1.4-3.3l-1.8-3.5 4.2-4.2 3.5 1.8a13.2 13.2 0 0 1 3.3-1.4Z" fill="url(#maint-amber-grad)" stroke="var(--scene-ink)" stroke-width="1.5" stroke-linejoin="round" />
+                                        <circle cx="0" cy="0" r="6" fill="var(--scene-surface)" stroke="var(--scene-ink)" stroke-width="1.5" />
+                                    </g>
+                                </g>
+                                <g transform="translate(162, 74)">
+                                    <g class="anim-gear-ccw">
+                                        <path d="M-2 -11.5h4l.9 2.6a9 9 0 0 1 2.2 1l2.4-1.2 2.8 2.8-1.2 2.4a9 9 0 0 1 1 2.2L11.5 -2v4l-2.6.9a9 9 0 0 1-1 2.2l1.2 2.4-2.8 2.8-2.4-1.2a9 9 0 0 1-2.2 1L2 11.5h-4l-.9-2.6a9 9 0 0 1-2.2-1l-2.4 1.2-2.8-2.8 1.2-2.4a9 9 0 0 1-1-2.2L-11.5 2v-4l2.6-.9a9 9 0 0 1 1-2.2l-1.2-2.4 2.8-2.8 2.4 1.2a9 9 0 0 1 2.2-1Z" fill="var(--scene-depth)" stroke="var(--scene-ink)" stroke-width="1.4" stroke-linejoin="round" />
+                                        <circle cx="0" cy="0" r="4" fill="var(--scene-surface)" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    </g>
+                                </g>
+
+                                <!-- Ground Contact Shadows -->
+                                <ellipse cx="258" cy="199" rx="76" ry="5" fill="var(--scene-shadow)" />
+                                <ellipse cx="424" cy="199" rx="34" ry="4.5" fill="var(--scene-shadow)" />
+                                <ellipse cx="86" cy="199" rx="22" ry="4" fill="var(--scene-shadow)" />
+                                <ellipse cx="362" cy="199" rx="20" ry="4" fill="var(--scene-shadow)" />
+
+                                <!-- TOWER CRANE (Right Side) -->
+                                <g id="tower-crane">
+                                    <!-- Concrete Base (3D Extruded) -->
+                                    <polygon points="444,185 453,181 453,195 444,198" fill="var(--scene-depth)" stroke="var(--scene-ink)" stroke-width="1.6" stroke-linejoin="round" />
+                                    <rect x="398" y="185" width="46" height="13" rx="2" fill="var(--scene-surface-alt)" stroke="var(--scene-ink)" stroke-width="1.6" />
+                                    <rect x="408" y="177" width="26" height="8" rx="1.5" fill="url(#maint-orange-grad)" stroke="var(--scene-ink)" stroke-width="1.5" />
+
+                                    <!-- Vertical Truss Mast -->
+                                    <rect x="415" y="28" width="14" height="149" fill="var(--scene-surface)" stroke="var(--scene-ink)" stroke-width="1.7" />
+                                    <!-- Diagonal Cross Bracing -->
+                                    <path d="M415 44l14 14M429 44l-14 14M415 62l14 14M429 62l-14 14M415 80l14 14M429 80l-14 14M415 98l14 14M429 98l-14 14M415 116l14 14M429 116l-14 14M415 134l14 14M429 134l-14 14M415 152l14 14M429 152l-14 14M415 168l14 9" stroke="var(--scene-ink)" stroke-width="1.25" />
+
+                                    <!-- Top A-Frame Peak & Guy Wires -->
+                                    <polygon points="415,28 422,12 429,28" fill="var(--scene-surface-alt)" stroke="var(--scene-ink)" stroke-width="1.7" stroke-linejoin="round" />
+                                    <line x1="422" y1="12" x2="210" y2="38" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <line x1="422" y1="12" x2="472" y2="38" stroke="var(--scene-ink)" stroke-width="1.4" />
+
+                                    <!-- Horizontal Jib Boom -->
+                                    <polygon points="196,43 210,36 474,36 474,48 196,48" fill="var(--scene-surface-alt)" stroke="var(--scene-ink)" stroke-width="1.7" stroke-linejoin="round" />
+                                    <!-- Jib Lattice Struts -->
+                                    <path d="M214 36l12 12 12-12 12 12 12-12 12 12 12-12 12 12 12-12 12 12 12-12 12 12 12-12 12 12 12-12 12 12 12-12 12 12 12-12 12 12" stroke="var(--scene-ink)" stroke-width="1.2" stroke-linejoin="round" />
+
+                                    <!-- Counterweight Block (Right of Mast) -->
+                                    <rect x="454" y="48" width="22" height="14" rx="2" fill="url(#maint-amber-grad)" stroke="var(--scene-ink)" stroke-width="1.6" />
+                                    <line x1="461" y1="48" x2="461" y2="62" stroke="var(--scene-ink)" stroke-width="1.2" />
+
+                                    <!-- Operator Cabin -->
+                                    <rect x="400" y="48" width="17" height="17" rx="2.5" fill="url(#maint-orange-grad)" stroke="var(--scene-ink)" stroke-width="1.6" />
+                                    <rect x="403" y="51" width="9" height="8" rx="1.2" fill="#e0f2fe" stroke="var(--scene-ink)" stroke-width="1.1" />
+
+                                    <!-- Animated Crane Trolley + Hoist + Suspended 3D SIBIMA Module -->
+                                    <g class="anim-trolley">
+                                        <g transform="translate(253, 48)">
+                                            <!-- Trolley Wheels & Carriage -->
+                                            <rect x="-11" y="0" width="22" height="6" rx="2" fill="url(#maint-orange-grad)" stroke="var(--scene-ink)" stroke-width="1.5" />
+                                            <!-- Animated Swinging & Hoisting Load (pivots at 0,6) -->
+                                            <g transform="translate(0, 6)">
+                                                <g class="anim-hoist">
+                                                    <!-- Steel Cable -->
+                                                    <line x1="0" y1="0" x2="0" y2="11" stroke="var(--scene-ink)" stroke-width="1.8" />
+                                                    <!-- Pulley & Hook -->
+                                                    <rect x="-4.5" y="9" width="9" height="6.5" rx="2" fill="url(#maint-amber-grad)" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                                    <path d="M0 15.5v3.2a2.8 2.8 0 1 1-2.6 2.8" stroke="var(--scene-ink)" stroke-width="1.6" stroke-linecap="round" />
+                                                    <!-- Diagonal Rigging Slings -->
+                                                    <line x1="0" y1="20" x2="-46" y2="33" stroke="var(--scene-ink)" stroke-width="1.35" />
+                                                    <line x1="0" y1="20" x2="46" y2="33" stroke="var(--scene-ink)" stroke-width="1.35" />
+
+                                                    <!-- Suspended 3D Modular SIBIMA Floor/Window Block -->
+                                                    <!-- 3D Right Extrusion Face -->
+                                                    <polygon points="56,33 64,28 64,71 56,76" fill="var(--scene-depth)" stroke="var(--scene-ink)" stroke-width="1.6" stroke-linejoin="round" />
+                                                    <!-- 3D Top Bevel Face -->
+                                                    <polygon points="-56,33 -48,28 64,28 56,33" fill="var(--scene-surface-alt)" stroke="var(--scene-ink)" stroke-width="1.6" stroke-linejoin="round" />
+                                                    <!-- Front UI Card Face -->
+                                                    <rect x="-56" y="33" width="112" height="43" rx="3" fill="var(--scene-surface)" stroke="var(--scene-ink)" stroke-width="1.8" />
+                                                    <!-- Window Top Bar -->
+                                                    <rect x="-56" y="33" width="112" height="11" rx="2" fill="var(--scene-ink)" />
+                                                    <circle cx="-46" cy="38.5" r="2.1" fill="#f87171" />
+                                                    <circle cx="-39" cy="38.5" r="2.1" fill="#fbbf24" />
+                                                    <circle cx="-32" cy="38.5" r="2.1" fill="#34d399" />
+                                                    <!-- Mini Content Bars inside Module -->
+                                                    <rect x="-46" y="49" width="42" height="5.5" rx="2" fill="url(#maint-orange-grad)" />
+                                                    <rect x="-46" y="58" width="92" height="3.8" rx="1.9" fill="var(--scene-depth)" />
+                                                    <!-- Animated Live Upgrade Progress Bar -->
+                                                    <rect x="-46" y="65" width="92" height="5" rx="2.5" fill="var(--scene-surface-alt)" stroke="var(--scene-depth)" stroke-width="1" />
+                                                    <g transform="translate(-46, 65)">
+                                                        <rect class="anim-progress" x="0" y="0" width="92" height="5" rx="2.5" fill="#10b981" />
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+
+                                <!-- CENTER BUILDING UNDER CONSTRUCTION (3D Depth) -->
+                                <g id="building-structure">
+                                    <!-- 3D Right Side Wall -->
+                                    <polygon points="310,148 324,140 324,198 310,198" fill="var(--scene-depth)" stroke="var(--scene-ink)" stroke-width="1.7" stroke-linejoin="round" />
+                                    <!-- 3D Roof Deck -->
+                                    <polygon points="196,148 212,140 324,140 310,148" fill="var(--scene-surface-alt)" stroke="var(--scene-ink)" stroke-width="1.7" stroke-linejoin="round" />
+                                    <!-- Main Building Front Facade -->
+                                    <rect x="196" y="148" width="114" height="50" fill="url(#maint-building-front)" stroke="var(--scene-ink)" stroke-width="1.8" />
+
+                                    <!-- Steel Corner Column Frame Being Fastened by Worker 2 -->
+                                    <rect x="195" y="128" width="5" height="20" rx="1" fill="var(--scene-steel)" stroke="var(--scene-ink)" stroke-width="1.3" />
+                                    <!-- Roof Connector Pins / Steel Rebar Waiting for Crane Module -->
+                                    <path d="M214 144v-7M240 144v-7M266 144v-7M292 144v-7" stroke="#ea580c" stroke-width="2" stroke-linecap="round" />
+
+                                    <!-- Windows & Entrance -->
+                                    <rect x="208" y="157" width="18" height="14" rx="2" fill="#e0f2fe" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <rect x="234" y="157" width="18" height="14" rx="2" fill="#fef3c7" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <rect x="260" y="157" width="18" height="14" rx="2" fill="#e0f2fe" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <rect x="286" y="157" width="14" height="14" rx="2" fill="#dcfce7" stroke="var(--scene-ink)" stroke-width="1.4" />
+
+                                    <!-- Lower Floor Entrance & Trim -->
+                                    <rect x="242" y="177" width="24" height="21" rx="2" fill="url(#maint-orange-grad)" stroke="var(--scene-ink)" stroke-width="1.5" />
+                                    <circle cx="261" cy="188" r="1.5" fill="#ffffff" />
+                                    <rect x="208" y="178" width="24" height="11" rx="1.5" fill="var(--scene-surface-alt)" stroke="var(--scene-ink)" stroke-width="1.3" />
+                                    <rect x="276" y="178" width="24" height="11" rx="1.5" fill="var(--scene-surface-alt)" stroke="var(--scene-ink)" stroke-width="1.3" />
+
+                                    <!-- Metal Scaffolding (Left of Building) -->
+                                    <g id="scaffolding">
+                                        <line x1="148" y1="126" x2="148" y2="198" stroke="var(--scene-steel)" stroke-width="2.4" stroke-linecap="round" />
+                                        <line x1="191" y1="126" x2="191" y2="198" stroke="var(--scene-steel)" stroke-width="2.4" stroke-linecap="round" />
+                                        <!-- Cross Bracing -->
+                                        <line x1="148" y1="158" x2="191" y2="194" stroke="var(--scene-steel)" stroke-width="1.5" />
+                                        <line x1="191" y1="158" x2="148" y2="194" stroke="var(--scene-steel)" stroke-width="1.5" />
+                                        <!-- Safety Guard Rail -->
+                                        <line x1="145" y1="133" x2="194" y2="133" stroke="var(--scene-steel)" stroke-width="1.8" stroke-linecap="round" />
+                                        <!-- Wooden Plank Platform -->
+                                        <rect x="142" y="153" width="54" height="5.5" rx="1.5" fill="#d97706" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    </g>
+                                </g>
+
+                                <!-- WORKER 2: Active Builder on Scaffolding Hammering Building Frame -->
+                                <g id="worker-builder">
+                                    <!-- Legs & Boots (standing on plank y=153) -->
+                                    <rect x="161" y="137" width="6.5" height="14" rx="2" fill="#334155" stroke="var(--scene-ink)" stroke-width="1.3" />
+                                    <rect x="170" y="137" width="6.5" height="14" rx="2" fill="#1e293b" stroke="var(--scene-ink)" stroke-width="1.3" />
+                                    <rect x="160" y="149" width="8.5" height="4" rx="1.5" fill="#0f172a" />
+                                    <rect x="170" y="149" width="9" height="4" rx="1.5" fill="#0f172a" />
+                                    <!-- Torso with High-Vis Orange Safety Vest -->
+                                    <rect x="159" y="119" width="19" height="20" rx="4.5" fill="url(#maint-orange-grad)" stroke="var(--scene-ink)" stroke-width="1.5" />
+                                    <!-- Reflective Vest Stripes -->
+                                    <line x1="160" y1="127" x2="177" y2="127" stroke="#fef3c7" stroke-width="2" />
+                                    <line x1="160" y1="133" x2="177" y2="133" stroke="#fef3c7" stroke-width="2" />
+                                    <!-- Head & Yellow Hard Hat -->
+                                    <circle cx="169" cy="111" r="6.5" fill="#fed7aa" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <path d="M162 110c0-4.5 3.1-7.5 7-7.5s7 3 7 7.5Z" fill="url(#maint-amber-grad)" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <line x1="160.5" y1="110" x2="178.5" y2="110" stroke="var(--scene-ink)" stroke-width="1.8" stroke-linecap="round" />
+
+                                    <!-- Animated Hammering Arm (pivots at shoulder 175, 124) -->
+                                    <g transform="translate(175, 124)">
+                                        <g class="anim-hammer">
+                                            <!-- Arm -->
+                                            <line x1="0" y1="0" x2="12" y2="4" stroke="#334155" stroke-width="4.5" stroke-linecap="round" />
+                                            <circle cx="12.5" cy="4" r="2.6" fill="#fed7aa" stroke="var(--scene-ink)" stroke-width="1.1" />
+                                            <!-- Wrench / Hammer Tool -->
+                                            <line x1="12.5" y1="4" x2="18" y2="-6" stroke="#92400e" stroke-width="2.4" stroke-linecap="round" />
+                                            <rect x="15" y="-10" width="8.5" height="4.5" rx="1.2" transform="rotate(28 18 -7)" fill="#64748b" stroke="var(--scene-ink)" stroke-width="1.2" />
+                                        </g>
+                                    </g>
+
+                                    <!-- Animated Impact Sparks on Structure Edge -->
+                                    <g transform="translate(197, 134)">
+                                        <g class="anim-spark">
+                                            <line x1="0" y1="0" x2="6" y2="-5" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" />
+                                            <line x1="1" y1="2" x2="8" y2="1" stroke="#ea580c" stroke-width="2" stroke-linecap="round" />
+                                            <line x1="0" y1="4" x2="5" y2="8" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" />
+                                        </g>
+                                    </g>
+                                </g>
+
+                                <!-- WORKER 1: Site Supervisor Directing Crane (Left Ground) -->
+                                <g id="worker-supervisor">
+                                    <!-- Legs & Boots (ground y=198) -->
+                                    <rect x="77" y="177" width="7" height="18" rx="2.2" fill="#334155" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <rect x="87" y="177" width="7" height="18" rx="2.2" fill="#1e293b" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <rect x="75.5" y="193" width="9.5" height="4.5" rx="1.6" fill="#0f172a" />
+                                    <rect x="87" y="193" width="10" height="4.5" rx="1.6" fill="#0f172a" />
+
+                                    <!-- Left Arm Holding Rolled Blueprint -->
+                                    <path d="M76 161l-7 10 6 3" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    <rect x="65" y="169" width="13" height="5" rx="2" transform="rotate(-18 71 171)" fill="#38bdf8" stroke="var(--scene-ink)" stroke-width="1.2" />
+
+                                    <!-- Torso & High-Vis Safety Vest -->
+                                    <rect x="75" y="156" width="21" height="23" rx="5" fill="url(#maint-orange-grad)" stroke="var(--scene-ink)" stroke-width="1.6" />
+                                    <line x1="76" y1="166" x2="95" y2="166" stroke="#fef3c7" stroke-width="2.2" />
+                                    <line x1="76" y1="172" x2="95" y2="172" stroke="#fef3c7" stroke-width="2.2" />
+
+                                    <!-- Animated Head Looking Up at Crane -->
+                                    <g transform="translate(86, 152)">
+                                        <g class="anim-nod">
+                                            <circle cx="0" cy="-5" r="7.5" fill="#fed7aa" stroke="var(--scene-ink)" stroke-width="1.5" />
+                                            <!-- Eye -->
+                                            <circle cx="3" cy="-5.5" r="1.1" fill="#1e293b" />
+                                            <!-- Safety Hard Hat -->
+                                            <path d="M-8 -6c0-5 3.6-8.5 8-8.5s8 3.5 8 8.5Z" fill="url(#maint-amber-grad)" stroke="var(--scene-ink)" stroke-width="1.5" />
+                                            <path d="M-2 -14.2v5" stroke="#fffbeb" stroke-width="1.6" stroke-linecap="round" opacity="0.7" />
+                                            <line x1="-9.5" y1="-6" x2="10.5" y2="-6" stroke="var(--scene-ink)" stroke-width="2" stroke-linecap="round" />
+                                        </g>
+                                    </g>
+
+                                    <!-- Animated Right Arm Signaling Crane -->
+                                    <g transform="translate(94, 162)">
+                                        <g class="anim-wave">
+                                            <line x1="0" y1="0" x2="15" y2="-6" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" />
+                                            <circle cx="16" cy="-6.5" r="2.8" fill="#fed7aa" stroke="var(--scene-ink)" stroke-width="1.2" />
+                                        </g>
+                                    </g>
+                                </g>
+
+                                <!-- WORKER 3: System Technician Inspecting Tablet (Right Ground) -->
+                                <g id="worker-tech">
+                                    <!-- Legs & Boots -->
+                                    <rect x="353" y="177" width="7" height="18" rx="2.2" fill="#1e293b" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <rect x="363" y="177" width="7" height="18" rx="2.2" fill="#334155" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <rect x="350.5" y="193" width="10" height="4.5" rx="1.6" fill="#0f172a" />
+                                    <rect x="362" y="193" width="9.5" height="4.5" rx="1.6" fill="#0f172a" />
+
+                                    <!-- Torso & Vest -->
+                                    <rect x="351" y="156" width="21" height="23" rx="5" fill="#0f172a" stroke="var(--scene-ink)" stroke-width="1.6" />
+                                    <path d="M353 158h17v19h-17Z" fill="url(#maint-amber-grad)" opacity="0.92" />
+                                    <line x1="352" y1="167" x2="371" y2="167" stroke="#ffffff" stroke-width="2" />
+
+                                    <!-- Arm Holding Glowing Tablet -->
+                                    <path d="M353 163l-11 6" stroke="#1e293b" stroke-width="4.2" stroke-linecap="round" />
+                                    <rect x="334" y="162" width="11" height="14" rx="2" transform="rotate(-14 339 169)" fill="#38bdf8" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <!-- Pulsing Sync Indicator Above Tablet -->
+                                    <g class="anim-beacon">
+                                        <circle cx="337" cy="153" r="3" fill="#10b981" />
+                                    </g>
+
+                                    <!-- Head & Orange Hard Hat -->
+                                    <circle cx="361" cy="147" r="7.2" fill="#fed7aa" stroke="var(--scene-ink)" stroke-width="1.5" />
+                                    <circle cx="358" cy="146.5" r="1.1" fill="#1e293b" />
+                                    <path d="M353 146c0-4.8 3.6-8.2 8-8.2s8 3.4 8 8.2Z" fill="url(#maint-orange-grad)" stroke="var(--scene-ink)" stroke-width="1.5" />
+                                    <line x1="350.5" y1="146" x2="370.5" y2="146" stroke="var(--scene-ink)" stroke-width="2" stroke-linecap="round" />
+                                </g>
+
+                                <!-- SAFETY BARRICADE WITH BLINKING BEACON -->
+                                <g id="safety-barricade">
+                                    <!-- Beacon Glow -->
+                                    <circle class="anim-beacon" cx="124" cy="175" r="7.5" fill="url(#maint-beacon-glow)" />
+                                    <circle class="anim-beacon" cx="124" cy="175" r="2.8" fill="#f59e0b" stroke="var(--scene-ink)" stroke-width="1.1" />
+                                    <!-- Barricade Legs -->
+                                    <line x1="115" y1="184" x2="113" y2="198" stroke="var(--scene-ink)" stroke-width="2" stroke-linecap="round" />
+                                    <line x1="133" y1="184" x2="135" y2="198" stroke="var(--scene-ink)" stroke-width="2" stroke-linecap="round" />
+                                    <!-- Striped Bar -->
+                                    <rect x="110" y="179" width="28" height="7" rx="1.5" fill="#fbbf24" stroke="var(--scene-ink)" stroke-width="1.4" />
+                                    <path d="M116 179l-3 7M124 179l-3 7M132 179l-3 7" stroke="var(--scene-ink)" stroke-width="2.2" />
+                                </g>
+
+                                <!-- TRAFFIC CONES (Left & Right) -->
+                                <g id="cone-left" transform="translate(36, 178)">
+                                    <polygon points="9,0 16,18 2,18" fill="url(#maint-orange-grad)" stroke="var(--scene-ink)" stroke-width="1.4" stroke-linejoin="round" />
+                                    <line x1="6" y1="9" x2="12" y2="9" stroke="#ffffff" stroke-width="2.6" />
+                                    <rect x="0" y="17.5" width="18" height="2.8" rx="1.2" fill="var(--scene-ink)" />
+                                </g>
+                                <g id="cone-right" transform="translate(466, 178)">
+                                    <polygon points="9,0 16,18 2,18" fill="url(#maint-orange-grad)" stroke="var(--scene-ink)" stroke-width="1.4" stroke-linejoin="round" />
+                                    <line x1="6" y1="9" x2="12" y2="9" stroke="#ffffff" stroke-width="2.6" />
+                                    <rect x="0" y="17.5" width="18" height="2.8" rx="1.2" fill="var(--scene-ink)" />
+                                </g>
+
+                                <!-- Crisp Ground Baseline -->
+                                <line x1="18" y1="198.5" x2="502" y2="198.5" stroke="var(--scene-ink)" stroke-width="2" stroke-linecap="round" />
+                                <line x1="175" y1="204.5" x2="345" y2="204.5" stroke="var(--scene-ground)" stroke-width="1.8" stroke-linecap="round" />
+                            </svg>
                         </div>
 
                         <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/90 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800/60">
-                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                            </span>
                             <span>Pemeliharaan Sistem Sedang Berlangsung</span>
                         </span>
                     </div>
