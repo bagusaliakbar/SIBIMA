@@ -89,4 +89,24 @@ class Faq extends Model
     {
         return self::categories()[$this->category]['name'] ?? ucfirst($this->category);
     }
+
+    /**
+     * Safely format FAQ answer with basic markdown (**bold**, `code`) after HTML escaping.
+     */
+    public function getFormattedAnswerAttribute(): string
+    {
+        $escaped = e((string) $this->answer);
+        $formatted = preg_replace(
+            '/\*\*(.+?)\*\*/s',
+            '<strong class="font-semibold text-slate-800 dark:text-slate-100">$1</strong>',
+            $escaped
+        );
+        $formatted = preg_replace(
+            '/`([^`]+)`/',
+            '<code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-orange-700 dark:text-orange-300 font-mono text-[11px] border border-slate-200/80 dark:border-slate-700">$1</code>',
+            $formatted
+        );
+
+        return nl2br($formatted);
+    }
 }

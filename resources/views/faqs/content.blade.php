@@ -4,7 +4,7 @@
     openFaqId: {{ $faqs->first() ? $faqs->first()->id : 'null' }},
     faqsList: [
         @foreach($faqs as $f)
-            { id: {{ $f->id }}, q: {{ json_encode($f->question) }}, a: {{ json_encode(strip_tags($f->answer)) }}, c: '{{ $f->category }}' },
+            { id: {{ $f->id }}, q: {{ json_encode($f->question) }}, a: {{ json_encode(strip_tags($f->formatted_answer)) }}, c: '{{ $f->category }}' },
         @endforeach
     ],
     toggleFaq(id) {
@@ -42,14 +42,14 @@
             </p>
 
             <!-- Search Input Box -->
-            <div class="pt-2">
+            <div class="pt-2 space-y-3">
                 <div class="relative max-w-2xl mx-auto">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-500 dark:text-slate-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </span>
                     <input type="text" 
                         x-model="searchQuery" 
-                        placeholder="Ketik kata kunci pertanyaan (misal: bimbingan, seminar, revisi, acc, berkas)..." 
+                        placeholder="Ketik kata kunci pertanyaan (misal: bimbingan, jam hadir, acc, revisi, yudisium, pwa)..." 
                         class="block w-full pl-11 pr-10 py-3.5 text-xs sm:text-sm rounded-2xl bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100/80 dark:hover:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 border border-slate-200 dark:border-slate-700 focus:bg-white dark:focus:bg-slate-900 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/15 transition-all shadow-inner font-medium">
                     <button type="button" 
                         x-show="searchQuery.length > 0" 
@@ -60,6 +60,18 @@
                         x-cloak>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
+                </div>
+
+                <!-- Popular Quick Search Chips -->
+                <div class="flex flex-wrap items-center justify-center gap-1.5 text-[11px]">
+                    <span class="text-slate-500 dark:text-slate-400 font-semibold mr-1">Populer:</span>
+                    @foreach(['Konfirmasi Kehadiran', 'ACC', 'Kartu Bimbingan', 'Revisi', 'Yudisium', 'Jurnal', 'Auto Logout', 'PWA'] as $chip)
+                        <button type="button"
+                                @click="selectedCategory = 'all'; searchQuery = '{{ $chip }}'"
+                                class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-orange-50 dark:bg-slate-700/70 dark:hover:bg-orange-950/50 text-slate-600 hover:text-orange-700 dark:text-slate-300 dark:hover:text-orange-300 border border-slate-200/80 hover:border-orange-200 dark:border-slate-600/80 dark:hover:border-orange-800 font-semibold transition-colors cursor-pointer">
+                            {{ $chip }}
+                        </button>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -140,7 +152,7 @@
             @php
                 $catColor = $categories[$faq->category]['color'] ?? 'slate';
             @endphp
-            <div x-show="matchesSearch({{ json_encode($faq->question) }}, {{ json_encode(strip_tags($faq->answer)) }}, '{{ $faq->category }}')" 
+            <div x-show="matchesSearch({{ json_encode($faq->question) }}, {{ json_encode(strip_tags($faq->formatted_answer)) }}, '{{ $faq->category }}')" 
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 translate-y-1"
                  x-transition:enter-end="opacity-100 translate-y-0"
@@ -182,7 +194,7 @@
                      x-cloak 
                      class="px-5 pb-6 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed border-t border-slate-100 dark:border-slate-700/60 pt-4 bg-slate-50/50 dark:bg-slate-900/30">
                     <div class="prose prose-sm dark:prose-invert max-w-none space-y-2 text-slate-600 dark:text-slate-300">
-                        {!! nl2br(e($faq->answer)) !!}
+                        {!! $faq->formatted_answer !!}
                     </div>
                 </div>
             </div>
@@ -216,7 +228,7 @@
                 Hubungi Admin Program Studi atau Dosen Pembimbing Anda untuk bantuan lebih lanjut seputar alur bimbingan dan sidang skripsi.
             </p>
         </div>
-        <div class="shrink-0 flex items-center gap-3 w-full sm:w-auto justify-start md:justify-end">
+        <div class="shrink-0 flex flex-wrap items-center gap-3 w-full sm:w-auto justify-start md:justify-end">
             @auth
                 @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kaprodi')
                     <a href="{{ route('faqs.manage') }}" class="inline-flex items-center justify-center px-4 py-3 rounded-2xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-all shadow-xs cursor-pointer">
@@ -224,6 +236,12 @@
                         Kelola FAQ
                     </a>
                 @endif
+                <button type="button"
+                        onclick="if (window.openBugReportModal) window.openBugReportModal();"
+                        class="inline-flex items-center justify-center px-4 py-3 rounded-2xl text-xs font-bold bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all shadow-xs cursor-pointer">
+                    <svg class="w-4 h-4 mr-1.5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    Lapor Kendala
+                </button>
             @endauth
             <a href="https://wa.me/?text={{ urlencode('Halo Admin SIBIMA, saya memiliki pertanyaan seputar bimbingan skripsi:') }}" 
                target="_blank" 
