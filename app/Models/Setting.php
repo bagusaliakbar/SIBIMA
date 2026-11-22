@@ -122,23 +122,27 @@ class Setting extends Model
     {
         try {
             return [
-                'enabled'  => (bool) self::get('maintenance_enabled', false),
-                'mode'     => (string) self::get('maintenance_mode', 'banner'),
-                'target'   => (string) self::get('maintenance_target', 'both'),
-                'title'    => (string) self::get('maintenance_title', 'Pemeliharaan Sistem SIBIMA'),
-                'message'  => (string) self::get('maintenance_message', 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.'),
-                'estimate' => (string) self::get('maintenance_estimate', ''),
-                'ends_at'  => (string) self::get('maintenance_ends_at', ''),
+                'enabled'       => (bool) self::get('maintenance_enabled', false),
+                'mode'          => (string) self::get('maintenance_mode', 'banner'),
+                'target'        => (string) self::get('maintenance_target', 'both'),
+                'title'         => (string) self::get('maintenance_title', 'Pemeliharaan Sistem SIBIMA'),
+                'message'       => (string) self::get('maintenance_message', 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.'),
+                'estimate'      => (string) self::get('maintenance_estimate', ''),
+                'ends_at'       => (string) self::get('maintenance_ends_at', ''),
+                'block_guest'   => (bool) self::get('maintenance_block_guest', false),
+                'bypass_secret' => (string) self::get('maintenance_bypass_secret', ''),
             ];
         } catch (\Throwable $e) {
             return [
-                'enabled'  => false,
-                'mode'     => 'banner',
-                'target'   => 'both',
-                'title'    => 'Pemeliharaan Sistem SIBIMA',
-                'message'  => 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.',
-                'estimate' => '',
-                'ends_at'  => '',
+                'enabled'       => false,
+                'mode'          => 'banner',
+                'target'        => 'both',
+                'title'         => 'Pemeliharaan Sistem SIBIMA',
+                'message'       => 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.',
+                'estimate'      => '',
+                'ends_at'       => '',
+                'block_guest'   => false,
+                'bypass_secret' => '',
             ];
         }
     }
@@ -155,6 +159,39 @@ class Setting extends Model
         self::set('maintenance_message', (string) ($config['message'] ?? ''), 'string');
         self::set('maintenance_estimate', (string) ($config['estimate'] ?? ''), 'string');
         self::set('maintenance_ends_at', (string) ($config['ends_at'] ?? ''), 'string');
+        self::set('maintenance_block_guest', (bool) ($config['block_guest'] ?? false), 'boolean');
+
+        if (array_key_exists('bypass_secret', $config)) {
+            self::set('maintenance_bypass_secret', trim((string) $config['bypass_secret']), 'string');
+        }
+    }
+
+    /**
+     * Ensure a non-empty secret bypass token exists for guest-locked maintenance mode.
+     */
+    public static function getOrCreateMaintenanceBypassSecret(): string
+    {
+        $existing = trim((string) self::get('maintenance_bypass_secret', ''));
+        if ($existing !== '') {
+            return $existing;
+        }
+
+        $generated = 'sibima-' . strtolower(\Illuminate\Support\Str::random(12));
+        self::set('maintenance_bypass_secret', $generated, 'string');
+
+        return $generated;
+    }
+
+    /**
+     * Determine whether pre-login (guest) pages are locked behind the maintenance screen.
+     */
+    public static function isGuestMaintenanceLocked(?array $config = null): bool
+    {
+        $cfg = $config ?? self::getMaintenanceConfig();
+
+        return !empty($cfg['enabled'])
+            && ($cfg['mode'] ?? 'banner') === 'lock'
+            && !empty($cfg['block_guest']);
     }
 
     /**

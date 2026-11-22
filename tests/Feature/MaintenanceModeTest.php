@@ -75,7 +75,7 @@ class MaintenanceModeTest extends TestCase
             ->assertStatus(503)
             ->assertSee('SIBIMA Sedang Diperbarui')
             ->assertSee('Estimasi selesai: 30 Menit')
-            ->assertSee('Hitung Mundur Estimasi Selesai');
+            ->assertSee('Target selesai:');
 
         // AJAX request gets 503 JSON including ends_at
         $this->actingAs($dosen)
@@ -129,7 +129,103 @@ class MaintenanceModeTest extends TestCase
         $this->actingAs($student)
             ->get(route('dashboard'))
             ->assertStatus(503)
-            ->assertSee('Hitung Mundur Estimasi Selesai')
+            ->assertSee('Target selesai:')
             ->assertSee('Estimasi selesai: Sampai 12.00');
+    }
+
+    public function test_guest_lock_blocks_login_and_allows_admin_via_secret_bypass_url(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'is_active' => true,
+            'username' => 'adminmaint',
+            'password' => bcrypt('secret123'),
+        ]);
+        $student = User::factory()->create([
+            'role' => 'mahasiswa',
+            'is_active' => true,
+            'username' => 'mhs12345',
+            'password' => bcrypt('secret123'),
+        ]);
+
+        Setting::saveMaintenanceConfig([
+            'enabled' => true,
+            'mode' => 'lock',
+            'target' => 'both',
+            'title' => 'Pemeliharaan Publik SIBIMA',
+            'message' => 'Halaman login sedang ditutup sementara.',
+            'estimate' => '',
+            'ends_at' => now()->addHour()->toIso8601String(),
+            'block_guest' => true,
+            'bypass_secret' => 'sibima-rahasia99',
+        ]);
+
+        // Unauthenticated visitor on / and /login gets 503 maintenance screen without Logout button
+        $this->get('/')
+            ->assertStatus(503)
+            ->assertSee('Pemeliharaan Publik SIBIMA')
+            ->assertDontSee('Keluar');
+
+        $this->get(route('login'))
+            ->assertStatus(503)
+            ->assertSee('Pemeliharaan Publik SIBIMA');
+
+        // Wrong secret returns 404
+        $this->get('/akses/token-salah')->assertStatus(404);
+
+        // Valid secret grants bypass session and redirects to /login with staff notice
+        $this->get('/akses/sibima-rahasia99')
+            ->assertRedirect(route('login'));
+
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('Jalur Akses Khusus Pengelola');
+
+        // Student attempting login via secret bypass is rejected and logged out
+        $this->post(route('login'), [
+            'username' => 'mhs12345',
+            'password' => 'secret123',
+        ])->assertSessionHasErrors('username');
+        $this->assertGuest();
+
+        // Admin logging in via secret bypass succeeds and accesses dashboard
+        $this->post(route('login'), [
+            'username' => 'adminmaint',
+            'password' => 'secret123',
+        ])->assertRedirect(route('dashboard', absolute: false));
+
+        $this->assertAuthenticatedAs($admin);
+        $this->get(route('dashboard'))->assertOk();
+    }
+
+    public function test_rotating_bypass_secret_invalidates_previous_guest_bypass_session(): void
+    {
+        Setting::saveMaintenanceConfig([
+            'enabled' => true,
+            'mode' => 'lock',
+            'target' => 'both',
+            'title' => 'Pemeliharaan Publik',
+            'message' => 'Sedang update.',
+            'block_guest' => true,
+            'bypass_secret' => 'rahasia-lama123',
+        ]);
+
+        // Acquire bypass with old secret
+        $this->get('/akses/rahasia-lama123')->assertRedirect(route('login'));
+        $this->get(route('login'))->assertOk();
+
+        // Rotate secret
+        Setting::saveMaintenanceConfig([
+            'enabled' => true,
+            'mode' => 'lock',
+            'target' => 'both',
+            'title' => 'Pemeliharaan Publik',
+            'message' => 'Sedang update.',
+            'block_guest' => true,
+            'bypass_secret' => 'rahasia-baru456',
+        ]);
+
+        // Old bypass session is immediately rejected with 503
+        $this->get(route('login'))->assertStatus(503);
     }
 }

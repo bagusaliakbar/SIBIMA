@@ -14,6 +14,60 @@
         </p>
     </div>
 
+    @php
+        $loginMaintenance = \App\Models\Setting::getMaintenanceConfig();
+        $isGuestLockedBypass = \App\Models\Setting::isGuestMaintenanceLocked($loginMaintenance);
+        $isLoginBannerMode = !empty($loginMaintenance['enabled']) && ($loginMaintenance['mode'] ?? 'banner') === 'banner';
+        $loginEndsAtIso = \App\Models\Setting::resolveMaintenanceEndsAt($loginMaintenance) ?? '';
+    @endphp
+
+    <!-- Maintenance Bypass Notice (Only visible to Admin/Kaprodi entering via Secret URL) -->
+    @if($isGuestLockedBypass)
+        <div class="mb-4 p-3.5 rounded-xl bg-blue-50 text-blue-900 border border-blue-200 dark:bg-blue-950/50 dark:text-blue-200 dark:border-blue-800/60 text-xs flex items-start gap-2.5">
+            <svg class="w-4 h-4 shrink-0 mt-0.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+            </svg>
+            <div class="space-y-0.5">
+                <p class="font-bold">Jalur Akses Khusus Pengelola</p>
+                <p class="text-[11px] opacity-90">Mode pemeliharaan publik sedang aktif. Masuk menggunakan akun <strong>Admin</strong> atau <strong>Kaprodi</strong>.</p>
+            </div>
+        </div>
+    @elseif($isLoginBannerMode)
+        <div class="mb-4 p-3.5 rounded-xl bg-amber-50 text-amber-950 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-200 dark:border-amber-800/60 text-xs flex items-start gap-2.5"
+             x-data="{
+                 targetMs: @js($loginEndsAtIso) ? new Date(@js($loginEndsAtIso)).getTime() : null,
+                 countdown: '',
+                 tick() {
+                     if (!this.targetMs || isNaN(this.targetMs)) return;
+                     const diff = this.targetMs - Date.now();
+                     if (diff <= 0) { this.countdown = ''; return; }
+                     const sec = Math.floor(diff / 1000);
+                     const d = Math.floor(sec / 86400);
+                     const h = Math.floor((sec % 86400) / 3600);
+                     const m = Math.floor((sec % 3600) / 60);
+                     const s = sec % 60;
+                     const pad = n => String(n).padStart(2, '0');
+                     this.countdown = (d > 0 ? d + 'h ' : '') + pad(h) + ':' + pad(m) + ':' + pad(s);
+                 },
+                 init() {
+                     if (this.targetMs) { this.tick(); setInterval(() => this.tick(), 1000); }
+                 }
+             }">
+            <svg class="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <div class="space-y-1 min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <p class="font-bold">{{ $loginMaintenance['title'] }}</p>
+                    <template x-if="countdown">
+                        <span class="px-2 py-0.5 rounded bg-orange-600 text-white text-[10px] font-bold tabular-nums" x-text="countdown"></span>
+                    </template>
+                </div>
+                <p class="text-[11px] opacity-90 leading-relaxed">{{ $loginMaintenance['message'] }}</p>
+            </div>
+        </div>
+    @endif
+
     <!-- Session Status / Idle Expiry Alert -->
     @if (session('status'))
         <div class="mb-4 p-3.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60 text-xs font-semibold flex items-start gap-2.5">
@@ -119,20 +173,22 @@
         </div>
 
         <!-- Card Footer -->
-        <div class="auth-footer-border pt-5 sm:pt-6 mt-6 sm:mt-7 border-t text-center space-y-2">
-            <p class="auth-footer-text text-xs sm:text-sm font-medium">
-                Belum memiliki akun? 
-                <a href="{{ route('register') }}" class="font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 transition-colors">
-                    Daftar Sekarang
-                </a>
-            </p>
-            <p class="text-xs">
-                <a href="{{ route('faqs.index') }}" class="inline-flex items-center gap-1 font-semibold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 transition-colors">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Pusat Bantuan & Tanya Jawab (FAQ)
-                </a>
-            </p>
-        </div>
+        @unless($isGuestLockedBypass)
+            <div class="auth-footer-border pt-5 sm:pt-6 mt-6 sm:mt-7 border-t text-center space-y-2">
+                <p class="auth-footer-text text-xs sm:text-sm font-medium">
+                    Belum memiliki akun? 
+                    <a href="{{ route('register') }}" class="font-bold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 transition-colors">
+                        Daftar Sekarang
+                    </a>
+                </p>
+                <p class="text-xs">
+                    <a href="{{ route('faqs.index') }}" class="inline-flex items-center gap-1 font-semibold text-slate-500 hover:text-orange-600 dark:text-slate-400 dark:hover:text-orange-400 transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Pusat Bantuan & Tanya Jawab (FAQ)
+                    </a>
+                </p>
+            </div>
+        @endunless
     </form>
 
     <script>

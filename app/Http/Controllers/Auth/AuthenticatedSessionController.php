@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\ActivityLog;
+use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,15 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $user = $request->user();
+        if ($user && Setting::isGuestMaintenanceLocked() && !in_array($user->role, ['admin', 'kaprodi'], true)) {
+            Auth::guard('web')->logout();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'username' => 'Sistem sedang dalam mode pemeliharaan. Hanya Admin dan Kaprodi yang dapat masuk saat ini.',
+            ])->onlyInput('username');
+        }
+
         if ($user) {
             $user->update(['last_login_at' => now()]);
         }

@@ -14,6 +14,9 @@ Route::middleware('throttle:30,1')->group(function () {
     Route::get('/verify/sk-pembimbing/{token}', [App\Http\Controllers\AdvisorDecreeController::class, 'verify'])->name('sk-pembimbing.verify');
 });
 Route::get('/faq', [App\Http\Controllers\FaqController::class, 'index'])->name('faqs.index');
+Route::get('/akses/{secret}', [App\Http\Controllers\MaintenanceModeController::class, 'bypass'])
+    ->middleware('throttle:10,1')
+    ->name('maintenance.bypass');
 
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
