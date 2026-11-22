@@ -128,6 +128,7 @@ class Setting extends Model
                 'title'    => (string) self::get('maintenance_title', 'Pemeliharaan Sistem SIBIMA'),
                 'message'  => (string) self::get('maintenance_message', 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.'),
                 'estimate' => (string) self::get('maintenance_estimate', ''),
+                'ends_at'  => (string) self::get('maintenance_ends_at', ''),
             ];
         } catch (\Throwable $e) {
             return [
@@ -137,6 +138,7 @@ class Setting extends Model
                 'title'    => 'Pemeliharaan Sistem SIBIMA',
                 'message'  => 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.',
                 'estimate' => '',
+                'ends_at'  => '',
             ];
         }
     }
@@ -152,6 +154,7 @@ class Setting extends Model
         self::set('maintenance_title', (string) ($config['title'] ?? 'Pemeliharaan Sistem SIBIMA'), 'string');
         self::set('maintenance_message', (string) ($config['message'] ?? ''), 'string');
         self::set('maintenance_estimate', (string) ($config['estimate'] ?? ''), 'string');
+        self::set('maintenance_ends_at', (string) ($config['ends_at'] ?? ''), 'string');
     }
 
     /**

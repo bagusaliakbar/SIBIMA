@@ -25,9 +25,12 @@ class MaintenanceModeTest extends TestCase
                 'title' => 'Pemeliharaan Terjadwal Malam Ini',
                 'message' => 'Sistem akan dilakukan update server pukul 22.00 WIB.',
                 'estimate' => '23:00 WIB',
+                'ends_at' => now()->addHours(2)->format('Y-m-d\TH:i'),
             ])
             ->assertRedirect(route('admin.maintenance.index'))
             ->assertSessionHas('success');
+
+        $this->assertNotEmpty(Setting::getMaintenanceConfig()['ends_at']);
 
         // Student sees banner and can still access dashboard (200)
         $this->actingAs($student)
@@ -63,20 +66,23 @@ class MaintenanceModeTest extends TestCase
             'title' => 'SIBIMA Sedang Diperbarui',
             'message' => 'Mohon tunggu hingga pemeliharaan selesai.',
             'estimate' => '30 Menit',
+            'ends_at' => now()->addHour()->toIso8601String(),
         ]);
 
-        // Student gets 503 maintenance screen
+        // Student gets 503 maintenance screen with countdown
         $this->actingAs($student)
             ->get(route('dashboard'))
             ->assertStatus(503)
             ->assertSee('SIBIMA Sedang Diperbarui')
-            ->assertSee('Estimasi selesai: 30 Menit');
+            ->assertSee('Estimasi selesai: 30 Menit')
+            ->assertSee('Hitung Mundur Estimasi Selesai');
 
-        // AJAX request gets 503 JSON
+        // AJAX request gets 503 JSON including ends_at
         $this->actingAs($dosen)
             ->getJson(route('dashboard'))
             ->assertStatus(503)
-            ->assertJson(['maintenance' => true]);
+            ->assertJson(['maintenance' => true])
+            ->assertJsonStructure(['message', 'maintenance', 'estimate', 'ends_at']);
 
         // Student can still log out
         $this->actingAs($student)

@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
             <div>
                 <h1 class="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight">Mode Pemeliharaan Sistem</h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Kelola pemberitahuan atau kunci akses sementara untuk halaman Mahasiswa dan Dosen tanpa mengganggu akses Admin &amp; Kaprodi.</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Kelola pemberitahuan, hitung mundur (countdown), atau kunci akses sementara untuk halaman Mahasiswa dan Dosen tanpa mengganggu akses Admin &amp; Kaprodi.</p>
             </div>
             <div class="shrink-0">
                 @if($config['enabled'])
@@ -28,10 +28,67 @@
         title: {{ json_encode(old('title', $config['title'])) }},
         message: {{ json_encode(old('message', $config['message'])) }},
         estimate: {{ json_encode(old('estimate', $config['estimate'])) }},
+        endsAt: {{ json_encode(old('ends_at', $endsAtInput ?? '')) }},
+        cdDays: '00',
+        cdHours: '00',
+        cdMinutes: '00',
+        cdSeconds: '00',
+        cdActive: false,
+        cdExpired: false,
         get targetLabel() {
             if (this.target === 'mahasiswa') return 'Hanya Mahasiswa';
             if (this.target === 'dosen') return 'Hanya Dosen';
             return 'Mahasiswa & Dosen';
+        },
+        get cdCompact() {
+            if (!this.cdActive) return '';
+            if (this.cdExpired) return 'Selesai';
+            const dPrefix = parseInt(this.cdDays, 10) > 0 ? parseInt(this.cdDays, 10) + 'h ' : '';
+            return dPrefix + this.cdHours + ':' + this.cdMinutes + ':' + this.cdSeconds;
+        },
+        setPresetMinutes(mins) {
+            const dt = new Date(Date.now() + mins * 60000);
+            const pad = n => String(n).padStart(2, '0');
+            this.endsAt = dt.getFullYear() + '-' + pad(dt.getMonth() + 1) + '-' + pad(dt.getDate()) + 'T' + pad(dt.getHours()) + ':' + pad(dt.getMinutes());
+            this.updateCountdown();
+        },
+        clearEndsAt() {
+            this.endsAt = '';
+            this.updateCountdown();
+        },
+        updateCountdown() {
+            if (!this.endsAt) {
+                this.cdActive = false;
+                this.cdExpired = false;
+                return;
+            }
+            const targetMs = new Date(this.endsAt).getTime();
+            if (isNaN(targetMs)) {
+                this.cdActive = false;
+                return;
+            }
+            this.cdActive = true;
+            const diff = targetMs - Date.now();
+            if (diff <= 0) {
+                this.cdDays = '00';
+                this.cdHours = '00';
+                this.cdMinutes = '00';
+                this.cdSeconds = '00';
+                this.cdExpired = true;
+                return;
+            }
+            this.cdExpired = false;
+            const totalSec = Math.floor(diff / 1000);
+            const pad = n => String(n).padStart(2, '0');
+            this.cdDays = pad(Math.floor(totalSec / 86400));
+            this.cdHours = pad(Math.floor((totalSec % 86400) / 3600));
+            this.cdMinutes = pad(Math.floor((totalSec % 3600) / 60));
+            this.cdSeconds = pad(totalSec % 60);
+        },
+        init() {
+            this.updateCountdown();
+            setInterval(() => this.updateCountdown(), 1000);
+            this.$watch('endsAt', () => this.updateCountdown());
         }
     }">
         @if(session('success'))
@@ -83,7 +140,7 @@
                             <input type="radio" name="mode" value="banner" x-model="mode" class="mt-0.5 text-orange-600 focus:ring-orange-500">
                             <div>
                                 <p class="text-xs font-bold text-slate-800 dark:text-slate-100">Banner Pemberitahuan</p>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">Pengguna tetap bisa bekerja sambil melihat peringatan di bagian atas setiap halaman.</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">Pengguna tetap bisa bekerja sambil melihat peringatan &amp; countdown di bagian atas halaman.</p>
                             </div>
                         </label>
                         <label class="p-4 rounded-xl border cursor-pointer transition-all flex items-start gap-3"
@@ -91,7 +148,7 @@
                             <input type="radio" name="mode" value="lock" x-model="mode" class="mt-0.5 text-rose-600 focus:ring-rose-500">
                             <div>
                                 <p class="text-xs font-bold text-slate-800 dark:text-slate-100">Kunci Akses (Halaman Penuh)</p>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">Pengguna target diarahkan ke halaman pemeliharaan penuh hingga mode dimatikan.</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">Pengguna target diarahkan ke halaman pemeliharaan penuh dengan hitung mundur hingga mode dimatikan.</p>
                             </div>
                         </label>
                     </div>
@@ -108,6 +165,29 @@
                     </select>
                 </div>
 
+                <!-- Countdown Target DateTime -->
+                <div class="p-4 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <label for="maintenance_ends_at" class="block text-xs font-bold text-slate-700 dark:text-slate-200">Target Waktu Hitung Mundur / Countdown (Opsional)</label>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">Menampilkan timer hitung mundur (Hari : Jam : Menit : Detik) secara live di halaman pengguna.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                        <input type="datetime-local" id="maintenance_ends_at" name="ends_at" x-model="endsAt"
+                               class="block w-full h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-3.5 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
+
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <button type="button" @click="setPresetMinutes(30)" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200 dark:border-slate-700 hover:border-orange-300 text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors cursor-pointer">+30m</button>
+                            <button type="button" @click="setPresetMinutes(60)" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200 dark:border-slate-700 hover:border-orange-300 text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors cursor-pointer">+1 Jam</button>
+                            <button type="button" @click="setPresetMinutes(120)" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200 dark:border-slate-700 hover:border-orange-300 text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors cursor-pointer">+2 Jam</button>
+                            <button type="button" @click="setPresetMinutes(240)" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200 dark:border-slate-700 hover:border-orange-300 text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors cursor-pointer">+4 Jam</button>
+                            <button type="button" x-show="endsAt" @click="clearEndsAt()" class="px-2.5 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 text-[11px] font-bold text-rose-700 dark:text-rose-300 transition-colors cursor-pointer">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Title & Estimate -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
@@ -117,9 +197,9 @@
                                class="block w-full h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-3.5 text-xs text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
                     </div>
                     <div class="space-y-1.5">
-                        <label for="maintenance_estimate" class="block text-xs font-bold text-slate-700 dark:text-slate-300">Estimasi Selesai (Opsional)</label>
+                        <label for="maintenance_estimate" class="block text-xs font-bold text-slate-700 dark:text-slate-300">Catatan Estimasi Tambahan (Opsional)</label>
                         <input type="text" id="maintenance_estimate" name="estimate" x-model="estimate" maxlength="120"
-                               placeholder="Contoh: Hari ini pukul 23:00 WIB"
+                               placeholder="Contoh: Hari ini pukul 12.00 WIB"
                                class="block w-full h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-3.5 text-xs text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
                     </div>
                 </div>
@@ -157,11 +237,14 @@
                     <div class="rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 p-3.5 text-xs text-amber-950 dark:text-amber-100 space-y-1.5">
                         <div class="flex items-start gap-2.5">
                             <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                            <div class="min-w-0 flex-1 space-y-1">
-                                <div class="flex items-center gap-2 flex-wrap">
+                            <div class="min-w-0 flex-1 space-y-1.5">
+                                <div class="flex items-center gap-1.5 flex-wrap">
                                     <span class="font-bold" x-text="title || 'Pemeliharaan Sistem SIBIMA'"></span>
+                                    <template x-if="cdCompact">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-orange-600 text-white text-[10px] font-bold tabular-nums" x-text="cdCompact"></span>
+                                    </template>
                                     <template x-if="estimate && estimate.trim()">
-                                        <span class="px-2 py-0.5 rounded bg-amber-200/80 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 text-[11px] font-bold" x-text="'Estimasi: ' + estimate"></span>
+                                        <span class="px-2 py-0.5 rounded bg-amber-200/80 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 text-[10px] font-bold" x-text="'Estimasi: ' + estimate"></span>
                                     </template>
                                 </div>
                                 <p class="text-[11px] text-amber-900/90 dark:text-amber-200/90 leading-relaxed" x-text="message || '-'"></p>
@@ -175,21 +258,55 @@
 
                 <!-- Preview: Lock Screen Mode -->
                 <div x-show="mode === 'lock'" x-cloak class="space-y-3">
-                    <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-6 text-center space-y-3">
-                        <div class="w-12 h-12 rounded-2xl bg-orange-600/10 text-orange-600 dark:text-orange-400 flex items-center justify-center mx-auto">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        </div>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">
-                            Pemeliharaan Sistem
-                        </span>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-slate-100" x-text="title || 'Pemeliharaan Sistem SIBIMA'"></h3>
-                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed" x-text="message || '-'"></p>
-                        <template x-if="estimate && estimate.trim()">
-                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-700 dark:text-slate-200">
-                                <svg class="w-3.5 h-3.5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span x-text="'Estimasi selesai: ' + estimate"></span>
+                    <div class="rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">
+                        <div class="h-1 bg-orange-600"></div>
+                        <div class="p-5 text-center space-y-3.5">
+                            <div class="w-12 h-12 rounded-2xl border border-dashed border-orange-300 dark:border-orange-700 bg-orange-50/50 dark:bg-orange-950/30 flex items-center justify-center mx-auto">
+                                <div class="w-9 h-9 rounded-xl bg-orange-600/10 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </div>
                             </div>
-                        </template>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                <span>Pemeliharaan Sistem Sedang Berlangsung</span>
+                            </span>
+                            <div class="space-y-1">
+                                <h3 class="text-sm font-extrabold text-slate-900 dark:text-white" x-text="title || 'Pemeliharaan Sistem SIBIMA'"></h3>
+                                <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed" x-text="message || '-'"></p>
+                            </div>
+
+                            <!-- Live Countdown Preview -->
+                            <template x-if="cdActive && !cdExpired">
+                                <div class="rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 space-y-2">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Hitung Mundur Estimasi Selesai</p>
+                                    <div class="grid grid-cols-4 gap-1.5">
+                                        <div class="rounded-lg bg-slate-50 dark:bg-slate-800 py-1.5">
+                                            <div class="text-sm font-extrabold tabular-nums text-slate-900 dark:text-white" x-text="cdDays">00</div>
+                                            <div class="text-[9px] font-semibold uppercase text-slate-500">Hari</div>
+                                        </div>
+                                        <div class="rounded-lg bg-slate-50 dark:bg-slate-800 py-1.5">
+                                            <div class="text-sm font-extrabold tabular-nums text-slate-900 dark:text-white" x-text="cdHours">00</div>
+                                            <div class="text-[9px] font-semibold uppercase text-slate-500">Jam</div>
+                                        </div>
+                                        <div class="rounded-lg bg-slate-50 dark:bg-slate-800 py-1.5">
+                                            <div class="text-sm font-extrabold tabular-nums text-slate-900 dark:text-white" x-text="cdMinutes">00</div>
+                                            <div class="text-[9px] font-semibold uppercase text-slate-500">Menit</div>
+                                        </div>
+                                        <div class="rounded-lg bg-orange-50 dark:bg-orange-950/40 py-1.5">
+                                            <div class="text-sm font-extrabold tabular-nums text-orange-600 dark:text-orange-400" x-text="cdSeconds">00</div>
+                                            <div class="text-[9px] font-semibold uppercase text-orange-600/80">Detik</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template x-if="!cdActive && estimate && estimate.trim()">
+                                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-700 dark:text-slate-200">
+                                    <svg class="w-3.5 h-3.5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span x-text="'Estimasi selesai: ' + estimate"></span>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400">
                         Seluruh halaman <span class="font-semibold" x-text="targetLabel"></span> akan digantikan tampilan ini (HTTP 503) hingga pemeliharaan dimatikan.

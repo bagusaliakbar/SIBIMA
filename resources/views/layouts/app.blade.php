@@ -103,7 +103,39 @@
                 @endif
 
                 @if($showUserMaintenanceBanner)
-                    <div role="status" class="bg-amber-50 dark:bg-amber-950/75 border-b border-amber-300 dark:border-amber-800 px-3 sm:px-6 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-amber-950 dark:text-amber-100 shrink-0 z-20 print:hidden">
+                    @php
+                        $bannerEndsAtIso = $maintenanceConfig['ends_at'] ?? '';
+                    @endphp
+                    <div role="status"
+                         x-data="{
+                             targetMs: @js($bannerEndsAtIso) ? new Date(@js($bannerEndsAtIso)).getTime() : null,
+                             countdownText: '',
+                             tick() {
+                                 if (!this.targetMs || isNaN(this.targetMs)) {
+                                     this.countdownText = '';
+                                     return;
+                                 }
+                                 const diff = this.targetMs - Date.now();
+                                 if (diff <= 0) {
+                                     this.countdownText = 'Selesai';
+                                     return;
+                                 }
+                                 const totalSec = Math.floor(diff / 1000);
+                                 const d = Math.floor(totalSec / 86400);
+                                 const h = Math.floor((totalSec % 86400) / 3600);
+                                 const m = Math.floor((totalSec % 3600) / 60);
+                                 const s = totalSec % 60;
+                                 const pad = n => String(n).padStart(2, '0');
+                                 this.countdownText = (d > 0 ? d + 'h ' : '') + pad(h) + ':' + pad(m) + ':' + pad(s);
+                             },
+                             init() {
+                                 if (this.targetMs) {
+                                     this.tick();
+                                     setInterval(() => this.tick(), 1000);
+                                 }
+                             }
+                         }"
+                         class="bg-amber-50 dark:bg-amber-950/75 border-b border-amber-300 dark:border-amber-800 px-3 sm:px-6 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-amber-950 dark:text-amber-100 shrink-0 z-20 print:hidden">
                         <div class="flex items-start sm:items-center gap-2.5 min-w-0">
                             <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -113,11 +145,19 @@
                                 <span class="ml-1 text-amber-900/90 dark:text-amber-100/90">{{ $maintenanceConfig['message'] }}</span>
                             </div>
                         </div>
-                        @if(!empty($maintenanceConfig['estimate']))
-                            <span class="px-2.5 py-1 rounded-lg bg-amber-200/80 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 text-[11px] font-bold whitespace-nowrap shrink-0 self-start sm:self-auto">
-                                Estimasi: {{ $maintenanceConfig['estimate'] }}
-                            </span>
-                        @endif
+                        <div class="flex items-center gap-2 flex-wrap shrink-0 self-start sm:self-auto">
+                            <template x-if="countdownText">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-600 text-white text-[11px] font-bold tabular-nums whitespace-nowrap shadow-xs">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span x-text="countdownText"></span>
+                                </span>
+                            </template>
+                            @if(!empty($maintenanceConfig['estimate']))
+                                <span class="px-2.5 py-1 rounded-lg bg-amber-200/80 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 text-[11px] font-bold whitespace-nowrap">
+                                    Estimasi: {{ $maintenanceConfig['estimate'] }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 @elseif($showAdminMaintenanceNotice)
                     <div role="status" class="bg-rose-50 dark:bg-rose-950/70 border-b border-rose-200 dark:border-rose-800 px-3 sm:px-6 py-2 flex items-center justify-between gap-3 text-xs text-rose-900 dark:text-rose-200 shrink-0 z-20 print:hidden">
