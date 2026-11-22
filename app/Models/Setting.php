@@ -116,6 +116,63 @@ class Setting extends Model
     }
 
     /**
+     * Get the current maintenance mode configuration with safe defaults.
+     */
+    public static function getMaintenanceConfig(): array
+    {
+        try {
+            return [
+                'enabled'  => (bool) self::get('maintenance_enabled', false),
+                'mode'     => (string) self::get('maintenance_mode', 'banner'),
+                'target'   => (string) self::get('maintenance_target', 'both'),
+                'title'    => (string) self::get('maintenance_title', 'Pemeliharaan Sistem SIBIMA'),
+                'message'  => (string) self::get('maintenance_message', 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.'),
+                'estimate' => (string) self::get('maintenance_estimate', ''),
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'enabled'  => false,
+                'mode'     => 'banner',
+                'target'   => 'both',
+                'title'    => 'Pemeliharaan Sistem SIBIMA',
+                'message'  => 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.',
+                'estimate' => '',
+            ];
+        }
+    }
+
+    /**
+     * Save the maintenance mode configuration.
+     */
+    public static function saveMaintenanceConfig(array $config): void
+    {
+        self::set('maintenance_enabled', (bool) ($config['enabled'] ?? false), 'boolean');
+        self::set('maintenance_mode', (string) ($config['mode'] ?? 'banner'), 'string');
+        self::set('maintenance_target', (string) ($config['target'] ?? 'both'), 'string');
+        self::set('maintenance_title', (string) ($config['title'] ?? 'Pemeliharaan Sistem SIBIMA'), 'string');
+        self::set('maintenance_message', (string) ($config['message'] ?? ''), 'string');
+        self::set('maintenance_estimate', (string) ($config['estimate'] ?? ''), 'string');
+    }
+
+    /**
+     * Determine whether maintenance mode applies to a given user role.
+     * Admin and Kaprodi are never locked out or targeted.
+     */
+    public static function isMaintenanceActiveForRole(?string $role, ?array $config = null): bool
+    {
+        if (!in_array($role, ['mahasiswa', 'dosen'], true)) {
+            return false;
+        }
+
+        $cfg = $config ?? self::getMaintenanceConfig();
+        if (empty($cfg['enabled'])) {
+            return false;
+        }
+
+        return $cfg['target'] === 'both' || $cfg['target'] === $role;
+    }
+
+    /**
      * Cast string value to its respective type.
      *
      * @param mixed $value

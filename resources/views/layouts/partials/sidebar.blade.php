@@ -539,7 +539,8 @@
                                 } catch (\Throwable $e) {}
                                 return 0;
                             });
-                            $isMaintenanceActive = request()->routeIs('admin.backups.*') || request()->routeIs('admin.logs*') || request()->routeIs('admin.bug-reports.*');
+                            $isMaintenanceModeOn = \App\Models\Setting::getMaintenanceConfig()['enabled'] ?? false;
+                            $isMaintenanceActive = request()->routeIs('admin.maintenance.*') || request()->routeIs('admin.backups.*') || request()->routeIs('admin.logs*') || request()->routeIs('admin.bug-reports.*');
                         @endphp
                         <div x-data="{ open: {{ $isMaintenanceActive ? 'true' : 'false' }} }">
                             <button type="button" @click="if (sidebarCollapsed) { sidebarCollapsed = false; } open = !open" 
@@ -561,6 +562,13 @@
                                 </div>
                             </button>
                             <div x-show="open" x-cloak class="sidebar-dropdown-content pl-12 pr-2 py-1.5 space-y-1">
+                                <a href="{{ route('admin.maintenance.index') }}" 
+                                   class="flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('admin.maintenance.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-500 dark:text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
+                                    <span>• Mode Pemeliharaan</span>
+                                    @if($isMaintenanceModeOn)
+                                        <span class="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500 text-slate-950 leading-none">ON</span>
+                                    @endif
+                                </a>
                                 <a href="{{ route('admin.backups.index') }}" 
                                    class="flex items-center px-3 py-2 rounded-lg text-xs transition-all {{ request()->routeIs('admin.backups.*') ? 'text-orange-400 font-black bg-orange-500/10' : 'text-slate-500 dark:text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">
                                     • Backup & Restore

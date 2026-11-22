@@ -47,6 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(\App\Http\Middleware\ContentSecurityPolicy::class);
         $middleware->web(append: [
             \App\Http\Middleware\UpdateUserOnlineStatus::class,
+            \App\Http\Middleware\CheckMaintenanceMode::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

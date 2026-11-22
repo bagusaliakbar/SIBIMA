@@ -55,6 +55,12 @@
         </a>
         @php
             $isBugReportEnabled = \App\Models\Setting::isBugReportEnabled();
+            $maintenanceConfig = \App\Models\Setting::getMaintenanceConfig();
+            $showUserMaintenanceBanner = !empty($maintenanceConfig['enabled'])
+                && ($maintenanceConfig['mode'] ?? 'banner') === 'banner'
+                && \App\Models\Setting::isMaintenanceActiveForRole(Auth::user()?->role, $maintenanceConfig);
+            $showAdminMaintenanceNotice = !empty($maintenanceConfig['enabled'])
+                && in_array(Auth::user()?->role, ['admin', 'kaprodi'], true);
         @endphp
         <div class="flex h-screen w-full overflow-hidden">
             @include('layouts.partials.sidebar')
@@ -95,6 +101,38 @@
                         </form>
                     </div>
                 @endif
+
+                @if($showUserMaintenanceBanner)
+                    <div role="status" class="bg-amber-50 dark:bg-amber-950/75 border-b border-amber-300 dark:border-amber-800 px-3 sm:px-6 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-amber-950 dark:text-amber-100 shrink-0 z-20 print:hidden">
+                        <div class="flex items-start sm:items-center gap-2.5 min-w-0">
+                            <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <div class="min-w-0">
+                                <span class="font-bold text-amber-900 dark:text-amber-200">{{ $maintenanceConfig['title'] }}:</span>
+                                <span class="ml-1 text-amber-900/90 dark:text-amber-100/90">{{ $maintenanceConfig['message'] }}</span>
+                            </div>
+                        </div>
+                        @if(!empty($maintenanceConfig['estimate']))
+                            <span class="px-2.5 py-1 rounded-lg bg-amber-200/80 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 text-[11px] font-bold whitespace-nowrap shrink-0 self-start sm:self-auto">
+                                Estimasi: {{ $maintenanceConfig['estimate'] }}
+                            </span>
+                        @endif
+                    </div>
+                @elseif($showAdminMaintenanceNotice)
+                    <div role="status" class="bg-rose-50 dark:bg-rose-950/70 border-b border-rose-200 dark:border-rose-800 px-3 sm:px-6 py-2 flex items-center justify-between gap-3 text-xs text-rose-900 dark:text-rose-200 shrink-0 z-20 print:hidden">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                            <span class="font-semibold truncate">
+                                Mode Pemeliharaan Aktif ({{ $maintenanceConfig['mode'] === 'lock' ? 'Kunci Akses' : 'Banner' }} &mdash; Target: {{ $maintenanceConfig['target'] === 'both' ? 'Mahasiswa & Dosen' : ucfirst($maintenanceConfig['target']) }})
+                            </span>
+                        </div>
+                        <a href="{{ route('admin.maintenance.index') }}" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold whitespace-nowrap shrink-0 transition-colors">
+                            Kelola
+                        </a>
+                    </div>
+                @endif
+
                 @include('layouts.partials.topbar')
 
                 <!-- Page Content (Mobile Optimized Padding & Safe Area) -->

@@ -342,6 +342,10 @@ Route::middleware('auth')->group(function () {
         Route::patch('/admin/bug-reports/{bugReport}/status', [App\Http\Controllers\BugReportController::class, 'updateStatus'])->name('admin.bug-reports.update-status');
         Route::delete('/admin/bug-reports/{bugReport}', [App\Http\Controllers\BugReportController::class, 'destroy'])->name('admin.bug-reports.destroy');
 
+        // System Maintenance Mode (Admin & Kaprodi)
+        Route::get('/admin/maintenance', [App\Http\Controllers\MaintenanceModeController::class, 'index'])->name('admin.maintenance.index');
+        Route::put('/admin/maintenance', [App\Http\Controllers\MaintenanceModeController::class, 'update'])->name('admin.maintenance.update');
+
     });
 
     // Bug Reports Submission & My Reports (All Authenticated Users)
