@@ -160,7 +160,7 @@
         <div class="pointer-events-none fixed inset-x-0 bottom-0 h-80 bg-[radial-gradient(ellipse_at_bottom_left,rgba(245,158,11,0.08),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_bottom_left,rgba(245,158,11,0.10),transparent_60%)]" aria-hidden="true"></div>
 
         <!-- Full-Width Top Navigation Bar -->
-        <header class="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-14 pt-6 sm:pt-8 flex items-center justify-between gap-4 shrink-0">
+        <header class="relative z-10 w-full px-5 sm:px-8 lg:px-14 xl:px-20 pt-5 sm:pt-7 flex items-center justify-between gap-4 shrink-0">
             <div class="flex items-center gap-3">
                 <img src="{{ asset('logo_unsub.png') }}" alt="Logo UNSUB" class="w-10 h-10 object-contain shrink-0">
                 <div class="whitespace-nowrap">
@@ -182,176 +182,58 @@
             </button>
         </header>
 
-        <!-- Full-Viewport Split Hero Content -->
-        <main class="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-14 py-8 sm:py-12 flex-1 flex items-center">
-            <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-                <!-- Left Column: Status, Headline, Live Countdown & Actions -->
-                <div class="order-2 lg:order-1 lg:col-span-6 space-y-6 text-center lg:text-left">
-                    <!-- Live Status Badge -->
-                    <div class="flex justify-center lg:justify-start">
-                        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/90 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800/60 shadow-2xs">
-                            <span class="relative flex h-2.5 w-2.5">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
-                            </span>
-                            <span>Pemeliharaan Sistem Sedang Berlangsung</span>
-                        </span>
-                    </div>
-
-                    <!-- Headline & Message -->
-                    <div class="space-y-3.5">
-                        <h1 class="text-3xl sm:text-4xl xl:text-[44px] font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.12]">
-                            {{ $config['title'] ?: 'Pemeliharaan Sistem SIBIMA' }}
-                        </h1>
-                        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                            {!! nl2br(e($config['message'] ?: 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.')) !!}
-                        </p>
-                    </div>
-
-                    <!-- Hero Live Countdown Panel -->
-                    @if(!empty($endsAtIso))
-                        <div x-data="{
-                                targetMs: new Date(@js($endsAtIso)).getTime(),
-                                days: '00',
-                                hours: '00',
-                                minutes: '00',
-                                seconds: '00',
-                                finished: false,
-                                timer: null,
-                                tick() {
-                                    const diff = this.targetMs - Date.now();
-                                    if (isNaN(diff) || diff <= 0) {
-                                        this.days = '00';
-                                        this.hours = '00';
-                                        this.minutes = '00';
-                                        this.seconds = '00';
-                                        this.finished = true;
-                                        if (this.timer) {
-                                            clearInterval(this.timer);
-                                            this.timer = null;
-                                        }
-                                        return;
-                                    }
-                                    const totalSec = Math.floor(diff / 1000);
-                                    const d = Math.floor(totalSec / 86400);
-                                    const h = Math.floor((totalSec % 86400) / 3600);
-                                    const m = Math.floor((totalSec % 3600) / 60);
-                                    const s = totalSec % 60;
-                                    this.days = String(d).padStart(2, '0');
-                                    this.hours = String(h).padStart(2, '0');
-                                    this.minutes = String(m).padStart(2, '0');
-                                    this.seconds = String(s).padStart(2, '0');
-                                },
-                                init() {
-                                    this.tick();
-                                    if (!this.finished) {
-                                        this.timer = setInterval(() => this.tick(), 1000);
-                                    }
-                                }
-                             }"
-                             class="max-w-lg mx-auto lg:mx-0 rounded-2xl bg-white/90 dark:bg-slate-900/85 backdrop-blur-sm border border-slate-200/90 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
-                            <div class="flex items-center justify-center lg:justify-start gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                                <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span x-text="finished ? 'Estimasi Waktu Pemeliharaan Tercapai' : 'Hitung Mundur Estimasi Selesai'"></span>
-                            </div>
-
-                            <!-- 4-Tile Tabular Countdown -->
-                            <div x-show="!finished" class="grid grid-cols-4 gap-2.5 sm:gap-3.5 text-center">
-                                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/90 dark:border-slate-700/80 py-3.5 sm:py-4 px-2">
-                                    <div class="text-2xl sm:text-3xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white" x-text="days">00</div>
-                                    <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">Hari</div>
-                                </div>
-                                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/90 dark:border-slate-700/80 py-3.5 sm:py-4 px-2">
-                                    <div class="text-2xl sm:text-3xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white" x-text="hours">00</div>
-                                    <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">Jam</div>
-                                </div>
-                                <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/90 dark:border-slate-700/80 py-3.5 sm:py-4 px-2">
-                                    <div class="text-2xl sm:text-3xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white" x-text="minutes">00</div>
-                                    <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">Menit</div>
-                                </div>
-                                <div class="rounded-2xl bg-orange-50/70 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/70 py-3.5 sm:py-4 px-2">
-                                    <div class="text-2xl sm:text-3xl font-extrabold tabular-nums tracking-tight text-orange-600 dark:text-orange-400" x-text="seconds">00</div>
-                                    <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-orange-700/80 dark:text-orange-400/80 mt-1">Detik</div>
-                                </div>
-                            </div>
-
-                            <!-- Finished State -->
-                            <div x-show="finished" x-cloak class="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 px-4 py-3 text-xs font-semibold text-emerald-800 dark:text-emerald-300 flex items-center justify-center lg:justify-start gap-2.5 text-left">
-                                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span>Estimasi waktu telah tercapai. Klik <strong>Cek Status Sekarang</strong> untuk memeriksa ketersediaan sistem.</span>
-                            </div>
-
-                            <!-- Target Timestamp + Optional Estimate Label -->
-                            <div class="flex flex-wrap items-center justify-center lg:justify-start gap-x-3 gap-y-1 text-xs text-slate-600 dark:text-slate-300 pt-0.5">
-                                @if($formattedEndsAt)
-                                    <span class="inline-flex items-center gap-1.5 font-semibold">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                                        <span>Target selesai: {{ $formattedEndsAt }}</span>
-                                    </span>
-                                @endif
-                                @if(!empty($config['estimate']))
-                                    <span class="inline-flex items-center gap-1.5 font-medium text-slate-500 dark:text-slate-400">
-                                        <span>&middot;</span>
-                                        <span>Estimasi selesai: {{ $config['estimate'] }}</span>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                    @elseif(!empty($config['estimate']))
-                        <div class="flex justify-center lg:justify-start">
-                            <div class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-2xs">
-                                <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span>Estimasi selesai: {{ $config['estimate'] }}</span>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Actions -->
-                    <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
-                        @if(session()->has(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID))
-                            <form action="{{ route('impersonate.leave') }}" method="POST" class="w-full sm:w-auto">
-                                @csrf
-                                <button type="submit" class="w-full sm:w-auto h-11 px-5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition-colors inline-flex items-center justify-center gap-2 cursor-pointer">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
-                                    </svg>
-                                    <span>Kembali ke {{ ucfirst(session(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ROLE, 'Admin')) }}</span>
-                                </button>
-                            </form>
-                        @endif
-
-                        <button type="button"
-                                @click="reloading = true; window.location.reload()"
-                                :disabled="reloading"
-                                class="w-full sm:w-auto h-11 px-6 rounded-xl bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-xs sm:text-sm font-bold shadow-sm shadow-orange-600/20 transition-colors inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75">
-                            <svg class="w-4 h-4" :class="{ 'animate-spin': reloading }" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
-                            <span x-text="reloading ? 'Memeriksa...' : 'Cek Status Sekarang'"></span>
-                        </button>
-
-                        <form action="{{ route('logout') }}" method="POST" class="w-full sm:w-auto">
-                            @csrf
-                            <button type="submit" class="w-full sm:w-auto h-11 px-5 rounded-xl bg-white hover:bg-rose-50 dark:bg-slate-900 dark:hover:bg-rose-950/40 text-slate-700 hover:text-rose-700 dark:text-slate-200 dark:hover:text-rose-300 border border-slate-200 hover:border-rose-200 dark:border-slate-700 dark:hover:border-rose-800 text-xs sm:text-sm font-bold shadow-2xs transition-colors inline-flex items-center justify-center gap-2 cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                </svg>
-                                <span>Keluar</span>
-                            </button>
-                        </form>
-                    </div>
+        <!-- Full-Width Immersive Main Content (No Centered Container, No Side-by-Side Grid) -->
+        <main class="relative z-10 w-full px-5 sm:px-8 lg:px-14 xl:px-20 py-5 sm:py-7 flex-1 flex flex-col justify-between gap-6">
+            <!-- Top Row: Full-Width Headline + Message (Left) & Actions (Right) -->
+            <div class="w-full flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+                <div class="space-y-2 max-w-3xl text-left">
+                    <h1 class="text-2xl sm:text-4xl xl:text-[42px] font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.12]">
+                        {{ $config['title'] ?: 'Pemeliharaan Sistem SIBIMA' }}
+                    </h1>
+                    <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+                        {!! nl2br(e($config['message'] ?: 'Sistem sedang dalam pemeliharaan terjadwal untuk peningkatan layanan dan performa. Mohon maaf atas ketidaknyamanannya.')) !!}
+                    </p>
                 </div>
 
-                <!-- Right Column: Full-Scale Animated 3D-Depth Construction Showcase -->
-                <div class="order-1 lg:order-2 lg:col-span-6 flex items-center justify-center">
-                    <div class="w-full max-w-[640px] mx-auto">
-                        <svg class="maint-scene w-full h-auto overflow-visible select-none" viewBox="0 0 520 222" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustrasi tim teknisi sedang mengerjakan proyek pemeliharaan sistem SIBIMA">
+                <!-- Actions -->
+                <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+                    @if(session()->has(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID))
+                        <form action="{{ route('impersonate.leave') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="h-11 px-5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-bold shadow-sm transition-colors inline-flex items-center justify-center gap-2 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
+                                </svg>
+                                <span>Kembali ke {{ ucfirst(session(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ROLE, 'Admin')) }}</span>
+                            </button>
+                        </form>
+                    @endif
+
+                    <button type="button"
+                            @click="reloading = true; window.location.reload()"
+                            :disabled="reloading"
+                            class="h-11 px-6 rounded-xl bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white text-xs sm:text-sm font-bold shadow-sm shadow-orange-600/20 transition-colors inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75">
+                        <svg class="w-4 h-4" :class="{ 'animate-spin': reloading }" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span x-text="reloading ? 'Memeriksa...' : 'Cek Status Sekarang'"></span>
+                    </button>
+
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="h-11 px-5 rounded-xl bg-white hover:bg-rose-50 dark:bg-slate-900 dark:hover:bg-rose-950/40 text-slate-700 hover:text-rose-700 dark:text-slate-200 dark:hover:text-rose-300 border border-slate-200 hover:border-rose-200 dark:border-slate-700 dark:hover:border-rose-800 text-xs sm:text-sm font-bold shadow-2xs transition-colors inline-flex items-center justify-center gap-2 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            <span>Keluar</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Centerpiece: Large Enlarged Animated 3D-Depth Construction Showcase -->
+            <div class="w-full flex-1 flex items-center justify-center py-2">
+                <svg class="maint-scene w-full max-w-[1160px] h-auto max-h-[48vh] overflow-visible select-none" viewBox="0 0 520 222" preserveAspectRatio="xMidYMid meet" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustrasi tim teknisi sedang mengerjakan proyek pemeliharaan sistem SIBIMA">
                             <defs>
                                 <linearGradient id="maint-orange-grad" x1="0" y1="0" x2="1" y2="1">
                                     <stop offset="0%" stop-color="#fb923c" />
@@ -656,17 +538,122 @@
                                 <rect x="0" y="17.5" width="18" height="2.8" rx="1.2" fill="var(--scene-ink)" />
                             </g>
 
-                            <!-- Crisp Ground Baseline -->
-                            <line x1="18" y1="198.5" x2="502" y2="198.5" stroke="var(--scene-ink)" stroke-width="2" stroke-linecap="round" />
-                            <line x1="175" y1="204.5" x2="345" y2="204.5" stroke="var(--scene-ground)" stroke-width="1.8" stroke-linecap="round" />
-                        </svg>
-                    </div>
+                        <!-- Crisp Ground Baseline -->
+                        <line x1="18" y1="198.5" x2="502" y2="198.5" stroke="var(--scene-ink)" stroke-width="2" stroke-linecap="round" />
+                        <line x1="175" y1="204.5" x2="345" y2="204.5" stroke="var(--scene-ground)" stroke-width="1.8" stroke-linecap="round" />
+                    </svg>
                 </div>
-            </div>
-        </main>
 
-        <!-- Full-Width Footer -->
-        <footer class="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-14 py-5 border-t border-slate-200/75 dark:border-slate-800/75 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left shrink-0">
+                <!-- Bottom Strip: Full-Width Horizontal Live Countdown Bar (Non-Grid) -->
+                @if(!empty($endsAtIso))
+                    <div x-data="{
+                            targetMs: new Date(@js($endsAtIso)).getTime(),
+                            days: '00',
+                            hours: '00',
+                            minutes: '00',
+                            seconds: '00',
+                            finished: false,
+                            timer: null,
+                            tick() {
+                                const diff = this.targetMs - Date.now();
+                                if (isNaN(diff) || diff <= 0) {
+                                    this.days = '00';
+                                    this.hours = '00';
+                                    this.minutes = '00';
+                                    this.seconds = '00';
+                                    this.finished = true;
+                                    if (this.timer) {
+                                        clearInterval(this.timer);
+                                        this.timer = null;
+                                    }
+                                    return;
+                                }
+                                const totalSec = Math.floor(diff / 1000);
+                                const d = Math.floor(totalSec / 86400);
+                                const h = Math.floor((totalSec % 86400) / 3600);
+                                const m = Math.floor((totalSec % 3600) / 60);
+                                const s = totalSec % 60;
+                                this.days = String(d).padStart(2, '0');
+                                this.hours = String(h).padStart(2, '0');
+                                this.minutes = String(m).padStart(2, '0');
+                                this.seconds = String(s).padStart(2, '0');
+                            },
+                            init() {
+                                this.tick();
+                                if (!this.finished) {
+                                    this.timer = setInterval(() => this.tick(), 1000);
+                                }
+                            }
+                         }"
+                         class="w-full rounded-2xl bg-white/90 dark:bg-slate-900/85 backdrop-blur-sm border border-slate-200/90 dark:border-slate-800 px-5 sm:px-7 py-4 sm:py-5 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <!-- Left: Label & Target Time -->
+                        <div class="space-y-1.5 text-left">
+                            <div class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                                <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span x-text="finished ? 'Estimasi Waktu Pemeliharaan Tercapai' : 'Hitung Mundur Estimasi Selesai'"></span>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                                @if($formattedEndsAt)
+                                    <span class="inline-flex items-center gap-1.5 font-semibold text-slate-800 dark:text-slate-100">
+                                        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                                        <span>Target selesai: {{ $formattedEndsAt }}</span>
+                                    </span>
+                                @endif
+                                @if(!empty($config['estimate']))
+                                    <span class="inline-flex items-center gap-1.5 font-medium text-slate-500 dark:text-slate-400">
+                                        <span>&middot;</span>
+                                        <span>Estimasi selesai: {{ $config['estimate'] }}</span>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Right: Inline Flex Tabular Countdown -->
+                        <div x-show="!finished" class="flex items-center justify-between sm:justify-start gap-2 sm:gap-3 shrink-0">
+                            <div class="min-w-[68px] sm:min-w-[80px] rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/90 dark:border-slate-700/80 py-2.5 px-3 text-center">
+                                <div class="text-2xl sm:text-3xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white leading-none" x-text="days">00</div>
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">Hari</div>
+                            </div>
+                            <span class="text-lg sm:text-2xl font-bold text-slate-300 dark:text-slate-700 select-none">:</span>
+                            <div class="min-w-[68px] sm:min-w-[80px] rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/90 dark:border-slate-700/80 py-2.5 px-3 text-center">
+                                <div class="text-2xl sm:text-3xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white leading-none" x-text="hours">00</div>
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">Jam</div>
+                            </div>
+                            <span class="text-lg sm:text-2xl font-bold text-slate-300 dark:text-slate-700 select-none">:</span>
+                            <div class="min-w-[68px] sm:min-w-[80px] rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/90 dark:border-slate-700/80 py-2.5 px-3 text-center">
+                                <div class="text-2xl sm:text-3xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white leading-none" x-text="minutes">00</div>
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-1">Menit</div>
+                            </div>
+                            <span class="text-lg sm:text-2xl font-bold text-slate-300 dark:text-slate-700 select-none">:</span>
+                            <div class="min-w-[68px] sm:min-w-[80px] rounded-xl bg-orange-50/80 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/70 py-2.5 px-3 text-center">
+                                <div class="text-2xl sm:text-3xl font-extrabold tabular-nums tracking-tight text-orange-600 dark:text-orange-400 leading-none" x-text="seconds">00</div>
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-orange-700/80 dark:text-orange-400/80 mt-1">Detik</div>
+                            </div>
+                        </div>
+
+                        <!-- Finished State -->
+                        <div x-show="finished" x-cloak class="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 px-4 py-3 text-xs font-semibold text-emerald-800 dark:text-emerald-300 flex items-center gap-2.5">
+                            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Estimasi waktu telah tercapai. Klik <strong>Cek Status Sekarang</strong> untuk memeriksa ketersediaan sistem.</span>
+                        </div>
+                    </div>
+                @elseif(!empty($config['estimate']))
+                    <div class="w-full rounded-2xl bg-white/90 dark:bg-slate-900/85 border border-slate-200/90 dark:border-slate-800 px-5 sm:px-7 py-4 flex items-center gap-3 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 shadow-2xs">
+                        <svg class="w-4 h-4 text-orange-600 dark:text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Estimasi selesai: {{ $config['estimate'] }}</span>
+                    </div>
+                @endif
+            </main>
+
+            <!-- Full-Width Footer -->
+            <footer class="relative z-10 w-full px-5 sm:px-8 lg:px-14 xl:px-20 py-4 sm:py-5 border-t border-slate-200/75 dark:border-slate-800/75 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left shrink-0">
             @if(!empty($user))
                 <p class="text-xs text-slate-500 dark:text-slate-400">
                     Masuk sebagai <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $user->name }}</span>
@@ -676,7 +663,7 @@
                 <span></span>
             @endif
             <p class="text-xs text-slate-400 dark:text-slate-500">
-                &copy; {{ date('Y') }} SIBIMA &middot; Sistem Informasi Bimbingan Mahasiswa &middot; FASILKOM Universitas Subang
+                &copy; {{ date('Y') }} SIBIMA &middot; Sistem Informasi Bimbingan Mahasiswa &middot; FASILKOM UNSUB
             </p>
         </footer>
     </body>
