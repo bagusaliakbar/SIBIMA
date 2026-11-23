@@ -6,19 +6,22 @@ return [
     'releases' => [
         [
             'version' => 'v2.6.0',
-            'date' => '19–20 Nov 2026',
+            'date' => '19–23 Nov 2026',
             'badge' => 'Terbaru',
             'badge_type' => 'emerald',
             'categories' => ['feature', 'ux', 'perf'],
-            'title' => 'Hardening Keamanan Mendalam, Sesi Idle 60 Menit & Audit UI/UX Menyeluruh',
+            'title' => 'Keamanan Mendalam, Mode Pemeliharaan, Pencarian Cepat & Optimasi Performa',
             'items' => [
                 'Penguatan keamanan menyeluruh (Audit OWASP): pengetatan kontrol akses SK/Surat Tugas Pembimbing, pengajuan skripsi & bimbingan, daftar pengguna online, cek ketersediaan dosen, pemulihan database khusus Administrator, serta pembatasan eksposur data sensitif pengguna pada respons JSON.',
                 'Perlindungan aplikasi & jaringan berlapis: sanitasi tampilan dinamis (Live Chat, Online Users, Laporan Bug, Preview WhatsApp, Katalog E-Book) anti-XSS, validasi ketat skema tautan HTTP/HTTPS & avatar, validasi DNS IPv4/IPv6 & redirect aman anti-SSRF, Trusted Proxies khusus Cloudflare, HSTS, rate limiting verifikasi QR, Cloudflare Turnstile pada registrasi, serta enkripsi sesi otomatis.',
                 'Penerapan batas sesi idle seragam 60 menit (server & client) lengkap dengan modal peringatan hitung mundur 2 menit, tombol perpanjang sesi, sinkronisasi multi-tab, serta auto-logout otomatis.',
                 'Penanganan ramah halaman kedaluwarsa (419 Page Expired) melalui redirect otomatis dengan pembaruan token CSRF, refresh token otomatis di halaman login, serta jeda polling latar belakang (notifikasi & status online) saat tab tersembunyi/idle.',
-                'Penambahan tampilan Mobile Card View responsif pada 10 tabel operasional utama (gelombang, pengumuman, FAQ, penguji seminar/sidang, laporan bug, yudisium, manajemen pengguna, pendaftaran seminar & sidang).',
-                'Standardisasi penuh antarmuka Clean Enterprise: penggantian seluruh emoji UI menjadi ikon SVG Heroicons, dialog konfirmasi & toast global, normalisasi aksesibilitas modal (z-index, ESC, ARIA), serta perbaikan kontras Dark Mode.',
-                'Pembersihan inline style pada komponen (Kanban, Widget Lapor Bug, Modal Sinkronisasi), modularisasi 9 halaman Blade besar (>1.000 baris) menjadi partial terstruktur, serta penambahan pengujian keamanan otomatis (SecurityHardeningTest & SessionSecurityTest).',
+                'Penambahan fitur Login As (Impersonation) aman untuk Admin & Kaprodi guna meninjau tampilan Mahasiswa/Dosen secara langsung, lengkap dengan banner pengingat, tombol kembali ke akun utama, proteksi kredensial, dan pencatatan audit otomatis.',
+                'Penambahan menu Mode Pemeliharaan Sistem (mode Banner & Layar Kunci Penuh 503 beranimasi proyek konstruksi) dilengkapi hitung mundur (countdown) real-time, filter target peran, opsi kunci halaman sebelum login, dan jalur masuk URL Rahasia khusus Admin & Kaprodi.',
+                'Pembaruan alur jadwal bimbingan: input wajib rentang jam selesai di penjadwalan, reschedule, kalender, dan notifikasi; pilihan jam kedatangan mahasiswa (slot interval 30 menit + input manual) pada halaman jadwal maupun konfirmasi cepat dropdown notifikasi; perbaikan staging tambah mahasiswa saat reschedule serta tampilan kartu jadwal terbaru dosen.',
+                'Pencarian Cepat Global (Command Palette Ctrl + K) di topbar berbasis hak akses role (skripsi, mahasiswa, pengguna, dokumen, pustaka, FAQ, & menu), perluasan Pusat Bantuan menjadi 32 FAQ lengkap, serta kolom nama sticky pada tabel lebar di layar kecil/tablet.',
+                'Standardisasi penuh antarmuka Clean Enterprise & Mobile Card View responsif di seluruh tabel operasional, penggantian seluruh emoji UI menjadi ikon SVG Heroicons, peningkatan kontras WCAG AA (Light/Dark Mode & breadcrumb), serta modularisasi halaman Blade besar.',
+                'Optimasi performa menyeluruh: pemangkasan bundle CSS sebesar 80% (1,24 MB → 251 KB), lazy-load Echo/Pusher (-46% JS awal), pembersihan 89 MB aset build lawas dengan sinkronisasi otomatis, eliminasi query N+1 di Dashboard Dosen/Admin & detail jadwal ujian, indeks cache user online, caching analitik historis & badge sidebar, serta perbaikan status gelombang arsip di dashboard.',
             ],
         ],
         [
