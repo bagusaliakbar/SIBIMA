@@ -449,9 +449,20 @@ Route::match(['get', 'post'], '/clear-cache', function (\Illuminate\Http\Request
                 @mkdir(public_path('build/assets'), 0755, true);
             }
             @copy(base_path('build/manifest.json'), public_path('build/manifest.json'));
-            foreach (glob(base_path('build/assets/*')) as $asset) {
+            $sourceAssets = glob(base_path('build/assets/*')) ?: [];
+            $activeBasenames = [];
+            foreach ($sourceAssets as $asset) {
                 if (is_file($asset)) {
-                    @copy($asset, public_path('build/assets/' . basename($asset)));
+                    $name = basename($asset);
+                    $activeBasenames[$name] = true;
+                    @copy($asset, public_path('build/assets/' . $name));
+                }
+            }
+            if (!empty($activeBasenames)) {
+                foreach (glob(public_path('build/assets/*')) ?: [] as $existing) {
+                    if (is_file($existing) && !isset($activeBasenames[basename($existing)])) {
+                        @unlink($existing);
+                    }
                 }
             }
         }

@@ -75,8 +75,13 @@ class SeminarScheduleDetail extends Model
             return false;
         }
 
-        $rev1 = $hasEx1 ? $this->revisions()->where('examiner_id', $this->examiner1_id)->first() : null;
-        $rev2 = $hasEx2 ? $this->revisions()->where('examiner_id', $this->examiner2_id)->first() : null;
+        if ($this->relationLoaded('revisions')) {
+            $rev1 = $hasEx1 ? $this->revisions->firstWhere('examiner_id', $this->examiner1_id) : null;
+            $rev2 = $hasEx2 ? $this->revisions->firstWhere('examiner_id', $this->examiner2_id) : null;
+        } else {
+            $rev1 = $hasEx1 ? $this->revisions()->where('examiner_id', $this->examiner1_id)->first() : null;
+            $rev2 = $hasEx2 ? $this->revisions()->where('examiner_id', $this->examiner2_id)->first() : null;
+        }
 
         $ok1 = !$hasEx1 || ($rev1 && $rev1->status === 'approved');
         $ok2 = !$hasEx2 || ($rev2 && $rev2->status === 'approved');
@@ -86,13 +91,22 @@ class SeminarScheduleDetail extends Model
 
     public function isRevisionStarted()
     {
+        if ($this->relationLoaded('revisions')) {
+            return $this->revisions->isNotEmpty();
+        }
+
         return $this->revisions()->exists();
     }
 
     public function isGraded()
     {
-        $rev1 = $this->revisions()->where('examiner_id', $this->examiner1_id)->first();
-        $rev2 = $this->revisions()->where('examiner_id', $this->examiner2_id)->first();
+        if ($this->relationLoaded('revisions')) {
+            $rev1 = $this->revisions->firstWhere('examiner_id', $this->examiner1_id);
+            $rev2 = $this->revisions->firstWhere('examiner_id', $this->examiner2_id);
+        } else {
+            $rev1 = $this->revisions()->where('examiner_id', $this->examiner1_id)->first();
+            $rev2 = $this->revisions()->where('examiner_id', $this->examiner2_id)->first();
+        }
         
         return ($rev1 && $rev1->isGraded()) && ($rev2 && $rev2->isGraded());
     }

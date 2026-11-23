@@ -6,10 +6,11 @@ export default {
     darkMode: 'class',
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
-        './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/**/*.js',
-        './app/**/*.php',
+        './app/Models/**/*.php',
+        './app/Services/**/*.php',
+        './app/View/**/*.php',
     ],
 
     theme: {
@@ -22,13 +23,6 @@ export default {
             },
         },
     },
-
-    safelist: [
-        {
-            pattern: /(bg|text|border)-(rose|amber|indigo|emerald|purple|cyan)-(50|100|200|300|400|500|600|700|800|900|950)/,
-            variants: ['hover', 'dark', 'dark:hover'],
-        },
-    ],
 
     plugins: [forms],
 };

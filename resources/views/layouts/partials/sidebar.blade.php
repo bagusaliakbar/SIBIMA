@@ -358,7 +358,11 @@
                         </div>
 
                         <!-- Direct Link: Yudisium & SKL -->
-                        @php $pendingGraduationsCount = \App\Models\Graduation::where('status', 'pending')->count(); @endphp
+                        @php
+                            $pendingGraduationsCount = cache()->remember('sidebar_pending_graduations_count', 60, function () {
+                                return \App\Models\Graduation::where('status', 'pending')->count();
+                            });
+                        @endphp
                         <a href="{{ route('graduations.index') }}" 
                            data-tooltip="Yudisium & SKL" title="Yudisium & SKL"
                            class="sidebar-link group flex items-center justify-between px-4 py-3 rounded-xl text-sm transition-all duration-300 {{ request()->routeIs('graduations.*') ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white font-bold shadow-lg shadow-orange-900/20' : 'text-slate-500 dark:text-slate-400 hover:text-white hover:bg-white/5 font-medium' }}">

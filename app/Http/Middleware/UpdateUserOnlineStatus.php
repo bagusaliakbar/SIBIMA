@@ -3,10 +3,10 @@
 namespace App\Http\Middleware;
 
 use App\Models\ActivityLog;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class UpdateUserOnlineStatus
 {
@@ -19,7 +19,7 @@ class UpdateUserOnlineStatus
         if (Auth::check()) {
             $user = Auth::user();
             if ($user && !$user->is_active) {
-                Cache::forget('user-is-online-' . $user->id);
+                User::markOffline((int) $user->id);
                 Auth::guard('web')->logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -57,7 +57,7 @@ class UpdateUserOnlineStatus
                     // Never block auto-logout if activity logging fails
                 }
 
-                Cache::forget('user-is-online-' . $user->id);
+                User::markOffline((int) $user->id);
                 Auth::guard('web')->logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -82,9 +82,9 @@ class UpdateUserOnlineStatus
             if (!$isPassiveRequest) {
                 $impersonatorId = $request->session()->get(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_ID);
                 if ($impersonatorId) {
-                    Cache::put('user-is-online-' . $impersonatorId, true, now()->addMinutes(3));
-                } else {
-                    Cache::put('user-is-online-' . Auth::id(), true, now()->addMinutes(3));
+                    User::markOnline((int) $impersonatorId, 180);
+                } elseif (Auth::id()) {
+                    User::markOnline((int) Auth::id(), 180);
                 }
             }
         }

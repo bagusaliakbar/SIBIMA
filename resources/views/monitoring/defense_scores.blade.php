@@ -149,11 +149,11 @@
                                 return 'E';
                             };
                             $finalGrade = $scores->count() > 0 ? $getGrade($finalScore) : '-';
-                            $gradeColor = match($finalGrade) {
-                                'A' => 'emerald',
-                                'B' => 'blue',
-                                'C' => 'amber',
-                                default => 'slate'
+                            $gradeCellClasses = match($finalGrade) {
+                                'A' => ['bg' => 'bg-emerald-50/50 dark:bg-emerald-900/10', 'text' => 'text-emerald-600 dark:text-emerald-400'],
+                                'B' => ['bg' => 'bg-blue-50/50 dark:bg-blue-900/10', 'text' => 'text-blue-600 dark:text-blue-400'],
+                                'C' => ['bg' => 'bg-amber-50/50 dark:bg-amber-900/10', 'text' => 'text-amber-600 dark:text-amber-400'],
+                                default => ['bg' => 'bg-slate-50/50 dark:bg-slate-900/10', 'text' => 'text-slate-600 dark:text-slate-400'],
                             };
                         @endphp
                         
@@ -208,8 +208,8 @@
                             <td rowspan="3" class="py-4 px-4 text-center align-middle border-r border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30">
                                 <div class="font-black text-lg text-slate-800 dark:text-slate-100">{{ number_format($finalScore, 1) }}</div>
                             </td>
-                            <td rowspan="3" class="py-4 px-4 text-center align-middle bg-{{ $gradeColor }}-50/50 dark:bg-{{ $gradeColor }}-900/10 transition-colors duration-500">
-                                <div class="text-3xl font-black text-{{ $gradeColor }}-600 drop-shadow-sm">{{ $finalGrade }}</div>
+                            <td rowspan="3" class="py-4 px-4 text-center align-middle {{ $gradeCellClasses['bg'] }} transition-colors duration-500">
+                                <div class="text-3xl font-black {{ $gradeCellClasses['text'] }} drop-shadow-sm">{{ $finalGrade }}</div>
                             </td>
                         </tr>
 

@@ -78,8 +78,12 @@ class ThesisDefenseScheduleDetail extends Model
 
         if (count($requiredIds) === 0) return false;
 
+        $loaded = $this->relationLoaded('revisions');
+
         foreach ($requiredIds as $id) {
-            $rev = $this->revisions()->where('examiner_id', $id)->first();
+            $rev = $loaded
+                ? $this->revisions->firstWhere('examiner_id', $id)
+                : $this->revisions()->where('examiner_id', $id)->first();
             if (!$rev || $rev->status !== 'approved') {
                 return false;
             }
@@ -90,6 +94,10 @@ class ThesisDefenseScheduleDetail extends Model
 
     public function isRevisionStarted()
     {
+        if ($this->relationLoaded('revisions')) {
+            return $this->revisions->isNotEmpty();
+        }
+
         return $this->revisions()->exists();
     }
 
@@ -100,9 +108,15 @@ class ThesisDefenseScheduleDetail extends Model
 
     public function isGraded()
     {
-        $rev1 = $this->revisions()->where('examiner_id', $this->examiner1_id)->first();
-        $rev2 = $this->revisions()->where('examiner_id', $this->examiner2_id)->first();
-        $revP1 = $this->thesis ? $this->revisions()->where('examiner_id', $this->thesis->pembimbing1_id)->first() : null;
+        if ($this->relationLoaded('revisions')) {
+            $rev1 = $this->revisions->firstWhere('examiner_id', $this->examiner1_id);
+            $rev2 = $this->revisions->firstWhere('examiner_id', $this->examiner2_id);
+            $revP1 = $this->thesis ? $this->revisions->firstWhere('examiner_id', $this->thesis->pembimbing1_id) : null;
+        } else {
+            $rev1 = $this->revisions()->where('examiner_id', $this->examiner1_id)->first();
+            $rev2 = $this->revisions()->where('examiner_id', $this->examiner2_id)->first();
+            $revP1 = $this->thesis ? $this->revisions()->where('examiner_id', $this->thesis->pembimbing1_id)->first() : null;
+        }
 
         return ($rev1 && $rev1->isGraded()) &&
                ($rev2 && $rev2->isGraded()) &&
@@ -111,8 +125,13 @@ class ThesisDefenseScheduleDetail extends Model
 
     public function isRevisionComplete()
     {
-        $rev1 = $this->revisions()->where('examiner_id', $this->examiner1_id)->first();
-        $rev2 = $this->revisions()->where('examiner_id', $this->examiner2_id)->first();
+        if ($this->relationLoaded('revisions')) {
+            $rev1 = $this->revisions->firstWhere('examiner_id', $this->examiner1_id);
+            $rev2 = $this->revisions->firstWhere('examiner_id', $this->examiner2_id);
+        } else {
+            $rev1 = $this->revisions()->where('examiner_id', $this->examiner1_id)->first();
+            $rev2 = $this->revisions()->where('examiner_id', $this->examiner2_id)->first();
+        }
 
         return ($rev1 && $rev1->isApproved()) &&
                ($rev2 && $rev2->isApproved());

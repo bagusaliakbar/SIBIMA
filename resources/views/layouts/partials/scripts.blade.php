@@ -26,8 +26,11 @@
             
                 const userId = {{ Auth::id() }};
                 
-                // Generic Notifications
-                if (window.Echo) {
+                // Generic Notifications (binds immediately or once dynamic Echo chunk is ready)
+                const bindRealtimeEcho = () => {
+                    if (!window.Echo || window._sibimaEchoBound) return;
+                    window._sibimaEchoBound = true;
+
                     window.Echo.private(`notifications.${userId}`)
                         .listen('NewNotification', (e) => {
                             window.dispatchEvent(new CustomEvent('notify', { 
@@ -42,7 +45,7 @@
                             const audio = document.getElementById('notif-sound');
                             if (audio) {
                                 audio.currentTime = 0;
-                                audio.play().catch(err => console.log('Audio play failed:', err));
+                                audio.play().catch(() => {});
                             }
 
                             // Refresh dropdown count if the function exists
@@ -70,12 +73,16 @@
                                 const audio = document.getElementById('notif-sound');
                                 if (audio) {
                                     audio.currentTime = 0;
-                                    audio.play().catch(err => console.log('Audio play failed:', err));
+                                    audio.play().catch(() => {});
                                 }
                             }
                         });
+                };
+
+                if (window.Echo) {
+                    bindRealtimeEcho();
                 } else {
-                    console.warn('Echo is not defined. Real-time notifications are disabled.');
+                    window.addEventListener('sibima:echo-ready', bindRealtimeEcho, { once: true });
                 }
             });
         </script>

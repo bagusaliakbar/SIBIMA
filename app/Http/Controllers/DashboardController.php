@@ -144,8 +144,7 @@ class DashboardController extends Controller
         }
 
         $data = \Illuminate\Support\Facades\Cache::remember('dashboard_online_users_json', 15, function () {
-            $allUsers = \App\Models\User::select('id', 'name', 'role', 'identifier')->get();
-            $onlineUsers = $allUsers->filter(fn($u) => $u->is_online)->values()->map(function($u) {
+            $onlineUsers = \App\Models\User::getOnlineUsers(false)->map(function($u) {
                 return [
                     'id' => $u->id,
                     'name' => $u->name,

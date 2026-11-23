@@ -67,6 +67,80 @@ class User extends Authenticatable
             ->whereDay('birth_date', now()->day);
     }
 
+    public const ONLINE_INDEX_CACHE_KEY = 'sibima_online_user_index';
+
+    /**
+     * Mark a user as online and maintain a lightweight indexed set of active user IDs.
+     */
+    public static function markOnline(int $userId, int $ttlSeconds = 180): void
+    {
+        $now = now()->timestamp;
+        \Illuminate\Support\Facades\Cache::put('user-is-online-' . $userId, true, now()->addSeconds($ttlSeconds));
+
+        $index = \Illuminate\Support\Facades\Cache::get(self::ONLINE_INDEX_CACHE_KEY, []);
+        if (!is_array($index)) {
+            $index = [];
+        }
+
+        // Prune expired IDs and refresh current user
+        $index = array_filter($index, fn ($expiresAt) => is_numeric($expiresAt) && (int) $expiresAt > $now);
+        $index[$userId] = $now + $ttlSeconds;
+
+        \Illuminate\Support\Facades\Cache::put(self::ONLINE_INDEX_CACHE_KEY, $index, now()->addMinutes(10));
+    }
+
+    /**
+     * Mark a user as offline and remove from the online ID index.
+     */
+    public static function markOffline(int $userId): void
+    {
+        \Illuminate\Support\Facades\Cache::forget('user-is-online-' . $userId);
+
+        $index = \Illuminate\Support\Facades\Cache::get(self::ONLINE_INDEX_CACHE_KEY, []);
+        if (is_array($index) && array_key_exists($userId, $index)) {
+            unset($index[$userId]);
+            \Illuminate\Support\Facades\Cache::put(self::ONLINE_INDEX_CACHE_KEY, $index, now()->addMinutes(10));
+        }
+    }
+
+    /**
+     * Fetch currently online users without scanning the entire users table.
+     */
+    public static function getOnlineUsers(bool $includeEmail = false): \Illuminate\Support\Collection
+    {
+        $now = now()->timestamp;
+        $index = \Illuminate\Support\Facades\Cache::get(self::ONLINE_INDEX_CACHE_KEY);
+
+        if (is_array($index)) {
+            $activeIds = array_keys(array_filter($index, fn ($expiresAt) => is_numeric($expiresAt) && (int) $expiresAt > $now));
+            if (empty($activeIds)) {
+                return collect();
+            }
+
+            $selectRaw = $includeEmail
+                ? 'id, name, role, identifier, email, CASE WHEN avatar IS NOT NULL AND avatar != "" THEN 1 ELSE 0 END as has_avatar'
+                : 'id, name, role, identifier, CASE WHEN avatar IS NOT NULL AND avatar != "" THEN 1 ELSE 0 END as has_avatar';
+
+            return self::query()
+                ->whereIn('id', $activeIds)
+                ->selectRaw($selectRaw)
+                ->get()
+                ->filter(fn ($u) => $u->is_online)
+                ->values();
+        }
+
+        // Safe fallback when index cache hasn't been populated yet
+        $selectRaw = $includeEmail
+            ? 'id, name, role, identifier, email, CASE WHEN avatar IS NOT NULL AND avatar != "" THEN 1 ELSE 0 END as has_avatar'
+            : 'id, name, role, identifier, CASE WHEN avatar IS NOT NULL AND avatar != "" THEN 1 ELSE 0 END as has_avatar';
+
+        return self::query()
+            ->selectRaw($selectRaw)
+            ->get()
+            ->filter(fn ($u) => $u->is_online)
+            ->values();
+    }
+
     /**
      * Check if user is online
      */

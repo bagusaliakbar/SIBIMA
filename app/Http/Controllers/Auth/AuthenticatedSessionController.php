@@ -71,9 +71,9 @@ class AuthenticatedSessionController extends Controller
         $impersonatorName = $request->session()->get(\App\Http\Controllers\ImpersonationController::SESSION_IMPERSONATOR_NAME);
 
         if ($isImpersonating && $impersonatorId) {
-            \Illuminate\Support\Facades\Cache::forget('user-is-online-' . $impersonatorId);
+            \App\Models\User::markOffline((int) $impersonatorId);
         } elseif ($userId = Auth::id()) {
-            \Illuminate\Support\Facades\Cache::forget('user-is-online-' . $userId);
+            \App\Models\User::markOffline((int) $userId);
         }
 
         $logoutDescription = $isIdleLogout
