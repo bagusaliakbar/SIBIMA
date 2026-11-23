@@ -28,6 +28,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard/online-users', [\App\Http\Controllers\DashboardController::class, 'onlineUsers'])
         ->name('dashboard.online-users');
+    Route::get('/quick-search', \App\Http\Controllers\QuickSearchController::class)
+        ->middleware('throttle:60,1')
+        ->name('quick-search');
     Route::post('/impersonate/leave', [\App\Http\Controllers\ImpersonationController::class, 'leave'])
         ->name('impersonate.leave');
     // Secure File Download Route

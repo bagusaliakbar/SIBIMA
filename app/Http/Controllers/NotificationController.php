@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MentoringSession;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,9 +15,65 @@ class NotificationController extends Controller
 
         // If AJAX or API call (such as dropdown polling), return JSON
         if ($request->wantsJson() || $request->ajax()) {
+            $notifications = $user->notifications()->latest()->take(20)->get();
+
+            // Batch-attach mentoring session schedule & attendance metadata for students (1 query total)
+            $sessionMetaMap = [];
+            if ($user->role === 'mahasiswa') {
+                $mentoringIds = $notifications
+                    ->map(fn ($n) => $n->data['mentoring_id'] ?? null)
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                if ($mentoringIds->isNotEmpty()) {
+                    $sessions = MentoringSession::query()
+                        ->whereIn('id', $mentoringIds)
+                        ->get(['id', 'scheduled_at', 'scheduled_end_at', 'student_attendance_status', 'student_arrival_time', 'status']);
+
+                    foreach ($sessions as $session) {
+                        $startStr = $session->scheduled_at ? $session->scheduled_at->format('H:i') : null;
+                        $endStr = $session->scheduled_end_at ? $session->scheduled_end_at->format('H:i') : null;
+                        $hasRange = $startStr && $endStr && $session->scheduled_end_at->gt($session->scheduled_at);
+
+                        $slots = [];
+                        if ($hasRange) {
+                            $cursor = Carbon::parse($session->scheduled_at);
+                            $endCarbon = Carbon::parse($session->scheduled_end_at);
+                            while ($cursor->lte($endCarbon) && count($slots) < 24) {
+                                $slots[] = $cursor->format('H:i');
+                                $cursor->addMinutes(30);
+                            }
+                            if (end($slots) !== $endStr && count($slots) < 24) {
+                                $slots[] = $endStr;
+                            }
+                        }
+
+                        $sessionMetaMap[$session->id] = [
+                            'has_time_range' => $hasRange,
+                            'start_time' => $startStr,
+                            'end_time' => $endStr,
+                            'slots' => $slots,
+                            'attendance_status' => $session->student_attendance_status ?? 'pending',
+                            'arrival_time' => $session->student_arrival_time,
+                            'is_actionable' => in_array($session->status, ['pending', 'approved'], true),
+                        ];
+                    }
+                }
+            }
+
+            $serialized = $notifications->map(function ($notif) use ($sessionMetaMap) {
+                $arr = $notif->toArray();
+                $mid = $notif->data['mentoring_id'] ?? null;
+                if ($mid && isset($sessionMetaMap[$mid])) {
+                    $arr['session_meta'] = $sessionMetaMap[$mid];
+                }
+                return $arr;
+            })->values();
+
             return response()->json([
-                'notifications' => $user->notifications()->latest()->take(20)->get(),
-                'unread_count' => $user->unreadNotifications()->count()
+                'notifications' => $serialized,
+                'unread_count' => $user->unreadNotifications()->count(),
             ]);
         }
 

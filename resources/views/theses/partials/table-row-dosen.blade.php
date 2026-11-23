@@ -1,6 +1,6 @@
                             <!-- BARIS DOSEN (4 KOLOM TERPADU: MAHASISWA, RENCANA JUDUL SKRIPSI, STATUS & PROGRES, AKSI) -->
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-900/50 transition-colors group">
-                                <td class="py-4 px-6">
+                                <td class="sibima-sticky-col py-4 px-6">
                                     <div class="flex items-center gap-3.5">
                                         <div class="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-slate-200/80 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shrink-0 ring-2 ring-white dark:ring-slate-800 shadow-2xs">
                                             <img src="{{ $thesis->student->avatar_url }}" alt="{{ $thesis->student->name }}" class="w-full h-full object-cover">

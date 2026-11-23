@@ -1,6 +1,6 @@
                             <!-- BARIS ADMIN / KAPRODI (6 KOLOM ASLI) -->
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-colors group">
-                            <td class="py-4 px-6">
+                            <td class="sibima-sticky-col py-4 px-6">
                                 <div class="flex items-center gap-3.5">
                                     <a href="{{ route('theses.logbooks', $thesis->id) }}" class="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-800 shrink-0 ring-2 ring-white dark:ring-slate-800 shadow-2xs hover:scale-105 transition-transform" title="Buka catatan bimbingan {{ $thesis->student->name }}">
                                         <img src="{{ $thesis->student->avatar_url }}" alt="{{ $thesis->student->name }}" class="w-full h-full object-cover">

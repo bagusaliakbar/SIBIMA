@@ -12,7 +12,10 @@
                                     pushEnabled: ('Notification' in window) && Notification.permission === 'granted',
                                     attendanceLoading: {},
                                     attendanceSuccess: {},
+                                    attendanceArrival: {},
                                     activePermissionInput: null,
+                                    activeArrivalInput: null,
+                                    selectedArrivalTime: {},
                                     permissionReason: {},
 
                                     getCsrfToken() {
@@ -191,7 +194,49 @@
                                                msg.includes('menjadwalkan');
                                     },
 
-                                    async confirmAttendance(notif, status, reason = null) {
+                                    getAttendanceStatus(notif) {
+                                        const mid = notif.data?.mentoring_id;
+                                        if (mid && this.attendanceSuccess[mid]) {
+                                            return this.attendanceSuccess[mid];
+                                        }
+                                        return notif.session_meta?.attendance_status || 'pending';
+                                    },
+
+                                    isSessionActionable(notif) {
+                                        if (!notif.session_meta) return true;
+                                        return notif.session_meta.is_actionable !== false;
+                                    },
+
+                                    getConfirmedArrivalLabel(notif) {
+                                        const mid = notif.data?.mentoring_id;
+                                        const time = (mid && this.attendanceArrival[mid]) || notif.session_meta?.arrival_time || '';
+                                        return time ? ('Akan Hadir · ' + time + ' WIB') : 'Akan Hadir';
+                                    },
+
+                                    handleAttendingClick(notif) {
+                                        if (notif.session_meta && notif.session_meta.has_time_range) {
+                                            this.activePermissionInput = null;
+                                            this.activeArrivalInput = notif.id;
+                                            if (!this.selectedArrivalTime[notif.id]) {
+                                                this.selectedArrivalTime[notif.id] = notif.session_meta.start_time || '';
+                                            }
+                                            return;
+                                        }
+                                        this.confirmAttendance(notif, 'attending');
+                                    },
+
+                                    submitAttendingWithTime(notif) {
+                                        const chosen = (this.selectedArrivalTime[notif.id] || '').trim();
+                                        const start = notif.session_meta?.start_time;
+                                        const end = notif.session_meta?.end_time;
+                                        if (chosen && start && end && (chosen < start || chosen > end)) {
+                                            window.sibimaToast(`Jam kedatangan harus berada dalam rentang ${start} - ${end} WIB.`, 'warning', 'Jam Di Luar Rentang');
+                                            return;
+                                        }
+                                        this.confirmAttendance(notif, 'attending', null, chosen || null);
+                                    },
+
+                                    async confirmAttendance(notif, status, reason = null, arrivalTime = null) {
                                         const mentoringId = notif.data?.mentoring_id;
                                         if (!mentoringId) return;
 
@@ -204,6 +249,9 @@
                                             };
                                             if (status === 'permission' && reason) {
                                                 payload.reason = reason;
+                                            }
+                                            if (status === 'attending' && arrivalTime) {
+                                                payload.arrival_time = arrivalTime;
                                             }
 
                                             const res = await fetch(`/mentoring-sessions/${mentoringId}/confirm-attendance`, {
@@ -220,11 +268,16 @@
                                             const data = await res.json();
                                             if (res.ok && data.success) {
                                                 this.attendanceSuccess[mentoringId] = status;
+                                                if (arrivalTime) {
+                                                    this.attendanceArrival[mentoringId] = arrivalTime;
+                                                }
                                                 this.activePermissionInput = null;
+                                                this.activeArrivalInput = null;
                                                 this.markSingleRead(notif.id);
-                                                window.sibimaToast('Konfirmasi kehadiran berhasil disimpan.', 'success', 'Terkonfirmasi');
+                                                window.sibimaToast(data.message || 'Konfirmasi kehadiran berhasil disimpan.', 'success', 'Terkonfirmasi');
                                             } else {
-                                                window.sibimaToast(data.message || 'Gagal menyimpan konfirmasi kehadiran.', 'error', 'Gagal Menyimpan');
+                                                const firstError = data.errors ? Object.values(data.errors).flat()[0] : null;
+                                                window.sibimaToast(firstError || data.message || 'Gagal menyimpan konfirmasi kehadiran.', 'error', 'Gagal Menyimpan');
                                             }
                                         } catch (e) {
                                             console.error(e);

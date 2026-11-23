@@ -166,7 +166,7 @@
                 <thead>
                     @if(Auth::user()->role === 'dosen')
                         <tr class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-xs border-b border-slate-100 dark:border-slate-700/80">
-                            <th class="py-3.5 px-6 font-semibold tracking-wider bg-slate-50 dark:bg-slate-900">MAHASISWA</th>
+                            <th class="sibima-sticky-th py-3.5 px-6 font-semibold tracking-wider bg-slate-50 dark:bg-slate-900">MAHASISWA</th>
                             <th class="py-3.5 px-6 font-semibold tracking-wider bg-slate-50 dark:bg-slate-900">RENCANA JUDUL SKRIPSI</th>
                             <th class="py-3.5 px-6 font-semibold tracking-wider text-center bg-slate-50 dark:bg-slate-900">
                                 <span class="block">Status &amp; Progres</span>
@@ -176,7 +176,7 @@
                         </tr>
                     @else
                         <tr class="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-700">
-                            <th class="py-4 px-6">Mahasiswa</th>
+                            <th class="sibima-sticky-th py-4 px-6">Mahasiswa</th>
                             <th class="py-4 px-6">Rencana Judul Skripsi</th>
                             <th class="py-4 px-6">Deskripsi</th>
                             <th class="py-4 px-6 text-center">Status &amp; Progres</th>

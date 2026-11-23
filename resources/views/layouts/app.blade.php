@@ -233,6 +233,7 @@
         @include('components.session-timeout-modal')
 
         @include('layouts.partials.audit-drawer')
+        @include('layouts.partials.command-palette')
 
         @include('layouts.partials.scripts')
 

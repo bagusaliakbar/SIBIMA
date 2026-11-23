@@ -160,16 +160,16 @@
                                                     <!-- Actionable Attendance Confirmation (For Students) -->
                                                     <template x-if="isAttendanceNotification(notif)">
                                                         <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-700/60" @click.stop>
-                                                            <!-- If already confirmed in this session -->
-                                                            <template x-if="attendanceSuccess[notif.data.mentoring_id]">
-                                                                <div class="flex items-center gap-1.5 py-0.5 text-[11px] font-bold">
-                                                                    <template x-if="attendanceSuccess[notif.data.mentoring_id] === 'attending'">
+                                                            <!-- If already confirmed (either from DB session_meta or in this session) -->
+                                                            <template x-if="getAttendanceStatus(notif) !== 'pending'">
+                                                                <div class="flex items-center gap-1.5 py-0.5 text-[11px] font-bold flex-wrap">
+                                                                    <template x-if="getAttendanceStatus(notif) === 'attending'">
                                                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/80 text-[11px] font-black uppercase tracking-wider">
                                                                             <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                                                            <span>Akan Hadir</span>
+                                                                            <span x-text="getConfirmedArrivalLabel(notif)"></span>
                                                                         </span>
                                                                     </template>
-                                                                    <template x-if="attendanceSuccess[notif.data.mentoring_id] === 'permission'">
+                                                                    <template x-if="getAttendanceStatus(notif) === 'permission'">
                                                                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/80 text-[11px] font-black uppercase tracking-wider">
                                                                             <svg class="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"/></svg>
                                                                             <span>Izin Diajukan</span>
@@ -178,13 +178,13 @@
                                                                 </div>
                                                             </template>
 
-                                                            <!-- If not yet confirmed -->
-                                                            <template x-if="!attendanceSuccess[notif.data.mentoring_id]">
+                                                            <!-- If not yet confirmed and session is still actionable -->
+                                                            <template x-if="getAttendanceStatus(notif) === 'pending' && isSessionActionable(notif)">
                                                                 <div>
                                                                     <!-- Fast Action Buttons -->
-                                                                    <div x-show="activePermissionInput !== notif.id" class="flex items-center gap-2">
+                                                                    <div x-show="activePermissionInput !== notif.id && activeArrivalInput !== notif.id" class="flex items-center gap-2">
                                                                         <button type="button" 
-                                                                                @click.stop="confirmAttendance(notif, 'attending')" 
+                                                                                @click.stop="handleAttendingClick(notif)" 
                                                                                 :disabled="attendanceLoading[notif.data.mentoring_id]"
                                                                                 class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black uppercase tracking-wider shadow-2xs transition-all cursor-pointer disabled:opacity-50">
                                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
@@ -192,7 +192,7 @@
                                                                         </button>
 
                                                                         <button type="button" 
-                                                                                @click.stop="activePermissionInput = notif.id" 
+                                                                                @click.stop="activeArrivalInput = null; activePermissionInput = notif.id" 
                                                                                 :disabled="attendanceLoading[notif.data.mentoring_id]"
                                                                                 class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-rose-50 dark:bg-slate-700 dark:hover:bg-rose-950/40 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 border border-slate-200 dark:border-slate-600 text-[11px] font-black uppercase tracking-wider shadow-2xs transition-all cursor-pointer disabled:opacity-50">
                                                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"/></svg>
@@ -200,6 +200,41 @@
                                                                         </button>
 
                                                                         <span x-show="attendanceLoading[notif.data.mentoring_id]" class="text-[11px] text-slate-500 dark:text-slate-400 animate-pulse font-medium">Menyimpan...</span>
+                                                                    </div>
+
+                                                                    <!-- Inline Arrival Time Picker (when lecturer provided a time range) -->
+                                                                    <div x-show="activeArrivalInput === notif.id" class="space-y-2 mt-1 p-2.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60">
+                                                                        <div class="flex items-center justify-between gap-2 text-[11px] font-bold text-emerald-900 dark:text-emerald-200">
+                                                                            <span>Pilih Jam Hadir</span>
+                                                                            <span class="font-mono text-[10px] text-emerald-700 dark:text-emerald-300" x-text="(notif.session_meta?.start_time || '') + ' - ' + (notif.session_meta?.end_time || '') + ' WIB'"></span>
+                                                                        </div>
+                                                                        <div class="flex flex-wrap gap-1">
+                                                                            <template x-for="slot in (notif.session_meta?.slots || [])" :key="slot">
+                                                                                <button type="button"
+                                                                                        @click.stop="selectedArrivalTime[notif.id] = slot"
+                                                                                        class="px-2 py-0.5 rounded-md text-[11px] font-bold tabular-nums border transition-colors cursor-pointer"
+                                                                                        :class="selectedArrivalTime[notif.id] === slot ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:border-emerald-400'"
+                                                                                        x-text="slot"></button>
+                                                                            </template>
+                                                                        </div>
+                                                                        <div class="flex items-center gap-1.5">
+                                                                            <input type="time"
+                                                                                   x-model="selectedArrivalTime[notif.id]"
+                                                                                   :min="notif.session_meta?.start_time"
+                                                                                   :max="notif.session_meta?.end_time"
+                                                                                   class="w-28 text-xs px-2 py-1 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold tabular-nums">
+                                                                            <button type="button"
+                                                                                    @click.stop="submitAttendingWithTime(notif)"
+                                                                                    :disabled="attendanceLoading[notif.data.mentoring_id]"
+                                                                                    class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer">
+                                                                                Konfirmasi
+                                                                            </button>
+                                                                            <button type="button"
+                                                                                    @click.stop="activeArrivalInput = null"
+                                                                                    class="px-2 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+                                                                                Batal
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
 
                                                                     <!-- Inline Reason Form for Izin -->

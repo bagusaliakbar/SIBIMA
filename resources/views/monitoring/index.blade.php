@@ -331,7 +331,7 @@
                 <table class="w-full text-left text-sm">
                     <thead>
                         <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 text-[11px] font-bold uppercase tracking-wider">
-                            <th class="py-3.5 px-6 whitespace-nowrap">Mahasiswa</th>
+                            <th class="sibima-sticky-th py-3.5 px-6 whitespace-nowrap">Mahasiswa</th>
                             <th class="py-3.5 px-4 text-center whitespace-nowrap">Bimbingan</th>
                             <th class="py-3.5 px-6 whitespace-nowrap">Dosen Pembimbing</th>
                             <th class="py-3.5 px-4 text-center whitespace-nowrap">Status ACC UP</th>
@@ -342,7 +342,7 @@
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                         @forelse($theses as $thesis)
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors align-top group">
-                                <td class="py-4 px-6">
+                                <td class="sibima-sticky-col py-4 px-6">
                                     <div class="flex items-center gap-2">
                                         <div class="font-bold text-sm text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors tracking-tight">
                                             {{ ucwords(strtolower($thesis->student->name)) }}

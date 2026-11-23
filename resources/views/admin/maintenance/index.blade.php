@@ -1,22 +1,28 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
-            <div>
-                <h1 class="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight">Mode Pemeliharaan Sistem</h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Kelola pemberitahuan, hitung mundur (countdown), atau kunci akses sementara untuk halaman Mahasiswa dan Dosen tanpa mengganggu akses Admin &amp; Kaprodi.</p>
-            </div>
-            <div class="shrink-0">
-                @if($config['enabled'])
-                    <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">
-                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                        <span>Status: Pemeliharaan Aktif ({{ $config['mode'] === 'lock' ? 'Kunci Akses' : 'Banner' }})</span>
-                    </span>
-                @else
-                    <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span>Status: Sistem Normal</span>
-                    </span>
-                @endif
+        <div class="w-full space-y-2">
+            <x-breadcrumb :items="[
+                ['label' => 'Pemeliharaan Sistem', 'route' => null],
+                ['label' => 'Mode Pemeliharaan', 'route' => null],
+            ]" />
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
+                <div>
+                    <h1 class="text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight">Mode Pemeliharaan Sistem</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Kelola pemberitahuan, hitung mundur (countdown), atau kunci akses sementara untuk halaman Mahasiswa dan Dosen tanpa mengganggu akses Admin &amp; Kaprodi.</p>
+                </div>
+                <div class="shrink-0">
+                    @if($config['enabled'])
+                        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            <span>Status: Pemeliharaan Aktif ({{ $config['mode'] === 'lock' ? 'Kunci Akses' : 'Banner' }})</span>
+                        </span>
+                    @else
+                        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span>Status: Sistem Normal</span>
+                        </span>
+                    @endif
+                </div>
             </div>
         </div>
     </x-slot>
