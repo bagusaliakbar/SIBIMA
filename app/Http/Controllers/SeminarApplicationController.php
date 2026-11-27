@@ -622,7 +622,7 @@ class SeminarApplicationController extends Controller
         if ($p1Signature && $p1 && !empty($p1->signature_token)) {
             $p1QrSvg = base64_encode(
                 \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
-                    ->size(44)
+                    ->size(96)
                     ->margin(0)
                     ->generate(url('/verify-signature/' . $p1->signature_token))
             );
@@ -632,7 +632,7 @@ class SeminarApplicationController extends Controller
         if ($p2Signature && $p2 && !empty($p2->signature_token)) {
             $p2QrSvg = base64_encode(
                 \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
-                    ->size(44)
+                    ->size(96)
                     ->margin(0)
                     ->generate(url('/verify-signature/' . $p2->signature_token))
             );

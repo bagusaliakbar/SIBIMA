@@ -291,26 +291,27 @@
         }
 
         .sig-area {
-            height: 68px;
+            height: 82px;
             vertical-align: middle;
             margin: 4px 0 4px 0;
         }
 
         .sig-inner-table {
             margin: 0 auto;
+            height: 78px;
             border-collapse: collapse;
         }
 
         .sig-inner-table td {
             width: auto !important;
             border: none !important;
-            padding: 0 4px !important;
+            padding: 0 8px !important;
             vertical-align: middle !important;
         }
 
         .sig-img {
-            max-height: 50px;
-            max-width: 118px;
+            max-height: 74px;
+            max-width: 170px;
             width: auto;
             height: auto;
             display: block;
@@ -318,8 +319,8 @@
         }
 
         .qr-img {
-            width: 38px;
-            height: 38px;
+            width: 56px;
+            height: 56px;
             display: block;
         }
 
@@ -570,12 +571,12 @@
                                         </tr>
                                     </table>
                                 @else
-                                    <div style="height: 64px;">&nbsp;</div>
+                                    <div style="height: 78px;">&nbsp;</div>
                                 @endif
                             </div>
                             <div class="dosen-name-line">{{ $p1?->name ?? ($formData['pembimbing1_name'] ?? '-') }}</div>
                             @if($p1 && !empty($p1->identifier))
-                                <div class="dosen-id-line">NIDN/NIP. {{ $p1->identifier }}</div>
+                                <div class="dosen-id-line">NIDN. {{ $p1->identifier }}</div>
                             @endif
                         </td>
 
@@ -599,7 +600,7 @@
                                         </tr>
                                     </table>
                                 @else
-                                    <div style="height: 64px;">&nbsp;</div>
+                                    <div style="height: 78px;">&nbsp;</div>
                                 @endif
                             </div>
                             <div class="dosen-name-line">{{ $p2?->name ?? ($formData['pembimbing2_name'] ?? '-') }}</div>
