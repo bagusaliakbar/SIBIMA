@@ -92,7 +92,13 @@
 
         <div>
             <x-input-label for="birth_date" :value="__('Tanggal Lahir')" />
-            <x-text-input id="birth_date" name="birth_date" type="date" max="{{ date('Y-m-d') }}" class="mt-1 block w-full" :value="old('birth_date', $user->birth_date?->format('Y-m-d'))" />
+            <x-date-picker id="birth_date"
+                           name="birth_date"
+                           :max="date('Y-m-d')"
+                           :value="old('birth_date', $user->birth_date?->format('Y-m-d'))"
+                           placeholder="Pilih tanggal lahir"
+                           class="mt-1 w-full"
+                           input-class="w-full h-10 px-3 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm sm:text-sm hover:border-slate-400 dark:hover:border-slate-600 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20" />
             <p class="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400">
                 Tanggal lahir Anda digunakan untuk ucapan & kejutan spesial dari civitas akademika SIBIMA FASILKOM UNSUB.
             </p>

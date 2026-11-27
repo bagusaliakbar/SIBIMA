@@ -125,13 +125,11 @@
                     </select>
 
                     <!-- Compact Inline Date Range -->
-                    <div class="flex items-center justify-between sm:justify-start gap-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-1 w-full sm:w-auto">
-                        <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">Tgl:</span>
-                        <input type="date" name="date_from" value="{{ $dateFrom }}" title="Dari Tanggal"
-                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 min-w-[125px] sm:min-w-[130px] [color-scheme:light] dark:[color-scheme:dark]">
-                        <span class="text-slate-500 dark:text-slate-400 text-xs font-bold">-</span>
-                        <input type="date" name="date_to" value="{{ $dateTo }}" title="Sampai Tanggal"
-                               class="border-0 bg-transparent p-0 text-xs font-semibold text-slate-800 dark:text-slate-100 dark:bg-transparent focus:ring-0 min-w-[125px] sm:min-w-[130px] [color-scheme:light] dark:[color-scheme:dark]">
+                    <div class="flex items-center justify-between sm:justify-start gap-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-2.5 py-0.5 w-full sm:w-auto">
+                        <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 shrink-0">Tgl:</span>
+                        <x-date-picker name="date_from" :value="$dateFrom" title="Dari Tanggal" placeholder="Dari tgl" compact borderless class="w-[126px] sm:w-[132px]" />
+                        <span class="text-slate-500 dark:text-slate-400 text-xs font-bold shrink-0">-</span>
+                        <x-date-picker name="date_to" :value="$dateTo" title="Sampai Tanggal" placeholder="Sampai tgl" compact borderless class="w-[126px] sm:w-[132px]" />
                     </div>
 
                     <!-- Filter Action Buttons Container -->

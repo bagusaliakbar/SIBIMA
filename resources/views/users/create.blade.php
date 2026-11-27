@@ -116,8 +116,13 @@
                         <!-- Tanggal Lahir -->
                         <div>
                             <label for="birth_date" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tanggal Lahir</label>
-                            <input id="birth_date" type="date" name="birth_date" value="{{ old('birth_date') }}" max="{{ date('Y-m-d') }}"
-                                class="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm py-2 transition-colors">
+                            <x-date-picker id="birth_date"
+                                           name="birth_date"
+                                           :value="old('birth_date')"
+                                           :max="date('Y-m-d')"
+                                           placeholder="Pilih tanggal lahir"
+                                           class="mt-1 w-full"
+                                           input-class="w-full h-10 px-3 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm sm:text-sm hover:border-slate-400 dark:hover:border-slate-600 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20" />
                             <p class="mt-1 text-[11px] text-slate-500 italic">Untuk ucapan selamat ulang tahun otomatis via WhatsApp & sistem.</p>
                             <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
                         </div>

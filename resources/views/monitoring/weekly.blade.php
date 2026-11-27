@@ -68,12 +68,12 @@
                         @foreach(request()->except(['date', 'page']) as $k => $v)
                             <input type="hidden" name="{{ $k }}" value="{{ $v }}">
                         @endforeach
-                        <input type="date" 
-                               name="date" 
-                               value="{{ $startDate->format('Y-m-d') }}" 
-                               onchange="this.form.submit()" 
-                               title="Pilih tanggal dalam minggu tertentu"
-                               class="py-1.5 px-2.5 border border-slate-200 dark:border-slate-700 rounded-xl leading-5 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs font-semibold focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-2xs">
+                        <x-date-picker name="date"
+                                       :value="$startDate->format('Y-m-d')"
+                                       onchange="this.form.submit()"
+                                       title="Pilih tanggal dalam minggu tertentu"
+                                       compact
+                                       class="w-40" />
                     </form>
                 </div>
             </div>

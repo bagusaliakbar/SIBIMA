@@ -36,7 +36,14 @@
 
                     <div>
                         <x-input-label for="date" value="Tanggal Pelaksanaan" class="text-[11px] font-black uppercase tracking-widest text-slate-500" />
-                        <x-text-input id="date" name="date" type="date" @change="recheckAll()" class="mt-1 block w-full text-sm" required />
+                        <x-date-picker id="date"
+                                       name="date"
+                                       :value="old('date')"
+                                       @change="recheckAll()"
+                                       placeholder="Pilih tanggal pelaksanaan"
+                                       required
+                                       class="mt-1 w-full"
+                                       input-class="w-full h-10 px-3 text-sm rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-sm hover:border-slate-400 dark:hover:border-slate-600 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20" />
                         <x-input-error :messages="$errors->get('date')" class="mt-2" />
                     </div>
 

@@ -461,14 +461,15 @@
                     <div class="md:col-span-2 space-y-4">
                         <div>
                             <label for="scheduled_date" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Tanggal Bimbingan Baru <span class="text-orange-600">*</span></label>
-                            <input type="date" 
-                                   name="scheduled_date" 
-                                   id="scheduled_date" 
-                                   min="{{ date('Y-m-d') }}"
-                                   x-model="scheduledDate"
-                                   @change="onDateChange()"
-                                   required 
-                                   class="mt-2 block w-full md:w-1/2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 py-2.5 px-3.5 text-slate-900 dark:text-slate-100 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:text-sm sm:leading-6 transition-all">
+                            <x-date-picker name="scheduled_date"
+                                           id="scheduled_date"
+                                           :min="date('Y-m-d')"
+                                           x-model="scheduledDate"
+                                           @change="onDateChange()"
+                                           placeholder="Pilih tanggal bimbingan baru"
+                                           required
+                                           class="mt-2 w-full md:w-1/2"
+                                           input-class="w-full h-11 px-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 shadow-sm text-sm font-medium hover:border-slate-400 dark:hover:border-slate-600 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20" />
                             <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Pilih tanggal baru. Tanggal sebelum hari ini otomatis dinonaktifkan.</p>
                         </div>
 

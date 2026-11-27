@@ -369,8 +369,11 @@
                             <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             Dari Tanggal
                         </label>
-                        <input type="date" name="start_date" value="{{ now()->startOfYear()->format('Y-m-d') }}" 
-                               class="w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+                        <x-date-picker name="start_date"
+                                       :value="now()->startOfYear()->format('Y-m-d')"
+                                       placeholder="Dari tanggal"
+                                       class="w-full"
+                                       input-class="w-full h-10 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all" />
                     </div>
 
                     <!-- Filter 2: Tanggal Selesai -->
@@ -379,8 +382,11 @@
                             <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             Sampai Tanggal
                         </label>
-                        <input type="date" name="end_date" value="{{ now()->format('Y-m-d') }}" 
-                               class="w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+                        <x-date-picker name="end_date"
+                                       :value="now()->format('Y-m-d')"
+                                       placeholder="Sampai tanggal"
+                                       class="w-full"
+                                       input-class="w-full h-10 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all" />
                     </div>
 
                     <!-- Filter 3: Gelombang (Wave) -->

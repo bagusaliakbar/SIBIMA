@@ -621,7 +621,11 @@
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tanggal Lahir <span class="text-rose-500">*</span></label>
-                                                <input type="date" name="birth_date" value="{{ old('birth_date', $resolvedForm['birth_date'] ?? ($prefill['birth_date'] ?? '')) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                                <x-date-picker name="birth_date"
+                                                               :value="old('birth_date', $resolvedForm['birth_date'] ?? ($prefill['birth_date'] ?? ''))"
+                                                               :max="now()->subDay()->format('Y-m-d')"
+                                                               placeholder="Pilih tanggal lahir"
+                                                               required />
                                                 @error('birth_date') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
                                             </div>
                                             <div>
@@ -938,12 +942,12 @@
                                 <label for="birth_date" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                                     Tanggal Lahir <span class="text-rose-500">*</span>
                                 </label>
-                                <input type="date"
-                                       id="birth_date"
-                                       name="birth_date"
-                                       x-model="biodata.birth_date"
-                                       required
-                                       class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                <x-date-picker id="birth_date"
+                                               name="birth_date"
+                                               x-model="biodata.birth_date"
+                                               :max="now()->subDay()->format('Y-m-d')"
+                                               placeholder="Pilih tanggal lahir"
+                                               required />
                                 @error('birth_date') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
 

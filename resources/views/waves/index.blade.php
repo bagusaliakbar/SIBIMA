@@ -202,16 +202,22 @@
                                 <input type="text" name="name" required placeholder="Contoh: Gelombang 1 2024/2025"
                                        class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Mulai</label>
-                                    <input type="date" name="start_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                    <x-date-picker name="start_date"
+                                                   placeholder="Pilih tgl mulai"
+                                                   required
+                                                   class="w-full"
+                                                   input-class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold hover:border-slate-300 dark:hover:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm" />
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Selesai</label>
-                                    <input type="date" name="end_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                    <x-date-picker name="end_date"
+                                                   placeholder="Pilih tgl selesai"
+                                                   required
+                                                   class="w-full"
+                                                   input-class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold hover:border-slate-300 dark:hover:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm" />
                                 </div>
                             </div>
                             <div>
@@ -260,16 +266,24 @@
                                 <input type="text" id="edit-name" name="name" required placeholder="Nama Gelombang"
                                        class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Mulai</label>
-                                    <input type="date" id="edit-start-date" name="start_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                    <x-date-picker id="edit-start-date"
+                                                   name="start_date"
+                                                   placeholder="Pilih tgl mulai"
+                                                   required
+                                                   class="w-full"
+                                                   input-class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold hover:border-slate-300 dark:hover:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm" />
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Tanggal Selesai</label>
-                                    <input type="date" id="edit-end-date" name="end_date" required 
-                                           class="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm">
+                                    <x-date-picker id="edit-end-date"
+                                                   name="end_date"
+                                                   placeholder="Pilih tgl selesai"
+                                                   required
+                                                   class="w-full"
+                                                   input-class="w-full h-12 px-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl text-sm font-bold hover:border-slate-300 dark:hover:border-slate-600 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-orange-500/15 focus:border-orange-500 transition-all shadow-sm" />
                                 </div>
                             </div>
                             <div>
@@ -304,13 +318,12 @@
             form.action = `/waves/${wave.id}`;
             nameInput.value = wave.name;
             
-            // Format dates for input type="date" (YYYY-MM-DD)
-            if (wave.start_date) {
-                startInput.value = wave.start_date.split('T')[0];
-            }
-            if (wave.end_date) {
-                endInput.value = wave.end_date.split('T')[0];
-            }
+            // Format dates for date picker (YYYY-MM-DD) and notify Alpine component
+            startInput.value = wave.start_date ? wave.start_date.split('T')[0] : '';
+            startInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+            endInput.value = wave.end_date ? wave.end_date.split('T')[0] : '';
+            endInput.dispatchEvent(new Event('input', { bubbles: true }));
             
             descInput.value = wave.description || '';
 

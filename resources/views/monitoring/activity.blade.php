@@ -201,10 +201,10 @@
                 @if($period === 'custom')
                     <div class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-3 flex-wrap">
                         <span class="text-xs font-bold text-slate-500">Rentang Tanggal:</span>
-                        <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}" class="py-1.5 px-3 rounded-xl border text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700">
+                        <x-date-picker name="date_from" :value="$filters['date_from'] ?? ''" placeholder="Dari tanggal" compact class="w-40" />
                         <span class="text-xs text-slate-500 dark:text-slate-400">s/d</span>
-                        <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}" class="py-1.5 px-3 rounded-xl border text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700">
-                        <button type="submit" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-xs">Terapkan Tanggal</button>
+                        <x-date-picker name="date_to" :value="$filters['date_to'] ?? ''" placeholder="Sampai tanggal" compact class="w-40" />
+                        <button type="submit" class="h-9 px-3.5 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-xs cursor-pointer">Terapkan Tanggal</button>
                     </div>
                 @endif
             </form>

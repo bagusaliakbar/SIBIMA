@@ -145,11 +145,19 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Dari Tgl</label>
-                            <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0 [color-scheme:light] dark:[color-scheme:dark]">
+                            <x-date-picker name="date_from"
+                                           :value="$filters['date_from'] ?? ''"
+                                           placeholder="Dari tgl"
+                                           compact
+                                           class="w-full" />
                         </div>
                         <div>
                             <label class="block text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Sampai Tgl</label>
-                            <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-0 [color-scheme:light] dark:[color-scheme:dark]">
+                            <x-date-picker name="date_to"
+                                           :value="$filters['date_to'] ?? ''"
+                                           placeholder="Sampai tgl"
+                                           compact
+                                           class="w-full" />
                         </div>
                     </div>
                 </div>

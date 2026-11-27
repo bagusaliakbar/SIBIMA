@@ -304,8 +304,12 @@
                         <!-- Tanggal Surat -->
                         <div>
                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Tanggal Penetapan</label>
-                            <input type="date" name="decree_date" value="{{ now()->format('Y-m-d') }}" required
-                                   class="w-full text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 font-bold focus:ring-orange-500 focus:border-orange-500">
+                            <x-date-picker name="decree_date"
+                                           :value="now()->format('Y-m-d')"
+                                           placeholder="Pilih tanggal penetapan"
+                                           required
+                                           class="w-full"
+                                           input-class="w-full h-9 text-xs rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 px-3 font-bold hover:border-slate-300 dark:hover:border-slate-600 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500" />
                         </div>
 
                         <!-- Format Penomoran -->

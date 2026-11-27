@@ -77,7 +77,10 @@
                         <label class="block text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                             Tanggal Ujian
                         </label>
-                        <input type="date" x-model="form.date" class="w-full text-xs font-semibold rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 focus:ring-2 focus:ring-orange-500">
+                        <x-date-picker x-model="form.date"
+                                       placeholder="Pilih tanggal ujian"
+                                       class="w-full"
+                                       input-class="w-full h-10 px-3 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20" />
                     </div>
 
                     <!-- Pilihan Jumlah Ruangan -->
