@@ -191,7 +191,7 @@ class DefenseDigitalRegistrationFormTest extends TestCase
         $statusRes->assertSee('Pratinjau PDF');
         $statusRes->assertSee(route('thesis-defense-applications.form-pdf', $app->id));
 
-        // Verify Option A rendered HTML view directly: P1 digital signature + QR, P2 blank, Student Materai 10.000, security footer
+        // Verify Option A rendered HTML view directly: P1 centered digital signature (no supervisor QR), P2 blank, Student Materai 10.000, security footer
         $renderedHtml = view('thesis_defenses.form_pdf', [
             'application' => $app->load(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave']),
             'formData' => $app->getResolvedFormData(),
@@ -200,8 +200,6 @@ class DefenseDigitalRegistrationFormTest extends TestCase
             'p2' => $setup['p2'],
             'p1Signature' => $setup['p1']->decrypted_signature,
             'p2Signature' => null,
-            'p1QrSvg' => base64_encode('<svg></svg>'),
-            'p2QrSvg' => null,
         ])->render();
 
         $this->assertStringContainsString('FORMULIR PENDAFTARAN SIDANG SKRIPSI/TUGAS AKHIR', $renderedHtml);
@@ -210,8 +208,9 @@ class DefenseDigitalRegistrationFormTest extends TestCase
         $this->assertStringContainsString('SISTEM INFORMASI / S1', $renderedHtml);
         $this->assertStringContainsString('Materai<br>10.000', $renderedHtml);
         $this->assertStringContainsString('alt="TTD Pembimbing 1"', $renderedHtml);
-        $this->assertStringContainsString('alt="QR Verifikasi Pembimbing 1"', $renderedHtml);
+        $this->assertStringNotContainsString('alt="QR Verifikasi Pembimbing 1"', $renderedHtml);
         $this->assertStringNotContainsString('alt="TTD Pembimbing 2"', $renderedHtml);
+        $this->assertStringNotContainsString('alt="QR Verifikasi Pembimbing 2"', $renderedHtml);
         $this->assertStringContainsString('SIBIMA FASILKOM UNSUB', $renderedHtml);
         $this->assertStringContainsString('Dokumen Pendaftaran SIDANG', $renderedHtml);
         $this->assertStringContainsString($app->getIntegrityCode(), $renderedHtml);

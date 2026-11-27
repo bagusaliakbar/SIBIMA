@@ -302,36 +302,33 @@
 
         .sig-area {
             height: 82px;
-            vertical-align: middle;
             margin: 4px 0 4px 0;
+            text-align: center;
         }
 
         .sig-inner-table {
-            margin: 0 auto;
+            width: 100%;
             height: 78px;
+            margin: 0 auto;
             border-collapse: collapse;
         }
 
         .sig-inner-table td {
-            width: auto !important;
+            width: 100% !important;
+            height: 78px;
             border: none !important;
-            padding: 0 8px !important;
+            padding: 0 !important;
+            text-align: center !important;
             vertical-align: middle !important;
         }
 
         .sig-img {
-            max-height: 74px;
-            max-width: 170px;
+            max-height: 76px;
+            max-width: 190px;
             width: auto;
             height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .qr-img {
-            width: 56px;
-            height: 56px;
-            display: block;
+            display: inline-block;
+            vertical-align: middle;
         }
 
         .dosen-name-line {
@@ -631,23 +628,16 @@
             <td colspan="3" class="supervisors-wrapper-cell">
                 <table class="supervisors-table">
                     <tr>
-                        {{-- Dosen Pembimbing 1 (Opsi A: TTD Digital + QR jika tersedia & ACC Sidang, kosong jika belum) --}}
+                        {{-- Dosen Pembimbing 1 (Opsi A: TTD Digital jika tersedia & ACC Sidang, kosong jika belum) --}}
                         <td class="left-col">
                             <div class="sign-role-title">Dosen Pembimbing 1</div>
                             <div class="sig-area">
-                                @if(!empty($p1Signature))
+                                @if(!empty($p1Signature) && ($canEmbedPng || !str_contains($p1Signature, 'image/png')))
                                     <table class="sig-inner-table">
                                         <tr>
-                                            @if($canEmbedPng || !str_contains($p1Signature, 'image/png'))
-                                                <td>
-                                                    <img src="{{ $p1Signature }}" class="sig-img" alt="TTD Pembimbing 1">
-                                                </td>
-                                            @endif
-                                            @if(!empty($p1QrSvg))
-                                                <td>
-                                                    <img src="data:image/svg+xml;base64,{{ $p1QrSvg }}" class="qr-img" alt="QR Verifikasi Pembimbing 1">
-                                                </td>
-                                            @endif
+                                            <td>
+                                                <img src="{{ $p1Signature }}" class="sig-img" alt="TTD Pembimbing 1">
+                                            </td>
                                         </tr>
                                     </table>
                                 @else
@@ -660,23 +650,16 @@
                             @endif
                         </td>
 
-                        {{-- Dosen Pembimbing 2 (Opsi A: TTD Digital + QR jika tersedia & ACC Sidang, kosong jika belum) --}}
+                        {{-- Dosen Pembimbing 2 (Opsi A: TTD Digital jika tersedia & ACC Sidang, kosong jika belum) --}}
                         <td>
                             <div class="sign-role-title">Dosen Pembimbing 2</div>
                             <div class="sig-area">
-                                @if(!empty($p2Signature))
+                                @if(!empty($p2Signature) && ($canEmbedPng || !str_contains($p2Signature, 'image/png')))
                                     <table class="sig-inner-table">
                                         <tr>
-                                            @if($canEmbedPng || !str_contains($p2Signature, 'image/png'))
-                                                <td>
-                                                    <img src="{{ $p2Signature }}" class="sig-img" alt="TTD Pembimbing 2">
-                                                </td>
-                                            @endif
-                                            @if(!empty($p2QrSvg))
-                                                <td>
-                                                    <img src="data:image/svg+xml;base64,{{ $p2QrSvg }}" class="qr-img" alt="QR Verifikasi Pembimbing 2">
-                                                </td>
-                                            @endif
+                                            <td>
+                                                <img src="{{ $p2Signature }}" class="sig-img" alt="TTD Pembimbing 2">
+                                            </td>
                                         </tr>
                                     </table>
                                 @else

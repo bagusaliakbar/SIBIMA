@@ -614,29 +614,9 @@ class SeminarApplicationController extends Controller
         $p1 = $thesis?->pembimbing1;
         $p2 = $thesis?->pembimbing2;
 
-        // Option A: Auto-stamp lecturer digital signature + verification QR only if ACC UP is granted and lecturer uploaded a signature
+        // Option A: Auto-stamp lecturer digital signature only if ACC UP is granted and lecturer uploaded a signature
         $p1Signature = ($thesis && $thesis->acc_up_p1 && $p1 && $p1->decrypted_signature) ? $p1->decrypted_signature : null;
         $p2Signature = ($thesis && $thesis->acc_up_p2 && $p2 && $p2->decrypted_signature) ? $p2->decrypted_signature : null;
-
-        $p1QrSvg = null;
-        if ($p1Signature && $p1 && !empty($p1->signature_token)) {
-            $p1QrSvg = base64_encode(
-                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
-                    ->size(96)
-                    ->margin(0)
-                    ->generate(url('/verify-signature/' . $p1->signature_token))
-            );
-        }
-
-        $p2QrSvg = null;
-        if ($p2Signature && $p2 && !empty($p2->signature_token)) {
-            $p2QrSvg = base64_encode(
-                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
-                    ->size(96)
-                    ->margin(0)
-                    ->generate(url('/verify-signature/' . $p2->signature_token))
-            );
-        }
 
         $verificationToken = $application->ensureVerificationToken();
         $verificationUrl = route('document.verify', $verificationToken);
@@ -656,8 +636,6 @@ class SeminarApplicationController extends Controller
             'p2' => $p2,
             'p1Signature' => $p1Signature,
             'p2Signature' => $p2Signature,
-            'p1QrSvg' => $p1QrSvg,
-            'p2QrSvg' => $p2QrSvg,
             'verificationToken' => $verificationToken,
             'verificationUrl' => $verificationUrl,
             'integrityCode' => $integrityCode,
