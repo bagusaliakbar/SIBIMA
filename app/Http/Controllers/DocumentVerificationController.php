@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SeminarApplication;
 use App\Models\SeminarScheduleDetail;
+use App\Models\ThesisDefenseApplication;
 use App\Models\ThesisDefenseScheduleDetail;
 
 class DocumentVerificationController extends Controller
@@ -39,6 +40,22 @@ class DocumentVerificationController extends Controller
             $integrityCode = $application->getIntegrityCode();
 
             return view('verification.seminar_application', compact('application', 'formData', 'integrityCode'));
+        }
+
+        // 4. Check Thesis Defense Registration Form Application
+        $defenseApplication = ThesisDefenseApplication::with(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave'])
+            ->where('verification_token', $token)
+            ->first();
+
+        if ($defenseApplication) {
+            $formData = $defenseApplication->getResolvedFormData();
+            $integrityCode = $defenseApplication->getIntegrityCode();
+
+            return view('verification.defense_application', [
+                'application' => $defenseApplication,
+                'formData' => $formData,
+                'integrityCode' => $integrityCode,
+            ]);
         }
 
         return view('verification.invalid');

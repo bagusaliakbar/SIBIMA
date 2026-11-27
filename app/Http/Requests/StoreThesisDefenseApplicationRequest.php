@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\ThesisDefenseApplication;
 use App\Models\Thesis;
+use App\Models\ThesisDefenseApplication;
+use App\Models\Wave;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,13 +20,23 @@ class StoreThesisDefenseApplicationRequest extends FormRequest
         $thesis = Thesis::where('student_id', Auth::id())->first();
         if (!$thesis) return [];
 
-        $existingApplication = ThesisDefenseApplication::where('thesis_id', $thesis->id)->first();
-        
+        $activeWave = Wave::getCurrentActive();
+        $existingApplication = ThesisDefenseApplication::where('thesis_id', $thesis->id)
+            ->when($activeWave, fn ($q) => $q->where('wave_id', $activeWave->id))
+            ->first();
+
+        if (!$existingApplication) {
+            $existingApplication = ThesisDefenseApplication::where('thesis_id', $thesis->id)
+                ->latest()
+                ->first();
+        }
+
+        // 19 Google Drive files (file_formulir is now generated automatically from the digital form)
         $files = [
-            'file_formulir', 'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
+            'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
             'file_skripsi', 'file_ktm', 'file_pkkmb_univ', 'file_pkkmb_fak', 'file_makrab',
             'file_cisco', 'file_workshop', 'file_organisasi', 'file_toefl', 'file_kewirausahaan',
-            'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah'
+            'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah',
         ];
 
         $safeUrlRule = function (string $attribute, mixed $value, \Closure $fail) {
@@ -46,6 +57,30 @@ class StoreThesisDefenseApplicationRequest extends FormRequest
                 $rules[$file] = ['nullable', 'url', $safeUrlRule];
             }
         }
+
+        // Backward-compatible legacy URL field (optional — replaced by built-in digital form)
+        $rules['file_formulir'] = ['nullable', 'url', $safeUrlRule];
+
+        $isFormulirRejected = isset($existingApplication->file_reviews['file_formulir']['status'])
+            && $existingApplication->file_reviews['file_formulir']['status'] === 'rejected';
+
+        $needsDigitalForm = !$existingApplication
+            || (!$existingApplication->hasDigitalForm() && empty($existingApplication->file_formulir))
+            || $isFormulirRejected;
+
+        $formRequirement = $needsDigitalForm ? 'required' : 'nullable';
+
+        $rules['birth_place'] = [$formRequirement, 'string', 'max:120'];
+        $rules['birth_date'] = [$formRequirement, 'date', 'before:today'];
+        $rules['study_program'] = ['nullable', 'string', 'max:120'];
+        $rules['semester_number'] = [$formRequirement, 'integer', 'min:1', 'max:20'];
+        $rules['academic_year'] = [$formRequirement, 'string', 'max:50'];
+        $rules['address'] = [$formRequirement, 'string', 'max:500'];
+        $rules['postal_code'] = [$formRequirement, 'string', 'max:10'];
+        $rules['home_phone'] = ['nullable', 'string', 'max:30'];
+        $rules['email'] = [$formRequirement, 'email', 'max:255'];
+        $rules['phone_number'] = [$formRequirement, 'string', 'max:25'];
+        $rules['statement_agreed'] = $needsDigitalForm ? ['accepted'] : ['nullable', 'boolean'];
 
         return $rules;
     }
@@ -73,6 +108,17 @@ class StoreThesisDefenseApplicationRequest extends FormRequest
             'file_perpus_pinjam' => 'link surat bebas pinjam perpustakaan',
             'file_perpus_sumbang' => 'link surat bebas sumbang perpustakaan',
             'file_ijazah' => 'link ijazah terakhir',
+            'birth_place' => 'tempat lahir',
+            'birth_date' => 'tanggal lahir',
+            'study_program' => 'program studi/jenjang',
+            'semester_number' => 'semester',
+            'academic_year' => 'tahun akademik',
+            'address' => 'alamat lengkap',
+            'postal_code' => 'kode pos',
+            'home_phone' => 'nomor telepon',
+            'email' => 'alamat e-mail',
+            'phone_number' => 'nomor HP',
+            'statement_agreed' => 'pernyataan kesiapan sidang',
         ];
     }
 
@@ -81,6 +127,10 @@ class StoreThesisDefenseApplicationRequest extends FormRequest
         return [
             'required' => ':attribute wajib diisi.',
             'url' => ':attribute harus berupa URL/link Google Drive yang valid.',
+            'email' => ':attribute harus berupa alamat e-mail yang valid.',
+            'date' => ':attribute harus berupa format tanggal yang valid.',
+            'before' => ':attribute harus sebelum hari ini.',
+            'accepted' => 'Anda wajib menyetujui :attribute sebelum mengirim pengajuan.',
         ];
     }
 }

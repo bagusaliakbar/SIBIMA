@@ -176,6 +176,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/thesis-defense-applications', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'store'])->name('thesis-defense-applications.store');
     Route::post('/thesis-defense-applications/upload-template', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'uploadTemplate'])->name('thesis-defense-applications.upload-template');
     Route::patch('/thesis-defense-applications/{application}/validate', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'validateApplication'])->name('thesis-defense-applications.validate');
+    Route::get('/thesis-defense-applications/{application}/form-pdf', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'downloadFormPdf'])->name('thesis-defense-applications.form-pdf');
     Route::get('/thesis-defense-applications/{application}/download-zip', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'downloadZip'])->name('thesis-defense-applications.download-zip');
     Route::delete('/thesis-defense-applications/{application}', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'destroy'])->name('thesis-defense-applications.destroy');
     Route::post('/thesis-defense-applications/admin-register', [App\Http\Controllers\ThesisDefenseApplicationController::class, 'adminRegister'])->name('thesis-defense-applications.admin-register')->middleware('role:admin,kaprodi');

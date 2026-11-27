@@ -78,8 +78,9 @@ class SeminarDigitalRegistrationFormTest extends TestCase
         $response->assertSee('Rina Kartika');
         $response->assertSee('D1A220123');
         $response->assertSee('Rancang Bangun Sistem Informasi Akademik Berbasis Web');
-        $response->assertSee('TTD Digital + QR otomatis terpasang di PDF');
-        $response->assertSee('Area TTD basah disiapkan di PDF');
+        $response->assertSee('Dr. Pembimbing Satu, M.Kom');
+        $response->assertSee('Ir. Pembimbing Dua, M.T');
+        $response->assertSee('Kosong + Kotak Materai 10.000');
         $response->assertSee('4 Berkas Google Drive');
         $response->assertDontSee('name="file_formulir"', false);
     }

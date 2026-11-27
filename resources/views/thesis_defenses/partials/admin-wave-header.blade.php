@@ -35,7 +35,10 @@
             {{-- Template Management --}}
             <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
-                    <h3 class="text-[11px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-[0.2em]">Templat Formulir Sidang</h3>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h3 class="text-[11px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-[0.2em]">Templat Formulir Sidang</h3>
+                        <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-[10px] font-bold">Form Digital PDF Aktif</span>
+                    </div>
                     @if($template)
                         <div class="flex items-center gap-3 mt-2">
                             <div class="p-2 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl border border-emerald-100 dark:border-emerald-500/20">

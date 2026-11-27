@@ -455,10 +455,21 @@
                                     }
                                 }
 
+                                $hasDigitalForm = $app->hasDigitalForm();
+                                $formulirUrl = $hasDigitalForm
+                                    ? route('thesis-defense-applications.form-pdf', ['application' => $app->id, 'inline' => 1])
+                                    : $app->file_formulir;
+                                $formulirDownloadUrl = $hasDigitalForm
+                                    ? route('thesis-defense-applications.form-pdf', $app->id)
+                                    : null;
+
                                 $appData = [
                                     'id' => $app->id,
                                     'validate_url' => route('thesis-defense-applications.validate', $app->id),
                                     'download_zip_url' => route('thesis-defense-applications.download-zip', $app->id),
+                                    'has_digital_form' => $hasDigitalForm,
+                                    'form_pdf_download_url' => $formulirDownloadUrl,
+                                    'form_data' => $hasDigitalForm ? $app->getResolvedFormData() : null,
                                     'student_name' => $student->name,
                                     'student_id' => $student->identifier,
                                     'student_email' => $student->email,
@@ -476,7 +487,7 @@
                                     'admin_feedback' => $app->admin_feedback,
                                     'file_reviews' => $app->file_reviews ?? [],
                                     'files' => [
-                                        'file_formulir' => $app->file_formulir,
+                                        'file_formulir' => $formulirUrl,
                                         'file_transkrip' => $app->file_transkrip,
                                         'file_acc_pembimbing' => $app->file_acc_pembimbing,
                                         'file_logbook' => $app->file_logbook,
@@ -552,6 +563,23 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
                                         </button>
+
+                                        @if($hasDigitalForm)
+                                            @php
+                                                $formulirReview = $app->file_reviews['file_formulir'] ?? null;
+                                                $isFormulirRejected = ($formulirReview['status'] ?? '') === 'rejected';
+                                            @endphp
+                                            <a href="{{ $formulirUrl }}" target="_blank"
+                                               class="inline-flex items-center gap-1 px-2.5 py-1 border {{ $isFormulirRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300' : 'border-blue-200 dark:border-blue-800/60 bg-blue-50/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50' }} rounded-lg text-[11px] font-bold transition-all shadow-2xs"
+                                               title="{{ $isFormulirRejected ? 'Ditolak: ' . ($formulirReview['note'] ?? 'Perlu revisi') : 'Lihat PDF Formulir Digital SIBIMA' }}">
+                                                <span>Formulir (PDF)</span>
+                                                @if($isFormulirRejected)
+                                                    <span class="text-rose-500 font-black text-xs">✕</span>
+                                                @else
+                                                    <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                @endif
+                                            </a>
+                                        @endif
 
                                         @if($rejectedCount > 0)
                                             <span class="inline-flex items-center gap-1 text-[11px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-800/80">

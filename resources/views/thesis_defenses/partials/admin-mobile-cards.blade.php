@@ -13,10 +13,20 @@
                                 if (($rev['status'] ?? '') === 'rejected') $rejectedCount++;
                             }
                         }
+                        $mHasDigitalForm = $app->hasDigitalForm();
+                        $mFormulirUrl = $mHasDigitalForm
+                            ? route('thesis-defense-applications.form-pdf', ['application' => $app->id, 'inline' => 1])
+                            : $app->file_formulir;
+                        $mFormulirDownloadUrl = $mHasDigitalForm
+                            ? route('thesis-defense-applications.form-pdf', $app->id)
+                            : null;
                         $mAppData = [
                             'id' => $app->id,
                             'validate_url' => route('thesis-defense-applications.validate', $app->id),
                             'download_zip_url' => route('thesis-defense-applications.download-zip', $app->id),
+                            'has_digital_form' => $mHasDigitalForm,
+                            'form_pdf_download_url' => $mFormulirDownloadUrl,
+                            'form_data' => $mHasDigitalForm ? $app->getResolvedFormData() : null,
                             'student_name' => $student->name,
                             'student_id' => $student->identifier,
                             'student_email' => $student->email,
@@ -34,7 +44,7 @@
                             'admin_feedback' => $app->admin_feedback,
                             'file_reviews' => $app->file_reviews ?? [],
                             'files' => [
-                                'file_formulir' => $app->file_formulir, 'file_transkrip' => $app->file_transkrip,
+                                'file_formulir' => $mFormulirUrl, 'file_transkrip' => $app->file_transkrip,
                                 'file_acc_pembimbing' => $app->file_acc_pembimbing, 'file_logbook' => $app->file_logbook,
                                 'file_pembayaran' => $app->file_pembayaran, 'file_skripsi' => $app->file_skripsi,
                                 'file_ktm' => $app->file_ktm, 'file_pkkmb_univ' => $app->file_pkkmb_univ,
@@ -68,11 +78,17 @@
                             <p class="text-xs text-slate-700 dark:text-slate-300 line-clamp-2 bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/60">{{ $app->thesis->title }}</p>
                         @endif
 
-                        <div class="flex items-center justify-between gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <button type="button" @click="selectedApp = {{ json_encode($mAppData) }}; showFiles = true" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border {{ $rejectedCount > 0 ? 'border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300' : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200' }} rounded-xl text-xs font-bold cursor-pointer">
                                 <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 <span>20 Berkas{{ $rejectedCount > 0 ? " ({$rejectedCount} Ditolak)" : '' }}</span>
                             </button>
+                            @if($mHasDigitalForm)
+                                <a href="{{ $mFormulirUrl }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 rounded-xl text-xs font-bold">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                    <span>Formulir (PDF)</span>
+                                </a>
+                            @endif
                         </div>
 
                         <div class="flex items-center gap-2 pt-1">

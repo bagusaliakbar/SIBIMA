@@ -61,8 +61,31 @@ class ThesisDefenseApplicationController extends Controller
             
             $isEligible = $thesis && $thesis->isAccSidangFinal();
             $template = ThesisDefenseTemplate::where('is_active', true)->latest()->first();
-            
-            return view('thesis_defenses.student_index', compact('thesis', 'application', 'isEligible', 'template', 'activeWave'));
+            $defaultAcademicPeriod = ThesisDefenseApplication::getDefaultAcademicPeriod();
+
+            $latestSeminarForm = $thesis
+                ? \App\Models\SeminarApplication::where('thesis_id', $thesis->id)
+                    ->whereNotNull('form_data')
+                    ->latest()
+                    ->value('form_data')
+                : null;
+            if (!is_array($latestSeminarForm)) {
+                $latestSeminarForm = [];
+            }
+
+            $prefillBiodata = [
+                'birth_place' => $user->birth_place ?: ($latestSeminarForm['birth_place'] ?? ''),
+                'birth_date' => $user->birth_date ? $user->birth_date->format('Y-m-d') : ($latestSeminarForm['birth_date'] ?? ''),
+                'semester_number' => (string) ($user->current_semester ?? ($latestSeminarForm['semester_number'] ?? 8)),
+                'academic_year' => $defaultAcademicPeriod['label'],
+                'email' => $user->email ?: ($latestSeminarForm['email'] ?? ''),
+                'phone_number' => $user->phone_number ?: ($latestSeminarForm['phone_number'] ?? ''),
+                'address' => $user->address ?: ($latestSeminarForm['address'] ?? ''),
+                'postal_code' => $user->postal_code ?: ($latestSeminarForm['postal_code'] ?? ''),
+                'home_phone' => $user->home_phone ?: ($latestSeminarForm['home_phone'] ?? ''),
+            ];
+
+            return view('thesis_defenses.student_index', compact('thesis', 'application', 'isEligible', 'template', 'activeWave', 'defaultAcademicPeriod', 'prefillBiodata'));
         }
 
         if ($user->role === 'admin' || $user->role === 'kaprodi') {
@@ -443,7 +466,7 @@ class ThesisDefenseApplicationController extends Controller
             return redirect()->back()->with('error', 'Pendaftaran sidang belum dibuka (tidak ada gelombang aktif).');
         }
 
-        $thesis = Thesis::where('student_id', Auth::id())->first();
+        $thesis = Thesis::where('student_id', Auth::id())->with(['pembimbing1', 'pembimbing2'])->first();
         if (!$thesis || !$thesis->isAccSidangFinal()) {
             return redirect()->back()->with('error', 'Anda belum memenuhi syarat untuk mengajukan sidang skripsi.');
         }
@@ -456,19 +479,19 @@ class ThesisDefenseApplicationController extends Controller
         }
 
         $files = [
-            'file_formulir', 'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
+            'file_transkrip', 'file_acc_pembimbing', 'file_logbook', 'file_pembayaran',
             'file_skripsi', 'file_ktm', 'file_pkkmb_univ', 'file_pkkmb_fak', 'file_makrab',
             'file_cisco', 'file_workshop', 'file_organisasi', 'file_toefl', 'file_kewirausahaan',
-            'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah'
+            'file_tahsin', 'file_komputer', 'file_perpus_pinjam', 'file_perpus_sumbang', 'file_ijazah',
         ];
 
         $formRequest = new StoreThesisDefenseApplicationRequest();
         $rules = $formRequest->rules();
 
         $validator = \Illuminate\Support\Facades\Validator::make(
-            $request->all(), 
-            $rules, 
-            $formRequest->messages(), 
+            $request->all(),
+            $rules,
+            $formRequest->messages(),
             $formRequest->attributes()
         );
 
@@ -485,12 +508,72 @@ class ThesisDefenseApplicationController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $extraData = [];
+        $hasSubmittedFormFields = $request->filled('birth_place')
+            || $request->filled('address')
+            || $request->boolean('statement_agreed');
+
+        if ($hasSubmittedFormFields) {
+            $user = Auth::user();
+            $existingApplication = ThesisDefenseApplication::where('thesis_id', $thesis->id)
+                ->where('wave_id', $activeWave->id)
+                ->first();
+
+            $studyProgram = ThesisDefenseApplication::DEFAULT_STUDY_PROGRAM;
+            $defaultPeriod = ThesisDefenseApplication::getDefaultAcademicPeriod();
+
+            $formData = [
+                'full_name' => trim((string) $user->name),
+                'birth_place' => trim((string) $request->input('birth_place', $user->birth_place ?? '')),
+                'birth_date' => $request->input('birth_date', $user->birth_date?->format('Y-m-d')),
+                'npm' => trim((string) ($user->identifier ?? '')),
+                'study_program' => $studyProgram,
+                'semester_number' => (int) $request->input('semester_number', $user->current_semester ?? 8),
+                'academic_year' => trim((string) $request->input('academic_year', $defaultPeriod['label'])),
+                'address' => trim((string) $request->input('address', $user->address ?? '')),
+                'postal_code' => trim((string) $request->input('postal_code', $user->postal_code ?? '')),
+                'home_phone' => trim((string) $request->input('home_phone', $user->home_phone ?? '')),
+                'email' => trim((string) $request->input('email', $user->email ?? '')),
+                'phone_number' => trim((string) $request->input('phone_number', $user->phone_number ?? '')),
+                'thesis_title' => trim((string) ($thesis->display_title ?? '')),
+                'pembimbing1_name' => $thesis->pembimbing1?->name ?? '-',
+                'pembimbing2_name' => $thesis->pembimbing2?->name ?? '-',
+                'submitted_at' => now()->toIso8601String(),
+            ];
+
+            // Sync reusable biodata back to user profile
+            $user->fill([
+                'birth_place' => $formData['birth_place'] ?: $user->birth_place,
+                'birth_date' => $formData['birth_date'] ?: $user->birth_date,
+                'study_program' => $studyProgram,
+                'address' => $formData['address'] ?: $user->address,
+                'postal_code' => $formData['postal_code'] ?: $user->postal_code,
+                'home_phone' => $formData['home_phone'] !== '' ? $formData['home_phone'] : $user->home_phone,
+                'phone_number' => $formData['phone_number'] ?: $user->phone_number,
+            ])->save();
+
+            $extraData = [
+                'form_data' => $formData,
+                'statement_agreed_at' => now(),
+                'verification_token' => $existingApplication?->verification_token ?: Str::random(32),
+            ];
+        } elseif ($request->filled('file_formulir')) {
+            $extraData['file_formulir'] = $request->input('file_formulir');
+        }
+
         try {
             $this->applicationService->submitApplication(
-                ThesisDefenseApplication::class, $thesis, $activeWave, $request, $files,
-                'Pengajuan Sidang', 'Pengajuan Sidang Baru', 'thesis-defense-applications.index'
+                ThesisDefenseApplication::class,
+                $thesis,
+                $activeWave,
+                $request,
+                $files,
+                'Pengajuan Sidang',
+                'Pengajuan Sidang Baru',
+                'thesis-defense-applications.index',
+                $extraData
             );
-            return redirect()->route('thesis-defense-applications.index')->with('success', 'Pengajuan sidang skripsi berhasil dikirim. Menunggu validasi admin.');
+            return redirect()->route('thesis-defense-applications.index')->with('success', 'Pengajuan sidang skripsi berhasil dikirim. Anda dapat langsung mencetak Formulir Pendaftaran Sidang (PDF) untuk diserahkan ke BAAK.');
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', 'Gagal mengajukan sidang skripsi: ' . $e->getMessage())->withInput();
         }
@@ -554,12 +637,97 @@ class ThesisDefenseApplicationController extends Controller
         }
     }
 
+    protected function buildFormPdf(ThesisDefenseApplication $application)
+    {
+        $application->loadMissing(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave']);
+
+        $formData = $application->getResolvedFormData();
+        $thesis = $application->thesis;
+        $p1 = $thesis?->pembimbing1;
+        $p2 = $thesis?->pembimbing2;
+
+        // Option A: Auto-stamp lecturer digital signature + verification QR only if ACC Sidang is granted and lecturer uploaded a signature
+        $p1Signature = ($thesis && $thesis->acc_sidang_p1 && $p1 && $p1->decrypted_signature) ? $p1->decrypted_signature : null;
+        $p2Signature = ($thesis && $thesis->acc_sidang_p2 && $p2 && $p2->decrypted_signature) ? $p2->decrypted_signature : null;
+
+        $p1QrSvg = null;
+        if ($p1Signature && $p1 && !empty($p1->signature_token)) {
+            $p1QrSvg = base64_encode(
+                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
+                    ->size(96)
+                    ->margin(0)
+                    ->generate(url('/verify-signature/' . $p1->signature_token))
+            );
+        }
+
+        $p2QrSvg = null;
+        if ($p2Signature && $p2 && !empty($p2->signature_token)) {
+            $p2QrSvg = base64_encode(
+                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
+                    ->size(96)
+                    ->margin(0)
+                    ->generate(url('/verify-signature/' . $p2->signature_token))
+            );
+        }
+
+        $verificationToken = $application->ensureVerificationToken();
+        $verificationUrl = route('document.verify', $verificationToken);
+        $integrityCode = $application->getIntegrityCode();
+        $documentQrSvg = base64_encode(
+            \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
+                ->size(96)
+                ->margin(0)
+                ->generate($verificationUrl)
+        );
+
+        return Pdf::loadView('thesis_defenses.form_pdf', [
+            'application' => $application,
+            'formData' => $formData,
+            'thesis' => $thesis,
+            'p1' => $p1,
+            'p2' => $p2,
+            'p1Signature' => $p1Signature,
+            'p2Signature' => $p2Signature,
+            'p1QrSvg' => $p1QrSvg,
+            'p2QrSvg' => $p2QrSvg,
+            'verificationToken' => $verificationToken,
+            'verificationUrl' => $verificationUrl,
+            'integrityCode' => $integrityCode,
+            'documentQrSvg' => $documentQrSvg,
+        ])->setPaper('a4', 'portrait');
+    }
+
+    public function downloadFormPdf(Request $request, ThesisDefenseApplication $application)
+    {
+        $user = Auth::user();
+        $application->loadMissing(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave']);
+        $thesis = $application->thesis;
+
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'], true)
+            || ($user->role === 'mahasiswa' && $thesis && $thesis->student_id === $user->id)
+            || ($user->role === 'dosen' && $thesis && ($thesis->pembimbing1_id === $user->id || $thesis->pembimbing2_id === $user->id));
+
+        if (!$isAuthorized) {
+            abort(403, 'Anda tidak memiliki akses untuk mengunduh formulir pendaftaran sidang ini.');
+        }
+
+        $pdf = $this->buildFormPdf($application);
+        $npm = preg_replace('/[^A-Za-z0-9_-]/', '_', (string) ($thesis?->student?->identifier ?? $application->id));
+        $studentName = preg_replace('/[^A-Za-z0-9_-]/', '_', (string) ($thesis?->student?->name ?? 'Mahasiswa'));
+        $filename = "Formulir_Pendaftaran_Sidang_{$npm}_{$studentName}.pdf";
+
+        if ($request->boolean('inline')) {
+            return $pdf->stream($filename);
+        }
+
+        return $pdf->download($filename);
+    }
+
     public function downloadZip(ThesisDefenseApplication $application)
     {
         if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') abort(403);
 
         $fileMap = [
-            'file_formulir' => '1_Formulir_Pendaftaran',
             'file_transkrip' => '2_Transkrip_Nilai',
             'file_acc_pembimbing' => '3_ACC_Pembimbing',
             'file_logbook' => '4_Logbook',
@@ -581,7 +749,14 @@ class ThesisDefenseApplicationController extends Controller
             'file_ijazah' => '20_Ijazah_SMA',
         ];
 
-        $tempFile = $this->applicationService->downloadZip($application, 'Sidang', $fileMap);
+        $extraVirtualFiles = [];
+        if ($application->hasDigitalForm()) {
+            $extraVirtualFiles['1_Formulir_Pendaftaran.pdf'] = $this->buildFormPdf($application)->output();
+        } else {
+            $fileMap = array_merge(['file_formulir' => '1_Formulir_Pendaftaran'], $fileMap);
+        }
+
+        $tempFile = $this->applicationService->downloadZip($application, 'Sidang', $fileMap, $extraVirtualFiles);
 
         if ($tempFile) {
             $fileName = "Sidang_{$application->thesis->student->identifier}_" . str_replace(' ', '_', $application->thesis->student->name) . ".zip";
