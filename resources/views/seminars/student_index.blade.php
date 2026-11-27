@@ -402,7 +402,7 @@
                         ];
                     @endphp
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         @foreach($fileFields as $field => $info)
                             @php
                                 $review = $application->file_reviews[$field] ?? null;
@@ -411,7 +411,7 @@
                                 $isDigitalCard = $field === 'file_formulir' && $hasDigitalForm;
                                 $hasFile = $isDigitalCard || !empty($application->$field);
                             @endphp
-                            <div class="group relative flex flex-col justify-between p-4 rounded-2xl border transition-all {{ $isRejected ? 'border-rose-200 bg-rose-50/40 dark:border-rose-800/60 dark:bg-rose-950/20' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700' }}">
+                            <div class="group relative flex flex-col justify-between p-4 rounded-2xl border transition-all {{ $field === 'file_formulir' ? 'md:col-span-2' : '' }} {{ $isRejected ? 'border-rose-200 bg-rose-50/40 dark:border-rose-800/60 dark:bg-rose-950/20' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700' }}">
                                 <div>
                                     <div class="flex items-start justify-between gap-3 mb-3">
                                         <div class="flex items-center gap-3 min-w-0">
@@ -466,18 +466,18 @@
                                 </div>
 
                                 @if($isDigitalCard)
-                                    <div class="mt-auto p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 text-[11px] space-y-1.5 text-slate-600 dark:text-slate-300">
-                                        <div class="flex justify-between gap-2">
-                                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Prodi:</span>
-                                            <span class="font-semibold text-right truncate">{{ $resolvedForm['study_program'] }}</span>
+                                    <div class="mt-auto p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-600 dark:text-slate-300">
+                                        <div>
+                                            <span class="block text-[11px] text-slate-500 dark:text-slate-400">Program Studi / Jenjang</span>
+                                            <span class="block font-semibold text-slate-800 dark:text-slate-100 mt-0.5">{{ $resolvedForm['study_program'] }}</span>
                                         </div>
-                                        <div class="flex justify-between gap-2">
-                                            <span class="text-slate-500 dark:text-slate-400 shrink-0">TTL:</span>
-                                            <span class="font-semibold text-right truncate">{{ $resolvedForm['birth_place'] }}, {{ $resolvedForm['birth_date'] ? \Carbon\Carbon::parse($resolvedForm['birth_date'])->locale('id')->translatedFormat('d M Y') : '-' }}</span>
+                                        <div>
+                                            <span class="block text-[11px] text-slate-500 dark:text-slate-400">Tempat / Tanggal Lahir</span>
+                                            <span class="block font-semibold text-slate-800 dark:text-slate-100 mt-0.5">{{ $resolvedForm['birth_place'] }}, {{ $resolvedForm['birth_date'] ? \Carbon\Carbon::parse($resolvedForm['birth_date'])->locale('id')->translatedFormat('d M Y') : '-' }}</span>
                                         </div>
-                                        <div class="flex justify-between gap-2">
-                                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Sem / TA:</span>
-                                            <span class="font-semibold text-right truncate">Sem {{ $resolvedForm['semester_number'] }} / {{ $resolvedForm['academic_year'] }}</span>
+                                        <div>
+                                            <span class="block text-[11px] text-slate-500 dark:text-slate-400">Semester / Tahun Akademik</span>
+                                            <span class="block font-semibold text-slate-800 dark:text-slate-100 mt-0.5">Semester {{ $resolvedForm['semester_number'] }} / {{ $resolvedForm['academic_year'] }}</span>
                                         </div>
                                     </div>
                                 @else
@@ -500,33 +500,6 @@
                                 @endif
                             </div>
                         @endforeach
-
-                        <!-- 6th Tile: Guidance Card -->
-                        <div class="p-4 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/40 flex flex-col justify-between">
-                            <div class="flex items-start gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 flex items-center justify-center shrink-0">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                </div>
-                                <div>
-                                    <span class="inline-block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                        Panduan BAAK &amp; Drive
-                                    </span>
-                                    <h5 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 leading-snug">
-                                        Cetak Formulir &amp; Izin Drive
-                                    </h5>
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed mt-1">
-                                        Cetak PDF formulir untuk ditempel <strong>Materai 10.000</strong> ke BAAK, dan pastikan 4 tautan Drive disetel <strong>"Anyone with the link can view"</strong>.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="pt-3 border-t border-slate-200/70 dark:border-slate-700/70 mt-3 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-                                <span>Status Sinkronisasi</span>
-                                <span class="inline-flex items-center gap-1.5 font-bold text-emerald-700 dark:text-emerald-400">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                    Aktif
-                                </span>
-                            </div>
-                        </div>
                     </div>
 
                     @if($application->status === 'rejected')

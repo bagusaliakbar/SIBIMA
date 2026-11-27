@@ -155,7 +155,7 @@ class SeminarDigitalRegistrationFormTest extends TestCase
         $this->assertStringContainsString('alt="TTD Pembimbing 1"', $renderedHtml);
         $this->assertStringContainsString('alt="QR Verifikasi Pembimbing 1"', $renderedHtml);
         $this->assertStringNotContainsString('alt="TTD Pembimbing 2"', $renderedHtml);
-        $this->assertStringContainsString('Dokumen Resmi Digital', $renderedHtml);
+        $this->assertStringContainsString('SIBIMA FASILKOM UNSUB', $renderedHtml);
         $this->assertStringContainsString($app->getIntegrityCode(), $renderedHtml);
         $this->assertStringContainsString('alt="QR Verifikasi Keaslian Dokumen"', $renderedHtml);
 
