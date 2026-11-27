@@ -528,12 +528,12 @@
                 {{-- Area kosong TTD Mahasiswa + Kotak Materai 10.000 untuk TTD basah & materai fisik --}}
                 <table class="materai-layout">
                     <tr>
-                        <td style="width: 36%; text-align: right; padding-right: 12px !important;">
+                        <td style="width: 47%; text-align: right; padding-right: 8px !important;">
                             <div class="materai-box">
                                 Materai<br>10.000
                             </div>
                         </td>
-                        <td style="width: 64%; height: 64px;">
+                        <td style="width: 53%; height: 64px;">
                             &nbsp;
                         </td>
                     </tr>
@@ -598,7 +598,6 @@
                                             @endif
                                         </tr>
                                     </table>
-                                    <div class="digital-caption">ACC UP Digital Terverifikasi SIBIMA</div>
                                 @else
                                     <div style="height: 64px;">&nbsp;</div>
                                 @endif

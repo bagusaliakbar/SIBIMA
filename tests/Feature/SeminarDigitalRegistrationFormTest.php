@@ -152,8 +152,8 @@ class SeminarDigitalRegistrationFormTest extends TestCase
         $this->assertStringContainsString('RINA KARTIKA', $renderedHtml);
         $this->assertStringContainsString('SISTEM INFORMASI / S1', $renderedHtml);
         $this->assertStringContainsString('Materai<br>10.000', $renderedHtml);
-        $this->assertStringContainsString('ACC UP Digital Terverifikasi SIBIMA', $renderedHtml);
         $this->assertStringContainsString('alt="TTD Pembimbing 1"', $renderedHtml);
+        $this->assertStringContainsString('alt="QR Verifikasi Pembimbing 1"', $renderedHtml);
         $this->assertStringNotContainsString('alt="TTD Pembimbing 2"', $renderedHtml);
 
         // Student owner can download PDF (attachment) and preview PDF (inline)
