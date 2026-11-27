@@ -809,21 +809,15 @@
                                 <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80">
                                     <span class="block text-[11px] text-slate-500 dark:text-slate-400">Dosen Pembimbing 1</span>
                                     <span class="block font-bold text-slate-800 dark:text-slate-100 mt-0.5">{{ $thesis?->pembimbing1?->name ?? '-' }}</span>
-                                    <span class="inline-block mt-1 text-[11px] font-semibold {{ $thesis?->pembimbing1?->signature ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
-                                        {{ $thesis?->pembimbing1?->signature ? 'TTD Digital + QR otomatis terpasang di PDF' : 'Area TTD basah disiapkan di PDF' }}
-                                    </span>
                                 </div>
                                 <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80">
                                     <span class="block text-[11px] text-slate-500 dark:text-slate-400">Dosen Pembimbing 2</span>
                                     <span class="block font-bold text-slate-800 dark:text-slate-100 mt-0.5">{{ $thesis?->pembimbing2?->name ?? '-' }}</span>
-                                    <span class="inline-block mt-1 text-[11px] font-semibold {{ $thesis?->pembimbing2?->signature ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">
-                                        {{ $thesis?->pembimbing2?->signature ? 'TTD Digital + QR otomatis terpasang di PDF' : 'Area TTD basah disiapkan di PDF' }}
-                                    </span>
                                 </div>
                                 <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80">
                                     <span class="block text-[11px] text-slate-500 dark:text-slate-400">Tanda Tangan Mahasiswa</span>
                                     <span class="block font-bold text-slate-800 dark:text-slate-100 mt-0.5">Kosong + Kotak Materai 10.000</span>
-                                    <span class="inline-block mt-1 text-[11px] text-slate-500 dark:text-slate-400">Dicetak lalu tempel materai fisik untuk BAAK</span>
+                                    <span class="inline-block mt-1 text-[11px] text-slate-500 dark:text-slate-400">Dicetak lalu tempel materai fisik untuk dikumpulkan ke BAAK</span>
                                 </div>
                             </div>
                         </div>
