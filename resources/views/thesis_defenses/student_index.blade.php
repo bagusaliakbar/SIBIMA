@@ -796,27 +796,23 @@
                 <div class="p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
-                            <div class="flex items-center gap-2.5 flex-wrap">
-                                <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Form Pendaftaran Sidang Skripsi</h3>
-                                @if($activeWave)
-                                    <span class="px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 text-[11px] font-bold rounded-lg uppercase tracking-wider border border-blue-200 dark:border-blue-800/60">
-                                        {{ $activeWave->name }}
-                                    </span>
-                                @else
-                                    <span class="px-2.5 py-0.5 bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 text-[11px] font-bold rounded-lg uppercase tracking-wider border border-rose-200 dark:border-rose-800/60">
-                                        Gelombang Belum Dibuka
-                                    </span>
-                                @endif
-                            </div>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">Form Pendaftaran Sidang Skripsi</h3>
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                 Lengkapi Formulir Pendaftaran Sidang Digital (otomatis menjadi PDF resmi BAAK) dan 19 tautan berkas Google Drive.
                             </p>
                         </div>
 
-                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold shrink-0">
-                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span>Formulir Otomatis Cetak PDF</span>
-                        </div>
+                        @if($activeWave)
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60 text-blue-800 dark:text-blue-300 text-xs font-bold uppercase tracking-wider shrink-0">
+                                <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                                <span>{{ $activeWave->name }}</span>
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-300 text-xs font-bold uppercase tracking-wider shrink-0">
+                                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                                <span>Gelombang Belum Dibuka</span>
+                            </span>
+                        @endif
                     </div>
                 </div>
 
