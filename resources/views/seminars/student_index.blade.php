@@ -319,7 +319,7 @@
                         $fileFields = [
                             'file_formulir' => [
                                 'label' => 'Formulir Pendaftaran Seminar',
-                                'subtitle' => $hasDigitalForm ? 'Formulir Digital SIBIMA (Siap Cetak PDF + Materai 10.000)' : 'Formulir Pendaftaran Resmi',
+                                'subtitle' => $hasDigitalForm ? 'Formulir Pendaftaran Seminar' : 'Formulir Pendaftaran Seminar',
                                 'category' => $hasDigitalForm ? 'Formulir Digital' : 'Administrasi',
                                 'theme' => [
                                     'bg' => 'bg-blue-50 dark:bg-blue-950/40',
@@ -454,23 +454,6 @@
                                         {{ $info['subtitle'] }}
                                     </p>
 
-                                    @if($isDigitalCard)
-                                        <div class="mb-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 text-[11px] space-y-1 text-slate-600 dark:text-slate-300">
-                                            <div class="flex justify-between gap-2">
-                                                <span class="text-slate-500 dark:text-slate-400 shrink-0">Prodi:</span>
-                                                <span class="font-semibold text-right truncate">{{ $resolvedForm['study_program'] }}</span>
-                                            </div>
-                                            <div class="flex justify-between gap-2">
-                                                <span class="text-slate-500 dark:text-slate-400 shrink-0">TTL:</span>
-                                                <span class="font-semibold text-right truncate">{{ $resolvedForm['birth_place'] }}, {{ $resolvedForm['birth_date'] ? \Carbon\Carbon::parse($resolvedForm['birth_date'])->locale('id')->translatedFormat('d M Y') : '-' }}</span>
-                                            </div>
-                                            <div class="flex justify-between gap-2">
-                                                <span class="text-slate-500 dark:text-slate-400 shrink-0">Sem / TA:</span>
-                                                <span class="font-semibold text-right truncate">Sem {{ $resolvedForm['semester_number'] }} / {{ $resolvedForm['academic_year'] }}</span>
-                                            </div>
-                                        </div>
-                                    @endif
-
                                     @if($isRejected && !empty($review['note']))
                                         <div class="mb-3 p-2.5 bg-rose-50 dark:bg-rose-950/40 rounded-xl border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-300">
                                             <div class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider">
@@ -482,25 +465,23 @@
                                     @endif
                                 </div>
 
-                                <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 mt-auto">
-                                    @if($isDigitalCard)
-                                        <span class="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                            <span>PDF Otomatis</span>
-                                        </span>
-                                        <div class="flex items-center gap-1.5">
-                                            <a href="{{ route('seminar-applications.form-pdf', ['application' => $application->id, 'inline' => 1]) }}"
-                                               target="_blank"
-                                               class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors">
-                                                <span>Lihat</span>
-                                            </a>
-                                            <a href="{{ route('seminar-applications.form-pdf', $application->id) }}"
-                                               class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white transition-colors">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                                                <span>Cetak PDF</span>
-                                            </a>
+                                @if($isDigitalCard)
+                                    <div class="mt-auto p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 text-[11px] space-y-1.5 text-slate-600 dark:text-slate-300">
+                                        <div class="flex justify-between gap-2">
+                                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Prodi:</span>
+                                            <span class="font-semibold text-right truncate">{{ $resolvedForm['study_program'] }}</span>
                                         </div>
-                                    @else
+                                        <div class="flex justify-between gap-2">
+                                            <span class="text-slate-500 dark:text-slate-400 shrink-0">TTL:</span>
+                                            <span class="font-semibold text-right truncate">{{ $resolvedForm['birth_place'] }}, {{ $resolvedForm['birth_date'] ? \Carbon\Carbon::parse($resolvedForm['birth_date'])->locale('id')->translatedFormat('d M Y') : '-' }}</span>
+                                        </div>
+                                        <div class="flex justify-between gap-2">
+                                            <span class="text-slate-500 dark:text-slate-400 shrink-0">Sem / TA:</span>
+                                            <span class="font-semibold text-right truncate">Sem {{ $resolvedForm['semester_number'] }} / {{ $resolvedForm['academic_year'] }}</span>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 mt-auto">
                                         <span class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
                                             <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                                             <span>Google Drive</span>
@@ -515,8 +496,8 @@
                                         @else
                                             <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">Belum diunggah</span>
                                         @endif
-                                    @endif
-                                </div>
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
 
