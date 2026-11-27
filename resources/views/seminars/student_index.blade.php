@@ -672,12 +672,10 @@
                     },
                     get biodataFilledCount() {
                         const requiredKeys = ['birth_place', 'birth_date', 'semester_number', 'academic_year', 'email', 'phone_number', 'address', 'postal_code'];
-                        let count = requiredKeys.filter(k => String(this.biodata[k] || '').trim() !== '').length;
-                        if (this.biodata.statement_agreed) count += 1;
-                        return count;
+                        return requiredKeys.filter(k => String(this.biodata[k] || '').trim() !== '').length;
                     },
                     get biodataTotalCount() {
-                        return 9;
+                        return 8;
                     },
                     get isBiodataComplete() {
                         return this.biodataFilledCount === this.biodataTotalCount;
@@ -689,10 +687,10 @@
                         return Object.keys(this.files).length;
                     },
                     get overallFilled() {
-                        return (this.isBiodataComplete ? 1 : 0) + this.totalFilesFilled;
+                        return (this.isBiodataComplete ? 1 : 0) + this.totalFilesFilled + (this.biodata.statement_agreed ? 1 : 0);
                     },
                     get overallTotal() {
-                        return 1 + this.totalFilesCount;
+                        return 1 + this.totalFilesCount + 1;
                     },
                     get percentFilled() {
                         return Math.round((this.overallFilled / this.overallTotal) * 100);
@@ -718,11 +716,6 @@
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                 Lengkapi Formulir Pendaftaran Digital (otomatis menjadi PDF resmi BAAK) dan 4 tautan berkas Google Drive.
                             </p>
-                        </div>
-
-                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold shrink-0">
-                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span>Formulir Otomatis Cetak PDF</span>
                         </div>
                     </div>
                 </div>
@@ -962,26 +955,6 @@
                                 @error('home_phone') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
                         </div>
-
-                        <!-- B. Pernyataan Kesiapan Seminar -->
-                        <div class="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 space-y-2">
-                            <span class="block text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">Pernyataan Kesiapan Seminar</span>
-                            <label class="flex items-start gap-3 cursor-pointer">
-                                <input type="checkbox"
-                                       name="statement_agreed"
-                                       value="1"
-                                       x-model="biodata.statement_agreed"
-                                       required
-                                       class="mt-0.5 rounded border-amber-400 text-orange-600 focus:ring-orange-500">
-                                <span class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
-                                    Dengan ini saya menyatakan siap mengikuti Seminar Skripsi/Tugas Akhir dan bersedia mengoreksi serta memperbaiki kesalahan dan kekurangan berdasarkan saran dari dosen pembimbing dan penguji.
-                                </span>
-                            </label>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 pl-7">
-                                Biodata yang Anda lengkapi juga otomatis disimpan ke profil SIBIMA agar dapat dipakai kembali saat Pendaftaran Sidang Skripsi.
-                            </p>
-                            @error('statement_agreed') <p class="text-rose-600 dark:text-rose-400 text-[11px] pl-7 font-semibold">{{ $message }}</p> @enderror
-                        </div>
                     </div>
 
                     <!-- ========================================================= -->
@@ -1143,6 +1116,26 @@
                                 </div>
                             @endforeach
                         </div>
+                    </div>
+
+                    <!-- Pernyataan Kesiapan Seminar -->
+                    <div class="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 space-y-2">
+                        <span class="block text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">Pernyataan Kesiapan Seminar</span>
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox"
+                                   name="statement_agreed"
+                                   value="1"
+                                   x-model="biodata.statement_agreed"
+                                   required
+                                   class="mt-0.5 rounded border-amber-400 text-orange-600 focus:ring-orange-500">
+                            <span class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
+                                Dengan ini saya menyatakan siap mengikuti Seminar Skripsi/Tugas Akhir dan bersedia mengoreksi serta memperbaiki kesalahan dan kekurangan berdasarkan saran dari dosen pembimbing dan penguji.
+                            </span>
+                        </label>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 pl-7">
+                            Biodata yang Anda lengkapi juga otomatis disimpan ke profil SIBIMA agar dapat dipakai kembali saat Pendaftaran Sidang Skripsi.
+                        </p>
+                        @error('statement_agreed') <p class="text-rose-600 dark:text-rose-400 text-[11px] pl-7 font-semibold">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Submit Footer -->
