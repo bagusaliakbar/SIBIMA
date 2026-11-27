@@ -81,6 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/seminar-applications', [App\Http\Controllers\SeminarApplicationController::class, 'store'])->name('seminar-applications.store');
     Route::post('/seminar-applications/upload-template', [App\Http\Controllers\SeminarApplicationController::class, 'uploadTemplate'])->name('seminar-applications.upload-template');
     Route::patch('/seminar-applications/{application}/validate', [App\Http\Controllers\SeminarApplicationController::class, 'validateApplication'])->name('seminar-applications.validate');
+    Route::get('/seminar-applications/{application}/form-pdf', [App\Http\Controllers\SeminarApplicationController::class, 'downloadFormPdf'])->name('seminar-applications.form-pdf');
     Route::get('/seminar-applications/{application}/download-zip', [App\Http\Controllers\SeminarApplicationController::class, 'downloadZip'])->name('seminar-applications.download-zip');
     Route::delete('/seminar-applications/{application}', [App\Http\Controllers\SeminarApplicationController::class, 'destroy'])->name('seminar-applications.destroy');
     Route::post('/seminar-applications/admin-register', [App\Http\Controllers\SeminarApplicationController::class, 'adminRegister'])->name('seminar-applications.admin-register')->middleware('role:admin,kaprodi');

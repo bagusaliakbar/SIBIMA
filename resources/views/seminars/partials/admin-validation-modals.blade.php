@@ -55,12 +55,19 @@
                                                          :class="(selectedApp.file_reviews && selectedApp.file_reviews['{{ $field }}'] && selectedApp.file_reviews['{{ $field }}'].status === 'rejected') ? 'border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'"
                                                          x-data="{ isRejected: (selectedApp.file_reviews && selectedApp.file_reviews['{{ $field }}'] && selectedApp.file_reviews['{{ $field }}'].status === 'rejected') }">
                                                         <div class="flex items-center justify-between gap-2">
-                                                            <a :href="selectedApp.files['{{ $field }}']" target="_blank" 
-                                                               class="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1.5 truncate group/filelink"
-                                                               title="Buka {{ $label }}">
-                                                                <span class="truncate">{{ $label }}</span>
-                                                                <svg class="w-3.5 h-3.5 text-slate-400 group-hover/filelink:text-indigo-600 dark:group-hover/filelink:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                                            </a>
+                                                            <div class="flex items-center gap-1.5 min-w-0">
+                                                                <a :href="selectedApp.files['{{ $field }}']" target="_blank"
+                                                                   class="text-xs font-bold text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center gap-1.5 truncate group/filelink"
+                                                                   title="Buka {{ $label }}">
+                                                                    <span class="truncate">{{ $label }}</span>
+                                                                    <svg class="w-3.5 h-3.5 text-slate-400 group-hover/filelink:text-indigo-600 dark:group-hover/filelink:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                                </a>
+                                                                @if($field === 'file_formulir')
+                                                                    <template x-if="selectedApp.has_digital_form">
+                                                                        <span class="px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 text-[10px] font-bold uppercase shrink-0">PDF Digital</span>
+                                                                    </template>
+                                                                @endif
+                                                            </div>
 
                                                             {{-- Radio Controls (OK / Tolak) Segmented Pill --}}
                                                             <div class="flex items-center p-0.5 bg-slate-200 dark:bg-slate-900 rounded-xl border border-slate-300 dark:border-slate-700 shrink-0">
@@ -230,6 +237,25 @@
                                             </div>
                                         </div>
 
+                                        {{-- Ringkasan Biodata Formulir Digital (jika terisi digital) --}}
+                                        <template x-if="previewApp.has_digital_form && previewApp.form_data">
+                                            <div class="bg-blue-50/60 dark:bg-blue-950/30 rounded-2xl p-4 border border-blue-200/80 dark:border-blue-800/60 space-y-2 text-xs">
+                                                <div class="flex items-center justify-between gap-2">
+                                                    <span class="text-[11px] font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300">Formulir Digital SIBIMA</span>
+                                                    <a :href="previewApp.form_pdf_download_url"
+                                                       class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold transition-colors">
+                                                        <span>Unduh PDF</span>
+                                                    </a>
+                                                </div>
+                                                <div class="space-y-1 text-[11px] text-slate-700 dark:text-slate-300">
+                                                    <div><span class="text-slate-500 dark:text-slate-400">Prodi:</span> <strong x-text="previewApp.form_data.study_program || '-'"></strong></div>
+                                                    <div><span class="text-slate-500 dark:text-slate-400">TTL:</span> <strong x-text="(previewApp.form_data.birth_place || '-') + ', ' + (previewApp.form_data.birth_date || '-')"></strong></div>
+                                                    <div><span class="text-slate-500 dark:text-slate-400">Sem / TA:</span> <strong x-text="'Sem ' + (previewApp.form_data.semester_number || '-') + ' / ' + (previewApp.form_data.academic_year || '-')"></strong></div>
+                                                    <div><span class="text-slate-500 dark:text-slate-400">Alamat:</span> <span x-text="(previewApp.form_data.address || '-') + (previewApp.form_data.postal_code ? ' (' + previewApp.form_data.postal_code + ')' : '')"></span></div>
+                                                </div>
+                                            </div>
+                                        </template>
+
                                         {{-- Catatan Admin Sebelumnya (jika ada) --}}
                                         <template x-if="previewApp.admin_feedback">
                                             <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-800 text-xs">
@@ -297,7 +323,15 @@
 
                                                 <template x-if="previewRawUrl">
                                                     <div class="flex items-center gap-2">
-                                                        <a :href="previewRawUrl" target="_blank" 
+                                                        <template x-if="previewFileKey === 'file_formulir' && previewApp && previewApp.form_pdf_download_url">
+                                                            <a :href="previewApp.form_pdf_download_url"
+                                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-bold transition-all shadow-2xs"
+                                                               title="Unduh Formulir Pendaftaran PDF">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                                                <span class="hidden sm:inline">Unduh PDF</span>
+                                                            </a>
+                                                        </template>
+                                                        <a :href="previewRawUrl" target="_blank"
                                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-bold transition-all shadow-2xs"
                                                            title="Buka dokumen di tab baru">
                                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>

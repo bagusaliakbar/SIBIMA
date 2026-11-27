@@ -31,13 +31,18 @@ class User extends Authenticatable
         'is_active',
         'avatar',
         'entry_year',
+        'study_program',
         'phone_number',
+        'address',
+        'postal_code',
+        'home_phone',
         'signature',
         'signature_token',
         'research_interests',
         'max_quota',
         'last_login_at',
         'birth_date',
+        'birth_place',
         'last_birthday_wished_year',
     ];
 

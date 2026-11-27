@@ -15,17 +15,26 @@ class ApplicationService
     /**
      * Submit or update an application.
      */
-    public function submitApplication($applicationModel, $thesis, $wave, $request, $files, $logTitle, $notifTitle, $indexRoute)
+    public function submitApplication($applicationModel, $thesis, $wave, $request, $files, $logTitle, $notifTitle, $indexRoute, array $extraData = [])
     {
         $existingApplication = $applicationModel::where('thesis_id', $thesis->id)
             ->where('wave_id', $wave->id)
             ->first();
 
-        $data = [
+        $data = array_merge([
             'thesis_id' => $thesis->id,
             'wave_id' => $wave->id,
             'status' => 'pending',
-        ];
+        ], $extraData);
+
+        if ($existingApplication && array_key_exists('form_data', $extraData)) {
+            $reviews = $existingApplication->file_reviews;
+            if (is_array($reviews) && isset($reviews['file_formulir'])) {
+                unset($reviews['file_formulir']);
+                $existingApplication->file_reviews = $reviews;
+                $existingApplication->save();
+            }
+        }
 
         $sessionKey = str_replace('App\\Models\\', '', $applicationModel) === 'SeminarApplication' ? 'seminar_uploads' : 'defense_uploads';
 
@@ -137,7 +146,7 @@ class ApplicationService
     /**
      * Download application files as ZIP.
      */
-    public function downloadZip($application, string $prefix, array $fileMap)
+    public function downloadZip($application, string $prefix, array $fileMap, array $extraVirtualFiles = [])
     {
         $studentName = str_replace(' ', '_', $application->thesis->student->name);
         $studentId = $application->thesis->student->identifier;
@@ -155,6 +164,12 @@ class ApplicationService
                         $extension = pathinfo($application->$field, PATHINFO_EXTENSION);
                         $zip->addFromString($label . '.' . ($extension ?: 'file'), Storage::disk(config('filesystems.default'))->get($application->$field));
                     }
+                }
+            }
+
+            foreach ($extraVirtualFiles as $virtualFilename => $content) {
+                if ($content !== null && $content !== '') {
+                    $zip->addFromString($virtualFilename, $content);
                 }
             }
 

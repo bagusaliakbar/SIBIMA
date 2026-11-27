@@ -39,7 +39,7 @@ class ApplicationFileUploadTest extends TestCase
             'acc_up_p2' => true,
         ]);
 
-        // 1. Partial submit
+        // 1. Partial submit (missing 2 Drive links + digital form biodata)
         $response = $this->actingAs($student)
             ->post(route('seminar-applications.store'), [
                 'file_acc_pembimbing' => 'https://drive.google.com/file/d/acc',
@@ -47,26 +47,48 @@ class ApplicationFileUploadTest extends TestCase
             ]);
 
         $response->assertRedirect();
-        $response->assertSessionHasErrors(['file_kartu_bimbingan', 'file_skripsi', 'file_formulir']);
+        $response->assertSessionHasErrors([
+            'file_kartu_bimbingan',
+            'file_skripsi',
+            'birth_place',
+            'birth_date',
+            'address',
+            'postal_code',
+            'statement_agreed',
+        ]);
+        $response->assertSessionDoesntHaveErrors(['file_formulir']);
 
-        // 2. Submit all files
+        // 2. Submit all 4 Drive files + digital registration form (no file_formulir link needed)
         $response = $this->actingAs($student)
             ->post(route('seminar-applications.store'), [
                 'file_acc_pembimbing' => 'https://drive.google.com/file/d/acc',
                 'file_pembayaran' => 'https://drive.google.com/file/d/bayar',
                 'file_kartu_bimbingan' => 'https://drive.google.com/file/d/kartu',
                 'file_skripsi' => 'https://drive.google.com/file/d/skripsi',
-                'file_formulir' => 'https://drive.google.com/file/d/formulir',
+                'birth_place' => 'Subang',
+                'birth_date' => '2003-05-14',
+                'study_program' => 'Sistem Informasi / S1',
+                'semester_number' => 8,
+                'academic_year' => 'Ganjil 2026/2027',
+                'address' => 'Jl. R.A Kartini KM 3 Subang',
+                'postal_code' => '41211',
+                'home_phone' => '0260411415',
+                'email' => $student->email,
+                'phone_number' => '081234567890',
+                'statement_agreed' => '1',
             ]);
 
         $response->assertRedirect(route('seminar-applications.index'));
         $response->assertSessionHasNoErrors();
 
-        // Assert Application is created
+        // Assert Application is created with digital form snapshot
         $application = SeminarApplication::where('thesis_id', $thesis->id)->first();
         $this->assertNotNull($application);
         $this->assertEquals('https://drive.google.com/file/d/acc', $application->file_acc_pembimbing);
         $this->assertEquals('https://drive.google.com/file/d/skripsi', $application->file_skripsi);
+        $this->assertTrue($application->hasDigitalForm());
+        $this->assertNull($application->file_formulir);
+        $this->assertEquals('Sistem Informasi / S1', $application->form_data['study_program']);
     }
 
     public function test_thesis_defense_application_url_submission()

@@ -7,10 +7,20 @@
                         $p2 = $app->thesis->pembimbing2;
                         $phone = $student->phone_number;
                         $cleanPhone = $phone ? (str_starts_with(preg_replace('/[^0-9]/', '', $phone), '0') ? '62' . substr(preg_replace('/[^0-9]/', '', $phone), 1) : preg_replace('/[^0-9]/', '', $phone)) : null;
+                        $mHasDigitalForm = $app->hasDigitalForm();
+                        $mFormulirUrl = $mHasDigitalForm
+                            ? route('seminar-applications.form-pdf', ['application' => $app->id, 'inline' => 1])
+                            : $app->file_formulir;
+                        $mFormulirDownloadUrl = $mHasDigitalForm
+                            ? route('seminar-applications.form-pdf', $app->id)
+                            : null;
                         $mAppData = [
                             'id' => $app->id,
                             'validate_url' => route('seminar-applications.validate', $app->id),
                             'download_zip_url' => route('seminar-applications.download-zip', $app->id),
+                            'has_digital_form' => $mHasDigitalForm,
+                            'form_pdf_download_url' => $mFormulirDownloadUrl,
+                            'form_data' => $mHasDigitalForm ? $app->getResolvedFormData() : null,
                             'student_name' => $student->name,
                             'student_id' => $student->identifier,
                             'student_email' => $student->email,
@@ -32,7 +42,7 @@
                                 'file_pembayaran' => $app->file_pembayaran,
                                 'file_kartu_bimbingan' => $app->file_kartu_bimbingan,
                                 'file_skripsi' => $app->file_skripsi,
-                                'file_formulir' => $app->file_formulir,
+                                'file_formulir' => $mFormulirUrl,
                             ]
                         ];
                     @endphp

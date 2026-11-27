@@ -61,8 +61,9 @@ class SeminarApplicationController extends Controller
             
             $isEligible = $thesis && $thesis->isAccUpFinal();
             $template = SeminarTemplate::where('is_active', true)->latest()->first();
-            
-            return view('seminars.student_index', compact('thesis', 'application', 'isEligible', 'template', 'activeWave'));
+            $defaultAcademicPeriod = SeminarApplication::getDefaultAcademicPeriod();
+
+            return view('seminars.student_index', compact('thesis', 'application', 'isEligible', 'template', 'activeWave', 'defaultAcademicPeriod'));
         }
 
         if ($user->role === 'admin' || $user->role === 'kaprodi') {
@@ -443,7 +444,7 @@ class SeminarApplicationController extends Controller
             return redirect()->back()->with('error', 'Pendaftaran seminar belum dibuka (tidak ada gelombang aktif).');
         }
 
-        $thesis = Thesis::where('student_id', Auth::id())->first();
+        $thesis = Thesis::where('student_id', Auth::id())->with(['pembimbing1', 'pembimbing2'])->first();
         if (!$thesis || !$thesis->isAccUpFinal()) {
             return redirect()->back()->with('error', 'Anda belum memenuhi syarat untuk mengajukan seminar.');
         }
@@ -455,15 +456,15 @@ class SeminarApplicationController extends Controller
             return redirect()->back()->with('error', 'Anda sudah melakukan pendaftaran seminar dan telah disetujui atau dijadwalkan.');
         }
 
-        $files = ['file_acc_pembimbing', 'file_pembayaran', 'file_kartu_bimbingan', 'file_skripsi', 'file_formulir'];
+        $files = ['file_acc_pembimbing', 'file_pembayaran', 'file_kartu_bimbingan', 'file_skripsi'];
 
         $formRequest = new StoreSeminarApplicationRequest();
         $rules = $formRequest->rules();
 
         $validator = \Illuminate\Support\Facades\Validator::make(
-            $request->all(), 
-            $rules, 
-            $formRequest->messages(), 
+            $request->all(),
+            $rules,
+            $formRequest->messages(),
             $formRequest->attributes()
         );
 
@@ -480,12 +481,72 @@ class SeminarApplicationController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $extraData = [];
+        $hasSubmittedFormFields = $request->filled('birth_place')
+            || $request->filled('address')
+            || $request->boolean('statement_agreed');
+
+        if ($hasSubmittedFormFields) {
+            $user = Auth::user();
+            $existingApplication = SeminarApplication::where('thesis_id', $thesis->id)
+                ->where('wave_id', $activeWave->id)
+                ->first();
+
+            $studyProgram = SeminarApplication::DEFAULT_STUDY_PROGRAM;
+            $defaultPeriod = SeminarApplication::getDefaultAcademicPeriod();
+
+            $formData = [
+                'full_name' => trim((string) $user->name),
+                'birth_place' => trim((string) $request->input('birth_place', $user->birth_place ?? '')),
+                'birth_date' => $request->input('birth_date', $user->birth_date?->format('Y-m-d')),
+                'npm' => trim((string) ($user->identifier ?? '')),
+                'study_program' => $studyProgram,
+                'semester_number' => (int) $request->input('semester_number', $user->current_semester ?? 8),
+                'academic_year' => trim((string) $request->input('academic_year', $defaultPeriod['label'])),
+                'address' => trim((string) $request->input('address', $user->address ?? '')),
+                'postal_code' => trim((string) $request->input('postal_code', $user->postal_code ?? '')),
+                'home_phone' => trim((string) $request->input('home_phone', $user->home_phone ?? '')),
+                'email' => trim((string) $request->input('email', $user->email ?? '')),
+                'phone_number' => trim((string) $request->input('phone_number', $user->phone_number ?? '')),
+                'thesis_title' => trim((string) ($thesis->display_title ?? '')),
+                'pembimbing1_name' => $thesis->pembimbing1?->name ?? '-',
+                'pembimbing2_name' => $thesis->pembimbing2?->name ?? '-',
+                'submitted_at' => now()->toIso8601String(),
+            ];
+
+            // Sync reusable biodata to user profile for future Sidang / Yudisium forms
+            $user->fill([
+                'birth_place' => $formData['birth_place'] ?: $user->birth_place,
+                'birth_date' => $formData['birth_date'] ?: $user->birth_date,
+                'study_program' => $studyProgram,
+                'address' => $formData['address'] ?: $user->address,
+                'postal_code' => $formData['postal_code'] ?: $user->postal_code,
+                'home_phone' => $formData['home_phone'] !== '' ? $formData['home_phone'] : $user->home_phone,
+                'phone_number' => $formData['phone_number'] ?: $user->phone_number,
+            ])->save();
+
+            $extraData = [
+                'form_data' => $formData,
+                'statement_agreed_at' => now(),
+                'verification_token' => $existingApplication?->verification_token ?: Str::random(32),
+            ];
+        } elseif ($request->filled('file_formulir')) {
+            $extraData['file_formulir'] = $request->input('file_formulir');
+        }
+
         try {
             $this->applicationService->submitApplication(
-                SeminarApplication::class, $thesis, $activeWave, $request, $files,
-                'Pengajuan Seminar', 'Pengajuan Seminar Baru', 'seminar-applications.index'
+                SeminarApplication::class,
+                $thesis,
+                $activeWave,
+                $request,
+                $files,
+                'Pengajuan Seminar',
+                'Pengajuan Seminar Baru',
+                'seminar-applications.index',
+                $extraData
             );
-            return redirect()->route('seminar-applications.index')->with('success', 'Pengajuan seminar berhasil dikirim. Menunggu validasi admin.');
+            return redirect()->route('seminar-applications.index')->with('success', 'Pengajuan seminar berhasil dikirim. Anda dapat langsung mencetak Formulir Pendaftaran (PDF) untuk diserahkan ke BAAK.');
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', 'Gagal mengajukan seminar: ' . $e->getMessage())->withInput();
         }
@@ -544,6 +605,78 @@ class SeminarApplicationController extends Controller
         }
     }
 
+    protected function buildFormPdf(SeminarApplication $application)
+    {
+        $application->loadMissing(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave']);
+
+        $formData = $application->getResolvedFormData();
+        $thesis = $application->thesis;
+        $p1 = $thesis?->pembimbing1;
+        $p2 = $thesis?->pembimbing2;
+
+        // Option A: Auto-stamp lecturer digital signature + verification QR only if ACC UP is granted and lecturer uploaded a signature
+        $p1Signature = ($thesis && $thesis->acc_up_p1 && $p1 && $p1->decrypted_signature) ? $p1->decrypted_signature : null;
+        $p2Signature = ($thesis && $thesis->acc_up_p2 && $p2 && $p2->decrypted_signature) ? $p2->decrypted_signature : null;
+
+        $p1QrSvg = null;
+        if ($p1Signature && $p1 && !empty($p1->signature_token)) {
+            $p1QrSvg = base64_encode(
+                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
+                    ->size(44)
+                    ->margin(0)
+                    ->generate(url('/verify-signature/' . $p1->signature_token))
+            );
+        }
+
+        $p2QrSvg = null;
+        if ($p2Signature && $p2 && !empty($p2->signature_token)) {
+            $p2QrSvg = base64_encode(
+                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
+                    ->size(44)
+                    ->margin(0)
+                    ->generate(url('/verify-signature/' . $p2->signature_token))
+            );
+        }
+
+        return Pdf::loadView('seminars.form_pdf', [
+            'application' => $application,
+            'formData' => $formData,
+            'thesis' => $thesis,
+            'p1' => $p1,
+            'p2' => $p2,
+            'p1Signature' => $p1Signature,
+            'p2Signature' => $p2Signature,
+            'p1QrSvg' => $p1QrSvg,
+            'p2QrSvg' => $p2QrSvg,
+        ])->setPaper('a4', 'portrait');
+    }
+
+    public function downloadFormPdf(Request $request, SeminarApplication $application)
+    {
+        $user = Auth::user();
+        $application->loadMissing(['thesis.student', 'thesis.pembimbing1', 'thesis.pembimbing2', 'wave']);
+        $thesis = $application->thesis;
+
+        $isAuthorized = in_array($user->role, ['admin', 'kaprodi'], true)
+            || ($user->role === 'mahasiswa' && $thesis && $thesis->student_id === $user->id)
+            || ($user->role === 'dosen' && $thesis && ($thesis->pembimbing1_id === $user->id || $thesis->pembimbing2_id === $user->id));
+
+        if (!$isAuthorized) {
+            abort(403, 'Anda tidak memiliki akses untuk mengunduh formulir pendaftaran ini.');
+        }
+
+        $pdf = $this->buildFormPdf($application);
+        $npm = preg_replace('/[^A-Za-z0-9_-]/', '_', (string) ($thesis?->student?->identifier ?? $application->id));
+        $studentName = preg_replace('/[^A-Za-z0-9_-]/', '_', (string) ($thesis?->student?->name ?? 'Mahasiswa'));
+        $filename = "Formulir_Pendaftaran_Seminar_{$npm}_{$studentName}.pdf";
+
+        if ($request->boolean('inline')) {
+            return $pdf->stream($filename);
+        }
+
+        return $pdf->download($filename);
+    }
+
     public function downloadZip(SeminarApplication $application)
     {
         if (Auth::user()->role !== 'admin' && Auth::user()->role !== 'kaprodi') abort(403);
@@ -553,10 +686,16 @@ class SeminarApplicationController extends Controller
             'file_pembayaran' => '2_Bukti_Pembayaran',
             'file_kartu_bimbingan' => '3_Kartu_Bimbingan',
             'file_skripsi' => '4_Naskah_Skripsi',
-            'file_formulir' => '5_Formulir_Seminar',
         ];
 
-        $tempFile = $this->applicationService->downloadZip($application, 'Seminar', $fileMap);
+        $extraVirtualFiles = [];
+        if ($application->hasDigitalForm()) {
+            $extraVirtualFiles['5_Formulir_Seminar.pdf'] = $this->buildFormPdf($application)->output();
+        } else {
+            $fileMap['file_formulir'] = '5_Formulir_Seminar';
+        }
+
+        $tempFile = $this->applicationService->downloadZip($application, 'Seminar', $fileMap, $extraVirtualFiles);
 
         if ($tempFile) {
             $fileName = "Seminar_{$application->thesis->student->identifier}_" . str_replace(' ', '_', $application->thesis->student->name) . ".zip";

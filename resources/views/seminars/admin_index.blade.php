@@ -371,11 +371,21 @@
                                     }
                                 }
                                 $waMessage = rawurlencode("Halo {$student->name}, terkait pengajuan Seminar Proposal Anda di SIBIMA...");
+                                $hasDigitalForm = $app->hasDigitalForm();
+                                $formulirUrl = $hasDigitalForm
+                                    ? route('seminar-applications.form-pdf', ['application' => $app->id, 'inline' => 1])
+                                    : $app->file_formulir;
+                                $formulirDownloadUrl = $hasDigitalForm
+                                    ? route('seminar-applications.form-pdf', $app->id)
+                                    : null;
 
                                 $appData = [
                                     'id' => $app->id,
                                     'validate_url' => route('seminar-applications.validate', $app->id),
                                     'download_zip_url' => route('seminar-applications.download-zip', $app->id),
+                                    'has_digital_form' => $hasDigitalForm,
+                                    'form_pdf_download_url' => $formulirDownloadUrl,
+                                    'form_data' => $hasDigitalForm ? $app->getResolvedFormData() : null,
                                     'student_name' => $student->name,
                                     'student_id' => $student->identifier,
                                     'student_email' => $student->email,
@@ -397,7 +407,7 @@
                                         'file_pembayaran' => $app->file_pembayaran,
                                         'file_kartu_bimbingan' => $app->file_kartu_bimbingan,
                                         'file_skripsi' => $app->file_skripsi,
-                                        'file_formulir' => $app->file_formulir,
+                                        'file_formulir' => $formulirUrl,
                                     ]
                                 ];
                             @endphp
@@ -445,11 +455,11 @@
                                     <div class="flex flex-wrap gap-1.5 max-w-[280px]">
                                         @php
                                             $files = [
-                                                ['key' => 'file_acc_pembimbing', 'label' => 'Bukti ACC', 'path' => $app->file_acc_pembimbing],
-                                                ['key' => 'file_pembayaran', 'label' => 'Bukti Bayar', 'path' => $app->file_pembayaran],
-                                                ['key' => 'file_kartu_bimbingan', 'label' => 'Logbook', 'path' => $app->file_kartu_bimbingan],
-                                                ['key' => 'file_skripsi', 'label' => 'Draf Skripsi', 'path' => $app->file_skripsi],
-                                                ['key' => 'file_formulir', 'label' => 'Formulir', 'path' => $app->file_formulir],
+                                                ['key' => 'file_acc_pembimbing', 'label' => 'Bukti ACC', 'path' => $app->file_acc_pembimbing, 'is_digital' => false],
+                                                ['key' => 'file_pembayaran', 'label' => 'Bukti Bayar', 'path' => $app->file_pembayaran, 'is_digital' => false],
+                                                ['key' => 'file_kartu_bimbingan', 'label' => 'Logbook', 'path' => $app->file_kartu_bimbingan, 'is_digital' => false],
+                                                ['key' => 'file_skripsi', 'label' => 'Draf Skripsi', 'path' => $app->file_skripsi, 'is_digital' => false],
+                                                ['key' => 'file_formulir', 'label' => $hasDigitalForm ? 'Formulir (PDF)' : 'Formulir', 'path' => $formulirUrl, 'is_digital' => $hasDigitalForm],
                                             ];
                                         @endphp
                                         @foreach($files as $file)
@@ -457,16 +467,24 @@
                                                 $review = $app->file_reviews[$file['key']] ?? null;
                                                 $isRejected = ($review['status'] ?? '') === 'rejected';
                                             @endphp
-                                            <a href="{{ $file['path'] }}" target="_blank" 
-                                               class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-50 dark:bg-slate-900 border {{ $isRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300' : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-400 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400' }} rounded-lg text-[11px] font-bold transition-all shadow-2xs"
-                                               title="{{ $isRejected ? 'Ditolak: ' . ($review['note'] ?? 'Perlu revisi') : 'Lihat ' . $file['label'] }}">
-                                                <span>{{ $file['label'] }}</span>
-                                                @if($isRejected)
-                                                    <span class="text-rose-500 font-black text-xs">✕</span>
-                                                @else
-                                                    <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                                @endif
-                                            </a>
+                                            @if(!empty($file['path']))
+                                                <a href="{{ $file['path'] }}" target="_blank"
+                                                   class="inline-flex items-center gap-1 px-2.5 py-1 border {{ $isRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300' : ($file['is_digital'] ? 'border-blue-200 dark:border-blue-800/60 bg-blue-50/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50' : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-400 dark:hover:border-indigo-600 hover:text-indigo-600 dark:hover:text-indigo-400') }} rounded-lg text-[11px] font-bold transition-all shadow-2xs"
+                                                   title="{{ $isRejected ? 'Ditolak: ' . ($review['note'] ?? 'Perlu revisi') : ($file['is_digital'] ? 'Lihat PDF Formulir Digital SIBIMA' : 'Lihat ' . $file['label']) }}">
+                                                    <span>{{ $file['label'] }}</span>
+                                                    @if($isRejected)
+                                                        <span class="text-rose-500 font-black text-xs">✕</span>
+                                                    @elseif($file['is_digital'])
+                                                        <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                    @else
+                                                        <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                    @endif
+                                                </a>
+                                            @else
+                                                <span class="inline-flex items-center px-2.5 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 rounded-lg text-[11px] font-medium">
+                                                    {{ $file['label'] }} (Kosong)
+                                                </span>
+                                            @endif
                                         @endforeach
                                     </div>
                                 </td>
