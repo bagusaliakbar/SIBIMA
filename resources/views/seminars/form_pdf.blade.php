@@ -523,7 +523,6 @@
         </tr>
         <tr>
             <td colspan="3" class="student-sign-cell">
-                <div class="date-line">Subang, {{ $submittedDateFormatted }}</div>
                 <div class="sign-role-title">Mahasiswa/i</div>
 
                 {{-- Area kosong TTD Mahasiswa + Kotak Materai 10.000 untuk TTD basah & materai fisik --}}
@@ -570,7 +569,6 @@
                                             @endif
                                         </tr>
                                     </table>
-                                    <div class="digital-caption">ACC UP Digital Terverifikasi SIBIMA</div>
                                 @else
                                     <div style="height: 64px;">&nbsp;</div>
                                 @endif
@@ -607,7 +605,7 @@
                             </div>
                             <div class="dosen-name-line">{{ $p2?->name ?? ($formData['pembimbing2_name'] ?? '-') }}</div>
                             @if($p2 && !empty($p2->identifier))
-                                <div class="dosen-id-line">NIDN/NIP. {{ $p2->identifier }}</div>
+                                <div class="dosen-id-line">NIDN. {{ $p2->identifier }}</div>
                             @endif
                         </td>
                     </tr>
