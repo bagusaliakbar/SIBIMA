@@ -52,6 +52,49 @@ class SeminarApplication extends Model
     }
 
     /**
+     * Ensure this application has a unique verification token persisted in DB.
+     */
+    public function ensureVerificationToken(): string
+    {
+        if (!empty($this->verification_token)) {
+            return $this->verification_token;
+        }
+
+        $token = \Illuminate\Support\Str::random(32);
+        $this->verification_token = $token;
+        if ($this->exists) {
+            $this->saveQuietly();
+        }
+
+        return $token;
+    }
+
+    /**
+     * Compute a deterministic HMAC-SHA256 integrity code bound to application & thesis data.
+     */
+    public function getIntegrityCode(): string
+    {
+        $resolved = $this->getResolvedFormData();
+        $thesis = $this->thesis;
+        $token = $this->verification_token ?: 'unissued';
+
+        $payload = implode('|', [
+            'seminar_application',
+            (string) ($this->id ?? 0),
+            mb_strtoupper(trim((string) ($resolved['npm'] ?? ''))),
+            mb_strtoupper(trim((string) ($resolved['full_name'] ?? ''))),
+            mb_strtoupper(trim((string) ($resolved['thesis_title'] ?? ''))),
+            (string) ((int) ($thesis?->acc_up_p1 ?? 0)),
+            (string) ((int) ($thesis?->acc_up_p2 ?? 0)),
+            $token,
+        ]);
+
+        $hash = strtoupper(substr(hash_hmac('sha256', $payload, (string) config('app.key')), 0, 12));
+
+        return 'SBM-SEM-' . substr($hash, 0, 4) . '-' . substr($hash, 4, 4) . '-' . substr($hash, 8, 4);
+    }
+
+    /**
      * Compute default academic period (e.g. Ganjil 2026/2027 or Genap 2025/2026).
      */
     public static function getDefaultAcademicPeriod(): array

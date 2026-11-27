@@ -638,6 +638,16 @@ class SeminarApplicationController extends Controller
             );
         }
 
+        $verificationToken = $application->ensureVerificationToken();
+        $verificationUrl = route('document.verify', $verificationToken);
+        $integrityCode = $application->getIntegrityCode();
+        $documentQrSvg = base64_encode(
+            \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
+                ->size(96)
+                ->margin(0)
+                ->generate($verificationUrl)
+        );
+
         return Pdf::loadView('seminars.form_pdf', [
             'application' => $application,
             'formData' => $formData,
@@ -648,6 +658,10 @@ class SeminarApplicationController extends Controller
             'p2Signature' => $p2Signature,
             'p1QrSvg' => $p1QrSvg,
             'p2QrSvg' => $p2QrSvg,
+            'verificationToken' => $verificationToken,
+            'verificationUrl' => $verificationUrl,
+            'integrityCode' => $integrityCode,
+            'documentQrSvg' => $documentQrSvg,
         ])->setPaper('a4', 'portrait');
     }
 

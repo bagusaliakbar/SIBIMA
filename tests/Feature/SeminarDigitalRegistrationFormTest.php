@@ -155,12 +155,31 @@ class SeminarDigitalRegistrationFormTest extends TestCase
         $this->assertStringContainsString('alt="TTD Pembimbing 1"', $renderedHtml);
         $this->assertStringContainsString('alt="QR Verifikasi Pembimbing 1"', $renderedHtml);
         $this->assertStringNotContainsString('alt="TTD Pembimbing 2"', $renderedHtml);
+        $this->assertStringContainsString('Dokumen Resmi Digital', $renderedHtml);
+        $this->assertStringContainsString($app->getIntegrityCode(), $renderedHtml);
+        $this->assertStringContainsString('alt="QR Verifikasi Keaslian Dokumen"', $renderedHtml);
 
-        // Student owner can download PDF (attachment) and preview PDF (inline)
+        // Public verification page (unauthenticated BAAK QR scan) shows verified details & matching integrity code
+        $verifyRes = $this->get(route('document.verify', $app->verification_token));
+        $verifyRes->assertStatus(200);
+        $verifyRes->assertSee('Dokumen Resmi Terverifikasi');
+        $verifyRes->assertSee('Formulir Pendaftaran Seminar');
+        $verifyRes->assertSee('Rina Kartika');
+        $verifyRes->assertSee('D1A220123');
+        $verifyRes->assertSee($app->getIntegrityCode());
+        $verifyRes->assertSee('ACC UP Terverifikasi');
+
+        $invalidVerifyRes = $this->get(route('document.verify', 'token-palsu-tidak-ada'));
+        $invalidVerifyRes->assertStatus(200);
+        $invalidVerifyRes->assertSee('Dokumen Tidak Valid');
+
+        // Student owner can download PDF (attachment) and preview PDF (inline) — verify valid single-page PDF
         $pdfDownload = $this->actingAs($freshStudent)->get(route('seminar-applications.form-pdf', $app->id));
         $pdfDownload->assertStatus(200);
         $this->assertStringContainsString('application/pdf', (string) $pdfDownload->headers->get('content-type'));
-        $this->assertStringStartsWith('%PDF-', $pdfDownload->getContent());
+        $pdfBytes = $pdfDownload->getContent();
+        $this->assertStringStartsWith('%PDF-', $pdfBytes);
+        $this->assertStringContainsString('/Count 1', $pdfBytes);
 
         $pdfInline = $this->actingAs($admin)->get(route('seminar-applications.form-pdf', ['application' => $app->id, 'inline' => 1]));
         $pdfInline->assertStatus(200);

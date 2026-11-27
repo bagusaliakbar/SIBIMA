@@ -6,7 +6,7 @@
     <style>
         @page {
             size: A4 portrait;
-            margin: 12mm 16mm 12mm 16mm;
+            margin: 10mm 16mm 10mm 16mm;
         }
 
         body {
@@ -17,6 +17,22 @@
             margin: 0;
             padding: 0;
             background-color: #ffffff;
+        }
+
+        /* WATERMARK KEAMANAN HALUS */
+        .security-watermark {
+            position: fixed;
+            top: 43%;
+            left: 5%;
+            width: 90%;
+            text-align: center;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 28pt;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #f1f5f9;
+            transform: rotate(-30deg);
+            z-index: -1;
         }
 
         /* KOP SURAT RESMI FASILKOM UNSUB */
@@ -346,19 +362,102 @@
             margin-top: 2px;
         }
 
-        /* FOOTER META */
-        .doc-footer {
-            margin-top: 8px;
+        /* FOOTER VERIFIKASI KEASLIAN DOKUMEN */
+        .doc-security-footer {
+            margin-top: 10px;
+            border: 1px solid #cbd5e1;
+            background-color: #f8fafc;
+            padding: 6px 8px;
+        }
+
+        .doc-security-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .doc-security-table td {
+            border: none !important;
+            padding: 0 !important;
+            vertical-align: middle !important;
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 7pt;
-            color: #475569;
-            border-top: 1px solid #cbd5e1;
-            padding-top: 4px;
+        }
+
+        .doc-qr-cell {
+            width: 48px;
+            padding-right: 8px !important;
+            border-right: 1px solid #cbd5e1 !important;
             text-align: center;
+        }
+
+        .doc-qr-img {
+            width: 44px;
+            height: 44px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .doc-info-cell {
+            padding-left: 9px !important;
+            padding-right: 8px !important;
+            text-align: left;
+            line-height: 1.3;
+        }
+
+        .doc-info-title {
+            font-size: 7.5pt;
+            font-weight: bold;
+            color: #0f172a;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .doc-info-meta {
+            font-size: 7pt;
+            color: #334155;
+            margin-top: 2px;
+        }
+
+        .doc-info-hint {
+            font-size: 6.3pt;
+            color: #64748b;
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        .doc-code-cell {
+            width: 145px;
+            padding-left: 8px !important;
+            border-left: 1px solid #cbd5e1 !important;
+            text-align: right;
+            line-height: 1.3;
+        }
+
+        .doc-code-label {
+            font-size: 6pt;
+            font-weight: bold;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .doc-code-value {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 8pt;
+            font-weight: bold;
+            color: #0f172a;
+            margin-top: 2px;
+            white-space: nowrap;
+        }
+
+        .doc-code-sub {
+            font-size: 6pt;
+            color: #475569;
+            margin-top: 2px;
         }
     </style>
 </head>
 <body>
+    <div class="security-watermark">SIBIMA FASILKOM UNSUB</div>
     @php
         $canEmbedPng = extension_loaded('gd');
         $kopBase64 = null;
@@ -614,12 +713,44 @@
         </tr>
     </table>
 
-    <div class="doc-footer">
-        Formulir Pendaftaran Seminar Skripsi/Tugas Akhir diterbitkan melalui SIBIMA FASILKOM UNSUB
-        @if($application->wave)
-            &bull; {{ $application->wave->name }}
-        @endif
-        &bull; Diajukan: {{ $submittedDateTime }}
+    @php
+        $resolvedVerificationToken = $verificationToken ?? $application->verification_token;
+        $resolvedVerificationUrl = $verificationUrl ?? ($resolvedVerificationToken ? route('document.verify', $resolvedVerificationToken) : null);
+        $resolvedIntegrityCode = $integrityCode ?? $application->getIntegrityCode();
+        $resolvedDocumentQrSvg = $documentQrSvg ?? (
+            $resolvedVerificationUrl
+                ? base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(96)->margin(0)->generate($resolvedVerificationUrl))
+                : null
+        );
+    @endphp
+
+    <div class="doc-security-footer">
+        <table class="doc-security-table">
+            <tr>
+                @if(!empty($resolvedDocumentQrSvg))
+                    <td class="doc-qr-cell">
+                        <img src="data:image/svg+xml;base64,{{ $resolvedDocumentQrSvg }}" class="doc-qr-img" alt="QR Verifikasi Keaslian Dokumen">
+                    </td>
+                @endif
+                <td class="doc-info-cell">
+                    <div class="doc-info-title">Dokumen Resmi Digital &mdash; SIBIMA FASILKOM UNSUB</div>
+                    <div class="doc-info-meta">
+                        @if($application->wave)
+                            <strong>{{ $application->wave->name }}</strong> &bull;
+                        @endif
+                        Diajukan: {{ $submittedDateTime }}
+                    </div>
+                    <div class="doc-info-hint">
+                        Pindai QR Code atau cocokkan Kode Keaslian pada portal SIBIMA untuk memastikan keabsahan dokumen ini.
+                    </div>
+                </td>
+                <td class="doc-code-cell">
+                    <div class="doc-code-label">Kode Keaslian Dokumen</div>
+                    <div class="doc-code-value">{{ $resolvedIntegrityCode }}</div>
+                    <div class="doc-code-sub">Terdaftar &amp; Terlindungi Sistem</div>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>
