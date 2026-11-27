@@ -733,7 +733,7 @@
                     </td>
                 @endif
                 <td class="doc-info-cell">
-                    <div class="doc-info-title">Dokumen Resmi Digital &mdash; SIBIMA FASILKOM UNSUB</div>
+                    <div class="doc-info-title">Dokumen Pendafaran SEMINAR &mdash; SIBIMA FASILKOM UNSUB</div>
                     <div class="doc-info-meta">
                         @if($application->wave)
                             <strong>{{ $application->wave->name }}</strong> &bull;
@@ -745,9 +745,8 @@
                     </div>
                 </td>
                 <td class="doc-code-cell">
-                    <div class="doc-code-label">Kode Keaslian Dokumen</div>
+                    <div class="doc-code-label">ID Dokumen</div>
                     <div class="doc-code-value">{{ $resolvedIntegrityCode }}</div>
-                    <div class="doc-code-sub">Terdaftar &amp; Terlindungi Sistem</div>
                 </td>
             </tr>
         </table>
