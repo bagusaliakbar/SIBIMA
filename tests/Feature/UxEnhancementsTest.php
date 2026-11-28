@@ -134,7 +134,9 @@ class UxEnhancementsTest extends TestCase
         $this->actingAs($admin)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Cari cepat...')
-            ->assertSee('Pencarian Cepat SIBIMA');
+            ->assertSee('Buka Pencarian Cepat (Ctrl+K)')
+            ->assertSee('sibima-open-search')
+            ->assertSee('Pencarian Cepat SIBIMA')
+            ->assertDontSee('Cari cepat...');
     }
 }

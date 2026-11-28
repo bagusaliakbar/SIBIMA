@@ -13,8 +13,8 @@
                         </div>
                     </div>
 
-                    <!-- Desktop Sidebar Toggle & Quick Search Trigger -->
-                    <div class="hidden md:flex items-center gap-2.5">
+                    <!-- Desktop Sidebar Toggle -->
+                    <div class="hidden md:flex items-center">
                         <button type="button" 
                                 @click="sidebarCollapsed = !sidebarCollapsed" 
                                 :aria-expanded="!sidebarCollapsed"
@@ -28,25 +28,14 @@
                             </div>
                             <span class="text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors" x-text="sidebarCollapsed ? 'Buka Menu' : 'Kecilkan'"></span>
                         </button>
-
-                        <button type="button"
-                                @click="$dispatch('sibima-open-search')"
-                                aria-label="Buka Pencarian Cepat (Ctrl+K)"
-                                class="h-10 px-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-900/70 dark:hover:bg-slate-700/70 border border-slate-200/80 dark:border-slate-700/80 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-medium inline-flex items-center gap-2.5 transition-colors cursor-pointer lg:w-64 justify-between">
-                            <span class="inline-flex items-center gap-2 truncate">
-                                <svg aria-hidden="true" class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                <span class="truncate">Cari cepat...</span>
-                            </span>
-                            <kbd class="hidden lg:inline-flex items-center px-1.5 py-0.5 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[10px] font-bold text-slate-500 dark:text-slate-400 shrink-0">Ctrl K</kbd>
-                        </button>
                     </div>
 
 
 
                     <div class="flex items-center space-x-1 sm:space-x-5">
                         <div class="flex items-center space-x-0.5 sm:space-x-2">
-                            <!-- Mobile Quick Search Trigger -->
-                            <button type="button" @click="$dispatch('sibima-open-search')" aria-label="Buka Pencarian Cepat" class="md:hidden w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all cursor-pointer" title="Cari Cepat">
+                            <!-- Quick Search Trigger (Icon-only, left of Dark/Light Mode) -->
+                            <button type="button" @click="$dispatch('sibima-open-search')" aria-label="Buka Pencarian Cepat (Ctrl+K)" class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all cursor-pointer" title="Cari Cepat (Ctrl+K)">
                                 <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </button>
                             <!-- Dark Mode Toggle -->
