@@ -82,6 +82,10 @@ class SeminarDigitalRegistrationFormTest extends TestCase
         $response->assertSee('Ir. Pembimbing Dua, M.T');
         $response->assertSee('Kosong + Kotak Materai 10.000');
         $response->assertSee('4 Berkas Google Drive');
+        $response->assertSee('openBaak');
+        $response->assertSee('handleSubmit');
+        $response->assertSee('sibima_seminar_draft_');
+        $response->assertSee('driveLinkStatus');
         $response->assertDontSee('name="file_formulir"', false);
     }
 
@@ -130,9 +134,13 @@ class SeminarDigitalRegistrationFormTest extends TestCase
         $this->assertEquals('41211', $freshStudent->postal_code);
         $this->assertEquals('0260411415', $freshStudent->home_phone);
 
-        // Status page shows Print PDF action
+        // Status page shows Print PDF action, clean Indonesian status title, and student self-cancel while pending
         $statusRes = $this->actingAs($freshStudent)->get(route('seminar-applications.index'));
         $statusRes->assertStatus(200);
+        $statusRes->assertSee('Status Pengajuan Seminar');
+        $statusRes->assertDontSee('Status Pengajuan: PENDING');
+        $statusRes->assertSee('Batalkan Pengajuan');
+        $statusRes->assertSee(route('seminar-applications.destroy', $app->id));
         $statusRes->assertSee('Cetak Formulir (PDF)');
         $statusRes->assertSee(route('seminar-applications.form-pdf', $app->id));
 
@@ -190,11 +198,13 @@ class SeminarDigitalRegistrationFormTest extends TestCase
         $this->actingAs($setup['p1'])->get(route('seminar-applications.form-pdf', $app->id))->assertStatus(200);
         $this->actingAs($otherStudent)->get(route('seminar-applications.form-pdf', $app->id))->assertStatus(403);
 
-        // Admin index shows Formulir (PDF) link
+        // Admin index shows Formulir (PDF) link & reactive validation modal helpers
         $adminRes = $this->actingAs($admin)->get(route('seminar-applications.index', ['wave_id' => $setup['wave']->id]));
         $adminRes->assertStatus(200);
         $adminRes->assertSee('Formulir (PDF)');
         $adminRes->assertSee('has_digital_form');
+        $adminRes->assertSee('openValidationModal');
+        $adminRes->assertSee('rejectedReviewCount');
 
         // Admin ZIP includes auto-generated 5_Formulir_Seminar.pdf
         $zipRes = $this->actingAs($admin)->get(route('seminar-applications.download-zip', $app->id));

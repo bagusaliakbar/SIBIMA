@@ -24,40 +24,59 @@
 
     <div class="w-full">
         @if($isEligible)
-            <!-- Physical Documents Notice -->
-            <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60 rounded-2xl p-5 mb-6">
-                <div class="flex items-start gap-4">
-                    <div class="p-2 bg-blue-100 dark:bg-blue-900/60 rounded-xl shrink-0">
-                        <svg class="w-5 h-5 text-blue-700 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <!-- Physical Documents Notice (Collapsible: compact during form entry, expanded after submission) -->
+            <div x-data="{ openBaak: @js((bool) $application) }"
+                 class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/60 rounded-2xl mb-6 overflow-hidden">
+                <button type="button"
+                        @click="openBaak = !openBaak"
+                        :aria-expanded="openBaak"
+                        class="w-full px-5 py-4 flex items-center justify-between gap-4 text-left hover:bg-blue-100/50 dark:hover:bg-blue-900/20 transition-colors cursor-pointer">
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <div class="p-2 bg-blue-100 dark:bg-blue-900/60 rounded-xl shrink-0">
+                            <svg class="w-5 h-5 text-blue-700 dark:text-blue-300" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-xs font-bold text-blue-900 dark:text-blue-200 uppercase tracking-wider">Penting: Berkas Fisik (Penyerahan ke BAAK)</h3>
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-200">4 Berkas Fisik</span>
+                            </div>
+                            <p x-show="!openBaak" class="text-xs text-blue-800/90 dark:text-blue-300/90 mt-0.5 truncate">
+                                Klik untuk melihat rincian berkas fisik ke BAAK (Formulir PDF + Materai 10.000, Pas Photo, Map &amp; Naskah Skripsi).
+                            </p>
+                        </div>
                     </div>
-                    <div class="min-w-0">
-                        <h3 class="text-xs font-bold text-blue-900 dark:text-blue-200 uppercase tracking-wider mb-1.5">Penting: Berkas Fisik (Penyerahan ke BAAK)</h3>
-                        <p class="text-xs text-blue-800 dark:text-blue-300 mb-3">Selain melengkapi formulir digital dan 19 tautan berkas di bawah ini, Anda wajib menyerahkan berkas fisik berikut langsung ke kantor BAAK:</p>
-                        <ul class="space-y-2.5">
-                            <li class="flex items-start text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-2.5 shrink-0"></span>
-                                <span><strong>Dokumen Skripsi:</strong> Cetak rangkap 3 (khusus jika pelaksanaan Sidang dilakukan secara Offline).</span>
-                            </li>
-                            <li class="flex items-start text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-2.5 shrink-0"></span>
-                                <span><strong>Formulir Pendaftaran Sidang (Cetak dari SIBIMA):</strong> Setelah mengirim pengajuan di bawah ini, klik tombol <strong>Cetak Formulir (PDF)</strong>, tempel <strong>Materai 10.000</strong>, bubuhkan tanda tangan Anda, lalu serahkan ke BAAK.</span>
-                            </li>
-                            <li class="flex items-start text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-2.5 shrink-0"></span>
-                                <span>
-                                    <strong>Pas Photo Hitam Putih:</strong> Terbaru, dicetak di kertas DOP.<br>
-                                    <span class="inline-block mt-1 font-bold bg-blue-100 dark:bg-blue-900/60 px-2 py-0.5 rounded">2x3 (5 lembar)</span>
-                                    <span class="inline-block mt-1 font-bold bg-blue-100 dark:bg-blue-900/60 px-2 py-0.5 rounded">3x4 (10 lembar)</span>
-                                    <span class="inline-block mt-1 font-bold bg-blue-100 dark:bg-blue-900/60 px-2 py-0.5 rounded">4x6 (10 lembar)</span>
-                                    <span class="block mt-1.5 opacity-85 italic text-[11px]">Ketentuan: Pria &amp; Wanita memakai baju putih hitam, berdasi, berjas hitam. Bagi wanita berhijab menggunakan kerudung warna hitam.</span>
-                                </span>
-                            </li>
-                            <li class="flex items-start text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
-                                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-2.5 shrink-0"></span>
-                                <span><strong>Map:</strong> Map Plastik warna Biru (2 buah) dan Map Kertas (2 buah).</span>
-                            </li>
-                        </ul>
-                    </div>
+                    <span class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 dark:text-blue-300 shrink-0">
+                        <span x-text="openBaak ? 'Tutup' : 'Lihat Detail'"></span>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="openBaak ? 'rotate-180' : ''" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </span>
+                </button>
+
+                <div x-show="openBaak" x-cloak class="px-5 pb-5 pt-1 border-t border-blue-200/70 dark:border-blue-800/50">
+                    <p class="text-xs text-blue-800 dark:text-blue-300 mb-3 mt-2">Selain melengkapi formulir digital dan 19 tautan berkas di bawah ini, Anda wajib menyerahkan berkas fisik berikut langsung ke kantor BAAK:</p>
+                    <ul class="space-y-2.5">
+                        <li class="flex items-start text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-2.5 shrink-0"></span>
+                            <span><strong>Dokumen Skripsi:</strong> Cetak rangkap 3 (khusus jika pelaksanaan Sidang dilakukan secara Offline).</span>
+                        </li>
+                        <li class="flex items-start text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-2.5 shrink-0"></span>
+                            <span><strong>Formulir Pendaftaran Sidang (Cetak dari SIBIMA):</strong> Setelah mengirim pengajuan di bawah ini, klik tombol <strong>Cetak Formulir (PDF)</strong>, tempel <strong>Materai 10.000</strong>, bubuhkan tanda tangan Anda, lalu serahkan ke BAAK.</span>
+                        </li>
+                        <li class="flex items-start text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-2.5 shrink-0"></span>
+                            <span>
+                                <strong>Pas Photo Hitam Putih:</strong> Terbaru, dicetak di kertas DOP.<br>
+                                <span class="inline-block mt-1 font-bold bg-blue-100 dark:bg-blue-900/60 px-2 py-0.5 rounded">2x3 (5 lembar)</span>
+                                <span class="inline-block mt-1 font-bold bg-blue-100 dark:bg-blue-900/60 px-2 py-0.5 rounded">3x4 (10 lembar)</span>
+                                <span class="inline-block mt-1 font-bold bg-blue-100 dark:bg-blue-900/60 px-2 py-0.5 rounded">4x6 (10 lembar)</span>
+                                <span class="block mt-1.5 opacity-85 italic text-[11px]">Ketentuan: Pria &amp; Wanita memakai baju putih hitam, berdasi, berjas hitam. Bagi wanita berhijab menggunakan kerudung warna hitam.</span>
+                            </span>
+                        </li>
+                        <li class="flex items-start text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-2.5 shrink-0"></span>
+                            <span><strong>Map:</strong> Map Plastik warna Biru (2 buah) dan Map Kertas (2 buah).</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         @endif
@@ -278,13 +297,14 @@
             @endphp
 
             <!-- Status Application -->
-            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+            <div x-data x-init="try { localStorage.removeItem('sibima_defense_draft_{{ Auth::id() }}_{{ $application->wave_id ?? ($activeWave?->id ?? 0) }}'); localStorage.removeItem('sibima_defense_draft_{{ Auth::id() }}_0'); } catch (e) {}"
+                 class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
                 <div class="p-6 border-b border-slate-200 dark:border-slate-800 {{ $application->status === 'approved' ? 'bg-emerald-50 dark:bg-emerald-950/30' : ($application->status === 'rejected' ? 'bg-rose-50 dark:bg-rose-950/30' : 'bg-amber-50 dark:bg-amber-950/30') }}">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
                             <div class="flex items-center gap-2.5 flex-wrap">
                                 <h3 class="text-base font-bold {{ $application->status === 'approved' ? 'text-emerald-900 dark:text-emerald-300' : ($application->status === 'rejected' ? 'text-rose-900 dark:text-rose-300' : 'text-amber-900 dark:text-amber-300') }}">
-                                    Status Pengajuan Sidang: {{ strtoupper($application->status) }}
+                                    Status Pengajuan Sidang
                                 </h3>
                                 <span class="px-3 py-0.5 rounded-full font-bold text-[11px] uppercase tracking-wider border {{ $application->status === 'approved' ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' : ($application->status === 'rejected' ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800') }}">
                                     {{ $application->status === 'approved' ? 'Disetujui' : ($application->status === 'rejected' ? 'Perlu Revisi' : 'Menunggu Validasi') }}
@@ -298,19 +318,39 @@
                             </p>
                         </div>
 
-                        @if($hasDigitalForm)
+                        @if($hasDigitalForm || $application->status === 'pending')
                             <div class="flex items-center gap-2 flex-wrap shrink-0">
-                                <a href="{{ route('thesis-defense-applications.form-pdf', ['application' => $application->id, 'inline' => 1]) }}"
-                                   target="_blank"
-                                   class="h-10 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                    <span>Pratinjau PDF</span>
-                                </a>
-                                <a href="{{ route('thesis-defense-applications.form-pdf', $application->id) }}"
-                                   class="h-10 inline-flex items-center justify-center gap-1.5 px-4 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-sm transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                                    <span>Cetak Formulir (PDF)</span>
-                                </a>
+                                @if($application->status === 'pending')
+                                    <form action="{{ route('thesis-defense-applications.destroy', $application->id) }}"
+                                          method="POST"
+                                          class="inline"
+                                          data-confirm="Pengajuan sidang berstatus Menunggu Validasi akan dibatalkan sehingga Anda dapat memperbaiki biodata atau tautan berkas lalu mendaftar ulang. Lanjutkan?"
+                                          data-confirm-title="Batalkan Pengajuan Sidang"
+                                          data-confirm-type="danger"
+                                          data-confirm-button="Ya, Batalkan">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="h-10 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-xl text-xs font-bold bg-white hover:bg-rose-50 text-rose-700 dark:bg-slate-900 dark:hover:bg-rose-950/40 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 transition-colors cursor-pointer">
+                                            <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            <span>Batalkan Pengajuan</span>
+                                        </button>
+                                    </form>
+                                @endif
+
+                                @if($hasDigitalForm)
+                                    <a href="{{ route('thesis-defense-applications.form-pdf', ['application' => $application->id, 'inline' => 1]) }}"
+                                       target="_blank"
+                                       class="h-10 inline-flex items-center justify-center gap-1.5 px-3.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors">
+                                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        <span>Pratinjau PDF</span>
+                                    </a>
+                                    <a href="{{ route('thesis-defense-applications.form-pdf', $application->id) }}"
+                                       class="h-10 inline-flex items-center justify-center gap-1.5 px-4 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-sm transition-colors">
+                                        <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                        <span>Cetak Formulir (PDF)</span>
+                                    </a>
+                                @endif
                             </div>
                         @endif
                     </div>
@@ -481,16 +521,195 @@
                         ];
                     @endphp
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        @foreach($fileFields as $field => $info)
-                            @php
-                                $review = $application->file_reviews[$field] ?? null;
-                                $isRejected = ($review['status'] ?? '') === 'rejected';
-                                $isApproved = ($review['status'] ?? '') === 'approved';
-                                $isDigitalCard = $field === 'file_formulir' && $hasDigitalForm;
-                                $hasFile = $isDigitalCard || !empty($application->$field);
-                            @endphp
-                            <div class="group relative flex flex-col justify-between p-4 rounded-2xl border transition-all {{ $field === 'file_formulir' ? 'md:col-span-2 lg:col-span-3 xl:col-span-4' : '' }} {{ $isRejected ? 'border-rose-200 bg-rose-50/40 dark:border-rose-800/60 dark:bg-rose-950/20' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700' }}">
+                    @php
+                        $approvedFilesCount = 0;
+                        $rejectedFilesCount = 0;
+                        $pendingFilesCount = 0;
+                        foreach ($fileFields as $fKey => $fMeta) {
+                            $fStat = $application->file_reviews[$fKey]['status'] ?? null;
+                            if ($fStat === 'approved') {
+                                $approvedFilesCount++;
+                            } elseif ($fStat === 'rejected') {
+                                $rejectedFilesCount++;
+                            } else {
+                                $pendingFilesCount++;
+                            }
+                        }
+                    @endphp
+
+                    @if($application->status === 'rejected')
+                        <div class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-800">
+                            <div class="flex items-center gap-3 mb-5 p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200 dark:border-amber-800/60">
+                                <div class="p-2 bg-amber-100 dark:bg-amber-900/60 rounded-xl shrink-0">
+                                    <svg class="w-5 h-5 text-amber-700 dark:text-amber-300" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h5 class="text-xs font-bold uppercase tracking-wider text-amber-900 dark:text-amber-200">Perbaikan Pengajuan Diperlukan ({{ $rejectedFilesCount }} Berkas Revisi)</h5>
+                                    <p class="text-xs text-amber-800 dark:text-amber-300 mt-0.5">Perbaiki data formulir atau unggah ulang tautan berkas yang ditolak di bawah ini, lalu klik Perbarui Pengajuan.</p>
+                                </div>
+                            </div>
+
+                            @if($errors->any())
+                                <div role="alert" tabindex="-1" x-init="$el.scrollIntoView({ behavior: 'smooth', block: 'center' })"
+                                     class="mb-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-200 text-xs">
+                                    <p class="font-bold mb-1">Periksa kembali isian berikut:</p>
+                                    <ul class="list-disc list-inside space-y-0.5">
+                                        @foreach($errors->all() as $err)
+                                            <li>{{ $err }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <form action="{{ route('thesis-defense-applications.store') }}" method="POST" x-data="{ isSubmitting: false }" @submit="if (isSubmitting) { $event.preventDefault(); return; } isSubmitting = true" class="space-y-6">
+                                @csrf
+
+                                @if($isFormulirRejected)
+                                    <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/40 space-y-4">
+                                        <div>
+                                            <h5 class="text-sm font-bold text-slate-800 dark:text-slate-100">Perbaikan Formulir Pendaftaran Sidang Digital</h5>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Perbarui biodata di bawah ini sesuai catatan validator. Sistem akan memperbarui PDF formulir secara otomatis.</p>
+                                        </div>
+
+                                        <input type="hidden" name="study_program" value="{{ $studyProgramFixed }}">
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tempat Lahir <span class="text-rose-500">*</span></label>
+                                                <input type="text" name="birth_place" value="{{ old('birth_place', $resolvedForm['birth_place'] !== '-' ? $resolvedForm['birth_place'] : ($prefill['birth_place'] ?? '')) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                                @error('birth_place') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tanggal Lahir <span class="text-rose-500">*</span></label>
+                                                <x-date-picker name="birth_date"
+                                                               :value="old('birth_date', $resolvedForm['birth_date'] ?? ($prefill['birth_date'] ?? ''))"
+                                                               :max="now()->subDay()->format('Y-m-d')"
+                                                               placeholder="Pilih tanggal lahir"
+                                                               required />
+                                                @error('birth_date') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Semester <span class="text-rose-500">*</span></label>
+                                                <input type="number" inputmode="numeric" min="1" max="20" name="semester_number" value="{{ old('semester_number', is_numeric($resolvedForm['semester_number']) ? $resolvedForm['semester_number'] : ($prefill['semester_number'] ?? 8)) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                                @error('semester_number') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tahun Akademik <span class="text-rose-500">*</span></label>
+                                                <input type="text" name="academic_year" value="{{ old('academic_year', $resolvedForm['academic_year'] !== '-' ? $resolvedForm['academic_year'] : $period['label']) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                                @error('academic_year') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">E-mail Aktif <span class="text-rose-500">*</span></label>
+                                                <input type="email" name="email" value="{{ old('email', $resolvedForm['email'] !== '-' ? $resolvedForm['email'] : ($prefill['email'] ?? '')) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                                @error('email') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">No. HP / WhatsApp <span class="text-rose-500">*</span></label>
+                                                <input type="text" inputmode="tel" name="phone_number" value="{{ old('phone_number', $resolvedForm['phone_number'] !== '-' ? $resolvedForm['phone_number'] : ($prefill['phone_number'] ?? '')) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                                @error('phone_number') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                            <div class="md:col-span-2">
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Alamat Lengkap <span class="text-rose-500">*</span></label>
+                                                <textarea name="address" rows="2" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">{{ old('address', $resolvedForm['address'] !== '-' ? $resolvedForm['address'] : ($prefill['address'] ?? '')) }}</textarea>
+                                                @error('address') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Kode Pos <span class="text-rose-500">*</span></label>
+                                                <input type="text" inputmode="numeric" name="postal_code" value="{{ old('postal_code', $resolvedForm['postal_code'] !== '-' ? $resolvedForm['postal_code'] : ($prefill['postal_code'] ?? '')) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                                @error('postal_code') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Telepon Rumah <span class="text-slate-500 dark:text-slate-400 font-normal">(Opsional)</span></label>
+                                                <input type="text" inputmode="tel" name="home_phone" value="{{ old('home_phone', $resolvedForm['home_phone'] !== '-' ? $resolvedForm['home_phone'] : ($prefill['home_phone'] ?? '')) }}" placeholder="Kosongkan jika tidak ada" class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                                @error('home_phone') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                        </div>
+
+                                        <label class="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 cursor-pointer">
+                                            <input type="checkbox" name="statement_agreed" value="1" required {{ old('statement_agreed', '1') ? 'checked' : '' }} class="mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500">
+                                            <span class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                                                Dengan ini saya menyatakan siap mengikuti Sidang Skripsi/Tugas Akhir dan bersedia mengoreksi serta memperbaiki kesalahan dan kekurangan berdasarkan saran dari dosen pembimbing dan penguji.
+                                            </span>
+                                        </label>
+                                    </div>
+                                @endif
+
+                                @php
+                                    $rejectedDriveFields = collect(array_keys($fileFields))
+                                        ->reject(fn($f) => $f === 'file_formulir')
+                                        ->filter(fn($f) => ($application->file_reviews[$f]['status'] ?? '') === 'rejected');
+                                @endphp
+
+                                @if($rejectedDriveFields->isNotEmpty())
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        @foreach($rejectedDriveFields as $field)
+                                            @php
+                                                $info = $fileFields[$field];
+                                                $revNote = $application->file_reviews[$field]['note'] ?? null;
+                                            @endphp
+                                            <div class="p-4 rounded-2xl border border-rose-200 dark:border-rose-800/60 bg-rose-50/40 dark:bg-rose-950/20 space-y-2">
+                                                <label class="block text-xs font-bold text-slate-800 dark:text-slate-100">{{ $info['label'] }} <span class="text-rose-500">*</span></label>
+                                                @if($revNote)
+                                                    <p class="text-[11px] font-medium text-rose-700 dark:text-rose-300">Catatan: "{{ $revNote }}"</p>
+                                                @else
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Masukkan tautan baru Google Drive yang dapat dilihat publik.</p>
+                                                @endif
+                                                <input type="url" name="{{ $field }}" value="{{ old($field, $application->$field ?? '') }}" placeholder="https://drive.google.com/..." required class="w-full h-10 px-3 text-xs text-slate-800 dark:text-slate-100 rounded-xl border border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900">
+                                                @error($field) <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <div class="flex justify-end">
+                                    <button type="submit"
+                                            :disabled="isSubmitting"
+                                            class="h-10 px-6 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-pointer inline-flex items-center justify-center gap-2">
+                                        <svg x-show="isSubmitting" x-cloak class="w-4 h-4 animate-spin" aria-hidden="true" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        <span x-text="isSubmitting ? 'Mengirim Perbaikan...' : 'Perbarui Pengajuan'">Perbarui Pengajuan</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    @endif
+
+                    <!-- Quick Status Filter Pills for 20-Card Grid -->
+                    <div x-data="{ statusFilter: 'all' }" class="space-y-4">
+                        <div class="flex flex-wrap items-center gap-2" role="tablist" aria-label="Filter status berkas sidang">
+                            <button type="button" role="tab" :aria-selected="statusFilter === 'all'" @click="statusFilter = 'all'"
+                                    class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer"
+                                    :class="statusFilter === 'all' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'">
+                                Semua ({{ count($fileFields) }})
+                            </button>
+                            <button type="button" role="tab" :aria-selected="statusFilter === 'rejected'" @click="statusFilter = 'rejected'"
+                                    class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer"
+                                    :class="statusFilter === 'rejected' ? 'bg-rose-600 text-white border-rose-600' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 dark:hover:bg-rose-900/50'">
+                                Perlu Revisi ({{ $rejectedFilesCount }})
+                            </button>
+                            <button type="button" role="tab" :aria-selected="statusFilter === 'approved'" @click="statusFilter = 'approved'"
+                                    class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer"
+                                    :class="statusFilter === 'approved' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/50'">
+                                Valid ({{ $approvedFilesCount }})
+                            </button>
+                            <button type="button" role="tab" :aria-selected="statusFilter === 'pending'" @click="statusFilter = 'pending'"
+                                    class="px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer"
+                                    :class="statusFilter === 'pending' ? 'bg-amber-600 text-white border-amber-600' : 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/60 hover:bg-amber-100 dark:hover:bg-amber-900/50'">
+                                Diproses ({{ $pendingFilesCount }})
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            @foreach($fileFields as $field => $info)
+                                @php
+                                    $review = $application->file_reviews[$field] ?? null;
+                                    $isRejected = ($review['status'] ?? '') === 'rejected';
+                                    $isApproved = ($review['status'] ?? '') === 'approved';
+                                    $cardStatus = $isRejected ? 'rejected' : ($isApproved ? 'approved' : 'pending');
+                                    $isDigitalCard = $field === 'file_formulir' && $hasDigitalForm;
+                                    $hasFile = $isDigitalCard || !empty($application->$field);
+                                @endphp
+                                <div x-show="statusFilter === 'all' || statusFilter === '{{ $cardStatus }}'"
+                                     class="group relative flex flex-col justify-between p-4 rounded-2xl border transition-all {{ $field === 'file_formulir' ? 'md:col-span-2 lg:col-span-3 xl:col-span-4' : '' }} {{ $isRejected ? 'border-rose-200 bg-rose-50/40 dark:border-rose-800/60 dark:bg-rose-950/20' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700' }}">
                                 <div>
                                     <div class="flex items-start justify-between gap-3 mb-3">
                                         <div class="flex items-center gap-3 min-w-0">
@@ -579,129 +798,14 @@
                                 @endif
                             </div>
                         @endforeach
-                    </div>
-
-                    @if($application->status === 'rejected')
-                        <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
-                            <div class="flex items-center gap-3 mb-6 p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200 dark:border-amber-800/60">
-                                <div class="p-2 bg-amber-100 dark:bg-amber-900/60 rounded-xl shrink-0">
-                                    <svg class="w-5 h-5 text-amber-700 dark:text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <p class="text-xs text-amber-800 dark:text-amber-200 font-bold">Silakan perbaiki data formulir atau unggah ulang berkas yang berstatus revisi di bawah ini:</p>
-                            </div>
-
-                            @if($errors->any())
-                                <div class="mb-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-200 text-xs">
-                                    <p class="font-bold mb-1">Periksa kembali isian berikut:</p>
-                                    <ul class="list-disc list-inside space-y-0.5">
-                                        @foreach($errors->all() as $err)
-                                            <li>{{ $err }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
-                            <form action="{{ route('thesis-defense-applications.store') }}" method="POST" class="space-y-6">
-                                @csrf
-
-                                @if($isFormulirRejected)
-                                    <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/40 space-y-4">
-                                        <div>
-                                            <h5 class="text-sm font-bold text-slate-800 dark:text-slate-100">Perbaikan Formulir Pendaftaran Sidang Digital</h5>
-                                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Perbarui biodata di bawah ini sesuai catatan validator. Sistem akan memperbarui PDF formulir secara otomatis.</p>
-                                        </div>
-
-                                        <input type="hidden" name="study_program" value="{{ $studyProgramFixed }}">
-
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tempat Lahir <span class="text-rose-500">*</span></label>
-                                                <input type="text" name="birth_place" value="{{ old('birth_place', $resolvedForm['birth_place'] !== '-' ? $resolvedForm['birth_place'] : ($prefill['birth_place'] ?? '')) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
-                                                @error('birth_place') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tanggal Lahir <span class="text-rose-500">*</span></label>
-                                                <x-date-picker name="birth_date"
-                                                               :value="old('birth_date', $resolvedForm['birth_date'] ?? ($prefill['birth_date'] ?? ''))"
-                                                               :max="now()->subDay()->format('Y-m-d')"
-                                                               placeholder="Pilih tanggal lahir"
-                                                               required />
-                                                @error('birth_date') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Semester <span class="text-rose-500">*</span></label>
-                                                <input type="number" min="1" max="20" name="semester_number" value="{{ old('semester_number', is_numeric($resolvedForm['semester_number']) ? $resolvedForm['semester_number'] : ($prefill['semester_number'] ?? 8)) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
-                                                @error('semester_number') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Tahun Akademik <span class="text-rose-500">*</span></label>
-                                                <input type="text" name="academic_year" value="{{ old('academic_year', $resolvedForm['academic_year'] !== '-' ? $resolvedForm['academic_year'] : $period['label']) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
-                                                @error('academic_year') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">E-mail Aktif <span class="text-rose-500">*</span></label>
-                                                <input type="email" name="email" value="{{ old('email', $resolvedForm['email'] !== '-' ? $resolvedForm['email'] : ($prefill['email'] ?? '')) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
-                                                @error('email') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">No. HP / WhatsApp <span class="text-rose-500">*</span></label>
-                                                <input type="text" name="phone_number" value="{{ old('phone_number', $resolvedForm['phone_number'] !== '-' ? $resolvedForm['phone_number'] : ($prefill['phone_number'] ?? '')) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
-                                                @error('phone_number') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                            <div class="md:col-span-2">
-                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Alamat Lengkap <span class="text-rose-500">*</span></label>
-                                                <textarea name="address" rows="2" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">{{ old('address', $resolvedForm['address'] !== '-' ? $resolvedForm['address'] : ($prefill['address'] ?? '')) }}</textarea>
-                                                @error('address') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Kode Pos <span class="text-rose-500">*</span></label>
-                                                <input type="text" name="postal_code" value="{{ old('postal_code', $resolvedForm['postal_code'] !== '-' ? $resolvedForm['postal_code'] : ($prefill['postal_code'] ?? '')) }}" required class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
-                                                @error('postal_code') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Telepon Rumah <span class="text-slate-400 font-normal">(Opsional)</span></label>
-                                                <input type="text" name="home_phone" value="{{ old('home_phone', $resolvedForm['home_phone'] !== '-' ? $resolvedForm['home_phone'] : ($prefill['home_phone'] ?? '')) }}" placeholder="Kosongkan jika tidak ada" class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
-                                                @error('home_phone') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                        </div>
-
-                                        <label class="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 cursor-pointer">
-                                            <input type="checkbox" name="statement_agreed" value="1" required {{ old('statement_agreed', '1') ? 'checked' : '' }} class="mt-0.5 rounded border-slate-300 text-orange-600 focus:ring-orange-500">
-                                            <span class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                                                Dengan ini saya menyatakan siap mengikuti Sidang Skripsi/Tugas Akhir dan bersedia mengoreksi serta memperbaiki kesalahan dan kekurangan berdasarkan saran dari dosen pembimbing dan penguji.
-                                            </span>
-                                        </label>
-                                    </div>
-                                @endif
-
-                                @php
-                                    $rejectedDriveFields = collect(array_keys($fileFields))
-                                        ->reject(fn($f) => $f === 'file_formulir')
-                                        ->filter(fn($f) => ($application->file_reviews[$f]['status'] ?? '') === 'rejected');
-                                @endphp
-
-                                @if($rejectedDriveFields->isNotEmpty())
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        @foreach($rejectedDriveFields as $field)
-                                            @php $info = $fileFields[$field]; @endphp
-                                            <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/40 space-y-2">
-                                                <label class="block text-xs font-bold text-slate-800 dark:text-slate-100">{{ $info['label'] }} <span class="text-rose-500">*</span></label>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Masukkan tautan baru Google Drive yang dapat dilihat publik.</p>
-                                                <input type="url" name="{{ $field }}" value="{{ old($field, $application->$field ?? '') }}" placeholder="https://drive.google.com/..." required class="w-full h-10 px-3 text-xs text-slate-800 dark:text-slate-100 rounded-xl border border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900">
-                                                @error($field) <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1">{{ $message }}</p> @enderror
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endif
-
-                                <div class="flex justify-end">
-                                    <button type="submit" class="h-10 px-6 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-pointer">
-                                        Perbarui Pengajuan
-                                    </button>
-                                </div>
-                            </form>
                         </div>
-                    @endif
+
+                        <div x-show="(statusFilter === 'rejected' && {{ $rejectedFilesCount }} === 0) || (statusFilter === 'approved' && {{ $approvedFilesCount }} === 0) || (statusFilter === 'pending' && {{ $pendingFilesCount }} === 0)"
+                             x-cloak
+                             class="p-6 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 text-center text-xs text-slate-500 dark:text-slate-400">
+                            Tidak ada berkas dengan status yang dipilih.
+                        </div>
+                    </div>
                 </div>
             </div>
         @else
@@ -710,6 +814,63 @@
                  x-data="{
                     activeTab: 'all',
                     batchFolderUrl: '',
+                    isSubmitting: false,
+                    invalidField: '',
+                    draftKey: 'sibima_defense_draft_{{ Auth::id() }}_{{ $activeWave?->id ?? 0 }}',
+                    hasServerOld: @js($errors->any()),
+                    draftRestored: false,
+                    draftSavedAt: '',
+                    draftTimer: null,
+                    fileCategoryMap: {
+                        file_pembayaran: 'utama',
+                        file_ktm: 'utama',
+                        file_ijazah: 'utama',
+                        file_transkrip: 'skripsi',
+                        file_acc_pembimbing: 'skripsi',
+                        file_logbook: 'skripsi',
+                        file_skripsi: 'skripsi',
+                        file_pkkmb_univ: 'sertifikat',
+                        file_pkkmb_fak: 'sertifikat',
+                        file_makrab: 'sertifikat',
+                        file_cisco: 'sertifikat',
+                        file_workshop: 'sertifikat',
+                        file_organisasi: 'sertifikat',
+                        file_toefl: 'sertifikat',
+                        file_kewirausahaan: 'sertifikat',
+                        file_tahsin: 'sertifikat',
+                        file_komputer: 'sertifikat',
+                        file_perpus_pinjam: 'perpus',
+                        file_perpus_sumbang: 'perpus'
+                    },
+                    fieldLabels: {
+                        birth_place: 'Tempat Lahir',
+                        birth_date: 'Tanggal Lahir',
+                        semester_number: 'Semester Saat Ini',
+                        academic_year: 'Tahun Akademik',
+                        email: 'E-mail Aktif',
+                        phone_number: 'No. HP / WhatsApp',
+                        address: 'Alamat Lengkap',
+                        postal_code: 'Kode Pos',
+                        file_pembayaran: '1. Scan Bukti Pembayaran Sidang',
+                        file_ktm: '2. Scan Kartu Tanda Mahasiswa (KTM)',
+                        file_ijazah: '3. Scan Ijazah SMA/SMK',
+                        file_transkrip: '4. Scan Transkrip Nilai Akhir',
+                        file_acc_pembimbing: '5. Scan Bukti ACC Pembimbing',
+                        file_logbook: '6. Scan Kartu Bimbingan / Logbook',
+                        file_skripsi: '7. Dokumen Soft File Skripsi',
+                        file_pkkmb_univ: '8. Scan Sertifikat PKKMB Univ',
+                        file_pkkmb_fak: '9. Scan Sertifikat PKKMB Fak',
+                        file_makrab: '10. Scan Sertifikat Makrab',
+                        file_cisco: '11. Scan Sertifikat Cisco IPv6',
+                        file_workshop: '12. Scan Sertifikat Workshop',
+                        file_organisasi: '13. Scan Sertifikat / Surat Aktif Organisasi',
+                        file_toefl: '14. Scan Sertifikat TOEFL',
+                        file_kewirausahaan: '15. Scan Sertifikat Wirausaha',
+                        file_tahsin: '16. Scan Sertifikat Tahsin',
+                        file_komputer: '17. Scan Sertifikat Komputer',
+                        file_perpus_pinjam: '18. Scan Bebas Pinjam Perpus',
+                        file_perpus_sumbang: '19. Scan Sumbang Buku Perpus'
+                    },
                     biodata: {
                         birth_place: @js(old('birth_place', $prefill['birth_place'])),
                         birth_date: @js(old('birth_date', $prefill['birth_date'])),
@@ -743,28 +904,198 @@
                         file_perpus_pinjam: @js(old('file_perpus_pinjam', '')),
                         file_perpus_sumbang: @js(old('file_perpus_sumbang', ''))
                     },
-                    applyBatchFolderUrl() {
-                        if (!this.batchFolderUrl || !this.batchFolderUrl.trim().startsWith('http')) {
-                            window.sibimaToast('Silakan masukkan link Google Drive yang valid (dimulai dengan https://)', 'warning', 'Tautan Tidak Valid');
-                            return;
+                    init() {
+                        if (!this.hasServerOld) {
+                            try {
+                                const raw = localStorage.getItem(this.draftKey);
+                                if (raw) {
+                                    const parsed = JSON.parse(raw);
+                                    let restoredAny = false;
+                                    if (parsed && parsed.biodata) {
+                                        ['birth_place', 'birth_date', 'semester_number', 'academic_year', 'email', 'phone_number', 'address', 'postal_code', 'home_phone'].forEach(k => {
+                                            if (parsed.biodata[k] && String(parsed.biodata[k]).trim() !== '') {
+                                                this.biodata[k] = String(parsed.biodata[k]);
+                                                restoredAny = true;
+                                            }
+                                        });
+                                    }
+                                    if (parsed && parsed.files) {
+                                        Object.keys(this.files).forEach(k => {
+                                            if (parsed.files[k] && String(parsed.files[k]).trim() !== '') {
+                                                this.files[k] = String(parsed.files[k]);
+                                                restoredAny = true;
+                                            }
+                                        });
+                                    }
+                                    if (restoredAny) {
+                                        this.draftRestored = true;
+                                        this.draftSavedAt = parsed.savedAt || '';
+                                    }
+                                }
+                            } catch (e) {}
                         }
-                        const url = this.batchFolderUrl.trim();
+                        this.$watch('biodata.birth_date', () => this.scheduleSaveDraft());
+                    },
+                    scheduleSaveDraft() {
+                        clearTimeout(this.draftTimer);
+                        this.draftTimer = setTimeout(() => {
+                            try {
+                                const now = new Date();
+                                const hh = String(now.getHours()).padStart(2, '0');
+                                const mm = String(now.getMinutes()).padStart(2, '0');
+                                const savedAt = hh + ':' + mm;
+                                const payload = {
+                                    biodata: { ...this.biodata, statement_agreed: false },
+                                    files: { ...this.files },
+                                    savedAt
+                                };
+                                localStorage.setItem(this.draftKey, JSON.stringify(payload));
+                                this.draftSavedAt = savedAt;
+                            } catch (e) {}
+                        }, 350);
+                    },
+                    clearDraft() {
+                        try {
+                            localStorage.removeItem(this.draftKey);
+                        } catch (e) {}
+                        Object.keys(this.files).forEach(k => { this.files[k] = ''; });
+                        this.batchFolderUrl = '';
+                        this.draftRestored = false;
+                        this.draftSavedAt = '';
+                        this.invalidField = '';
+                        if (typeof window.sibimaToast === 'function') {
+                            window.sibimaToast('Draf tautan berkas lokal telah dibersihkan.', 'info', 'Draf Direset');
+                        }
+                    },
+                    driveLinkStatus(url) {
+                        const u = String(url || '').trim();
+                        if (!u) return 'empty';
+                        if (!/^https?:\/\/.+/i.test(u)) return 'invalid';
+                        if (/^https?:\/\/drive\.google\.com\/drive\/(?:u\/\d+\/)?(?:my-drive|recent|shared-with-me|starred|trash|home)(?:[/?#].*)?$/i.test(u)) {
+                            return 'bad_home';
+                        }
+                        if (/^https?:\/\/(?:drive|docs)\.google\.com\//i.test(u)) return 'valid';
+                        return 'other';
+                    },
+                    doApplyBatch(url) {
                         Object.keys(this.files).forEach(k => {
                             this.files[k] = url;
                         });
+                        this.invalidField = '';
+                        this.scheduleSaveDraft();
+                        if (typeof window.sibimaToast === 'function') {
+                            window.sibimaToast('Tautan folder diterapkan ke seluruh 19 berkas.', 'success', 'Berhasil Diterapkan');
+                        }
+                    },
+                    applyBatchFolderUrl() {
+                        const url = String(this.batchFolderUrl || '').trim();
+                        const status = this.driveLinkStatus(url);
+                        if (status === 'empty' || status === 'invalid') {
+                            window.sibimaToast('Silakan masukkan tautan Google Drive yang valid (dimulai dengan https://)', 'warning', 'Tautan Tidak Valid');
+                            return;
+                        }
+                        if (status === 'bad_home') {
+                            window.sibimaToast('Tautan tersebut adalah beranda Drive pribadi Anda, bukan tautan berbagi folder. Klik kanan folder -> Bagikan -> Salin link.', 'warning', 'Bukan Link Berbagi Folder');
+                            return;
+                        }
+                        const hasExisting = Object.values(this.files).some(v => String(v || '').trim() !== '');
+                        if (hasExisting && typeof window.sibimaConfirm === 'function') {
+                            window.sibimaConfirm({
+                                title: 'Timpa Tautan Berkas?',
+                                message: 'Sebagian kolom berkas sudah terisi. Terapkan tautan folder ini ke seluruh 19 berkas sekaligus?',
+                                type: 'warning',
+                                confirmText: 'Ya, Terapkan Semua',
+                                onConfirm: () => this.doApplyBatch(url)
+                            });
+                            return;
+                        }
+                        this.doApplyBatch(url);
                     },
                     async pasteSingle(field) {
                         try {
                             const text = await navigator.clipboard.readText();
                             if (text) {
                                 this.files[field] = text.trim();
+                                if (this.invalidField === field) this.invalidField = '';
+                                this.scheduleSaveDraft();
                             }
                         } catch (e) {
                             window.sibimaToast('Gunakan tombol pintasan Ctrl + V untuk menempelkan link.', 'info', 'Pintasan Tempel');
                         }
                     },
-                    isDrive(url) {
-                        return url && url.includes('drive.google.com');
+                    focusField(id) {
+                        this.$nextTick(() => {
+                            const el = document.getElementById(id) || document.querySelector('[name=&quot;' + id + '&quot;]');
+                            if (el) {
+                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                setTimeout(() => {
+                                    if (typeof el.focus === 'function') el.focus();
+                                }, 150);
+                            }
+                        });
+                    },
+                    handleSubmit(e) {
+                        if (this.isSubmitting) {
+                            e.preventDefault();
+                            return;
+                        }
+                        const requiredBiodata = ['birth_place', 'birth_date', 'semester_number', 'academic_year', 'email', 'phone_number', 'address', 'postal_code'];
+                        for (const key of requiredBiodata) {
+                            const val = String(this.biodata[key] || '').trim();
+                            if (!val) {
+                                e.preventDefault();
+                                this.invalidField = key;
+                                this.focusField(key);
+                                window.sibimaToast('Lengkapi kolom ' + (this.fieldLabels[key] || key) + ' terlebih dahulu.', 'warning', 'Biodata Belum Lengkap');
+                                return;
+                            }
+                            if (key === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+                                e.preventDefault();
+                                this.invalidField = key;
+                                this.focusField(key);
+                                window.sibimaToast('Format alamat E-mail Aktif tidak valid.', 'warning', 'Format E-mail Salah');
+                                return;
+                            }
+                            if (key === 'semester_number' && (Number(val) < 1 || Number(val) > 20)) {
+                                e.preventDefault();
+                                this.invalidField = key;
+                                this.focusField(key);
+                                window.sibimaToast('Semester Saat Ini harus antara 1 sampai 20.', 'warning', 'Semester Tidak Valid');
+                                return;
+                            }
+                        }
+
+                        const fileKeys = Object.keys(this.files);
+                        for (const key of fileKeys) {
+                            const status = this.driveLinkStatus(this.files[key]);
+                            if (status === 'empty' || status === 'invalid' || status === 'bad_home') {
+                                e.preventDefault();
+                                const targetCat = this.fileCategoryMap[key];
+                                if (this.activeTab !== 'all' && targetCat && this.activeTab !== targetCat) {
+                                    this.activeTab = targetCat;
+                                }
+                                this.invalidField = key;
+                                this.focusField(key);
+                                const msg = status === 'bad_home'
+                                    ? (this.fieldLabels[key] + ' masih memakai link beranda Drive. Gunakan tautan berbagi (Share Link).')
+                                    : (status === 'invalid'
+                                        ? ('Format tautan ' + this.fieldLabels[key] + ' harus diawali https://')
+                                        : ('Tautan ' + this.fieldLabels[key] + ' belum diisi.'));
+                                window.sibimaToast(msg, 'warning', 'Berkas Belum Lengkap');
+                                return;
+                            }
+                        }
+
+                        if (!this.biodata.statement_agreed) {
+                            e.preventDefault();
+                            this.invalidField = 'statement_agreed';
+                            this.focusField('statement_agreed');
+                            window.sibimaToast('Centang pernyataan kesiapan sidang terlebih dahulu sebelum mengirim.', 'warning', 'Pernyataan Belum Dicentang');
+                            return;
+                        }
+
+                        this.invalidField = '';
+                        this.isSubmitting = true;
                     },
                     countFilled(keys) {
                         return keys.filter(k => this.files[k] && this.files[k].trim() !== '').length;
@@ -785,14 +1116,17 @@
                     get totalFilesCount() {
                         return Object.keys(this.files).length;
                     },
-                    get overallFilled() {
-                        return (this.isBiodataComplete ? 1 : 0) + this.totalFilesFilled + (this.biodata.statement_agreed ? 1 : 0);
+                    get overallPointsFilled() {
+                        return this.biodataFilledCount + this.totalFilesFilled + (this.biodata.statement_agreed ? 1 : 0);
                     },
-                    get overallTotal() {
-                        return 1 + this.totalFilesCount + 1;
+                    get overallPointsTotal() {
+                        return this.biodataTotalCount + this.totalFilesCount + 1;
+                    },
+                    get isAllReady() {
+                        return this.isBiodataComplete && this.totalFilesFilled === this.totalFilesCount && this.biodata.statement_agreed;
                     },
                     get percentFilled() {
-                        return Math.round((this.overallFilled / this.overallTotal) * 100);
+                        return Math.round((this.overallPointsFilled / this.overallPointsTotal) * 100);
                     }
                  }">
 
@@ -823,7 +1157,7 @@
                 @if(!$activeWave)
                     <div class="m-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-start gap-3">
                         <div class="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
                             <h4 class="text-xs font-bold uppercase tracking-wider text-amber-900 dark:text-amber-200">Gelombang Pendaftaran Belum Dibuka</h4>
@@ -835,7 +1169,8 @@
                 @endif
 
                 @if($errors->any())
-                    <div class="mx-6 mt-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-200 text-xs">
+                    <div role="alert" tabindex="-1" x-init="$el.scrollIntoView({ behavior: 'smooth', block: 'center' })"
+                         class="mx-6 mt-6 p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-800 dark:text-rose-200 text-xs">
                         <p class="font-bold mb-1">Terdapat isian yang belum valid atau belum lengkap:</p>
                         <ul class="list-disc list-inside space-y-0.5">
                             @foreach($errors->all() as $err)
@@ -845,23 +1180,53 @@
                     </div>
                 @endif
 
-                <form action="{{ route('thesis-defense-applications.store') }}" method="POST" class="p-6 space-y-8">
+                <form action="{{ route('thesis-defense-applications.store') }}" method="POST" novalidate
+                      @submit="handleSubmit($event)"
+                      @input="scheduleSaveDraft()"
+                      @change="scheduleSaveDraft()"
+                      class="p-6 space-y-8">
                     @csrf
                     <input type="hidden" name="study_program" value="{{ $studyProgramFixed }}">
 
-                    <!-- Overall Progress Bar -->
-                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 rounded-2xl space-y-2">
+                    <!-- Overall Progress & 3-Step Breakdown + Auto-Save Draft -->
+                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 rounded-2xl space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-bold">
-                            <span class="text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                <span>Progres Kelengkapan Pendaftaran:</span>
-                                <span class="text-orange-600 dark:text-orange-400" x-text="overallFilled + ' dari ' + overallTotal + ' Syarat Lengkap'"></span>
-                            </span>
-                            <span class="text-xs font-bold" :class="overallFilled === overallTotal ? 'text-emerald-600 dark:text-emerald-400' : 'text-orange-600 dark:text-orange-400'" x-text="percentFilled + '%'"></span>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-slate-700 dark:text-slate-200">Progres Kelengkapan Pendaftaran</span>
+                                <span x-show="draftSavedAt" x-cloak class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                    <svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    <span x-text="(draftRestored ? 'Draf dipulihkan • ' : 'Draf tersimpan ') + draftSavedAt"></span>
+                                </span>
+                                <button type="button" x-show="draftSavedAt" x-cloak @click="clearDraft()"
+                                        class="text-[11px] font-semibold text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 underline cursor-pointer">
+                                    Reset Draf
+                                </button>
+                            </div>
+                            <span class="text-xs font-bold" :class="isAllReady ? 'text-emerald-600 dark:text-emerald-400' : 'text-orange-600 dark:text-orange-400'" x-text="percentFilled + '%'"></span>
                         </div>
+
                         <div class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                             <div class="h-full transition-all duration-300 rounded-full"
-                                 :class="overallFilled === overallTotal ? 'bg-emerald-500' : 'bg-orange-600'"
+                                 :class="isAllReady ? 'bg-emerald-500' : 'bg-orange-600'"
                                  :style="'width: ' + percentFilled + '%'"></div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] font-semibold">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border"
+                                  :class="isBiodataComplete ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60' : 'bg-white text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'">
+                                <span class="w-1.5 h-1.5 rounded-full" :class="isBiodataComplete ? 'bg-emerald-500' : 'bg-amber-500'"></span>
+                                <span>1. Biodata: <strong x-text="biodataFilledCount + '/' + biodataTotalCount"></strong></span>
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border"
+                                  :class="totalFilesFilled === totalFilesCount ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60' : 'bg-white text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'">
+                                <span class="w-1.5 h-1.5 rounded-full" :class="totalFilesFilled === totalFilesCount ? 'bg-emerald-500' : 'bg-amber-500'"></span>
+                                <span>2. Berkas Drive: <strong x-text="totalFilesFilled + '/' + totalFilesCount"></strong></span>
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border"
+                                  :class="biodata.statement_agreed ? 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60' : 'bg-white text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'">
+                                <span class="w-1.5 h-1.5 rounded-full" :class="biodata.statement_agreed ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                                <span>3. Pernyataan: <strong x-text="biodata.statement_agreed ? 'Disetujui' : 'Belum'"></strong></span>
+                            </span>
                         </div>
                     </div>
 
@@ -932,13 +1297,15 @@
                                        id="birth_place"
                                        name="birth_place"
                                        x-model="biodata.birth_place"
+                                       @input="if (invalidField === 'birth_place') invalidField = ''"
                                        placeholder="Contoh: Subang"
                                        required
-                                       class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                       :class="invalidField === 'birth_place' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-slate-300 dark:border-slate-700'"
+                                       class="w-full h-10 px-3 text-xs rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
                                 @error('birth_place') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
 
-                            <div>
+                            <div :class="invalidField === 'birth_date' ? 'ring-2 ring-rose-500/30 rounded-xl p-0.5 -m-0.5' : ''">
                                 <label for="birth_date" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                                     Tanggal Lahir <span class="text-rose-500">*</span>
                                 </label>
@@ -956,13 +1323,16 @@
                                     Semester Saat Ini <span class="text-rose-500">*</span>
                                 </label>
                                 <input type="number"
+                                       inputmode="numeric"
                                        id="semester_number"
                                        name="semester_number"
                                        min="1"
                                        max="20"
                                        x-model="biodata.semester_number"
+                                       @input="if (invalidField === 'semester_number') invalidField = ''"
                                        required
-                                       class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                       :class="invalidField === 'semester_number' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-slate-300 dark:border-slate-700'"
+                                       class="w-full h-10 px-3 text-xs rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
                                 @error('semester_number') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
 
@@ -974,9 +1344,11 @@
                                        id="academic_year"
                                        name="academic_year"
                                        x-model="biodata.academic_year"
+                                       @input="if (invalidField === 'academic_year') invalidField = ''"
                                        placeholder="Contoh: Ganjil 2026/2027"
                                        required
-                                       class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                       :class="invalidField === 'academic_year' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-slate-300 dark:border-slate-700'"
+                                       class="w-full h-10 px-3 text-xs rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
                                 @error('academic_year') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
 
@@ -988,9 +1360,11 @@
                                        id="email"
                                        name="email"
                                        x-model="biodata.email"
+                                       @input="if (invalidField === 'email') invalidField = ''"
                                        placeholder="nama@email.com"
                                        required
-                                       class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                       :class="invalidField === 'email' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-slate-300 dark:border-slate-700'"
+                                       class="w-full h-10 px-3 text-xs rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
                                 @error('email') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
 
@@ -999,12 +1373,15 @@
                                     No. HP / WhatsApp <span class="text-rose-500">*</span>
                                 </label>
                                 <input type="text"
+                                       inputmode="tel"
                                        id="phone_number"
                                        name="phone_number"
                                        x-model="biodata.phone_number"
+                                       @input="if (invalidField === 'phone_number') invalidField = ''"
                                        placeholder="08xxxxxxxxxx"
                                        required
-                                       class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                       :class="invalidField === 'phone_number' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-slate-300 dark:border-slate-700'"
+                                       class="w-full h-10 px-3 text-xs rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
                                 @error('phone_number') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
 
@@ -1016,9 +1393,11 @@
                                           name="address"
                                           rows="2"
                                           x-model="biodata.address"
+                                          @input="if (invalidField === 'address') invalidField = ''"
                                           placeholder="Contoh: Jl. R.A Kartini KM 3, RT 01/RW 02, Kel. Pasirkareumbi, Kec. Subang, Kab. Subang"
                                           required
-                                          class="w-full px-3 py-2.5 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500"></textarea>
+                                          :class="invalidField === 'address' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-slate-300 dark:border-slate-700'"
+                                          class="w-full px-3 py-2.5 text-xs rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500"></textarea>
                                 @error('address') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
 
@@ -1027,25 +1406,29 @@
                                     Kode Pos <span class="text-rose-500">*</span>
                                 </label>
                                 <input type="text"
+                                       inputmode="numeric"
                                        id="postal_code"
                                        name="postal_code"
                                        x-model="biodata.postal_code"
+                                       @input="if (invalidField === 'postal_code') invalidField = ''"
                                        placeholder="Contoh: 41211"
                                        required
-                                       class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                       :class="invalidField === 'postal_code' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-slate-300 dark:border-slate-700'"
+                                       class="w-full h-10 px-3 text-xs rounded-xl border bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
                                 @error('postal_code') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
 
                             <div>
                                 <label for="home_phone" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                                    Telepon Rumah <span class="text-slate-400 font-normal">(Opsional)</span>
+                                    Telepon Rumah <span class="text-slate-500 dark:text-slate-400 font-normal">(Opsional)</span>
                                 </label>
                                 <input type="text"
+                                       inputmode="tel"
                                        id="home_phone"
                                        name="home_phone"
                                        x-model="biodata.home_phone"
                                        placeholder="Kosongkan jika tidak ada"
-                                       class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
+                                       class="w-full h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-orange-500 focus:ring-orange-500">
                                 @error('home_phone') <p class="text-rose-600 dark:text-rose-400 text-[11px] mt-1 font-semibold">{{ $message }}</p> @enderror
                             </div>
                         </div>
@@ -1073,17 +1456,18 @@
                             <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                                 <div class="flex items-start sm:items-center gap-3">
                                     <div class="p-2.5 bg-orange-600 text-white rounded-xl shrink-0">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                                        <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
                                     </div>
                                     <div>
                                         <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">Punya 1 Folder Google Drive untuk Semua Berkas?</h5>
-                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Tempelkan tautan folder Google Drive Anda di sini untuk mengisi 19 kolom berkas sekaligus.</p>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Tempelkan tautan berbagi folder Google Drive Anda untuk mengisi 19 kolom berkas sekaligus.</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2 w-full lg:w-auto">
                                     <input type="url"
                                            x-model="batchFolderUrl"
                                            placeholder="https://drive.google.com/drive/folders/..."
+                                           aria-label="Tautan folder Google Drive untuk semua berkas sidang"
                                            class="h-10 px-3 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-orange-500 focus:border-orange-500 w-full lg:w-72">
                                     <button type="button"
                                             @click="applyBatchFolderUrl()"
@@ -1144,8 +1528,10 @@
 
                         <!-- Category Filter Tabs -->
                         <div class="border-b border-slate-200 dark:border-slate-800">
-                            <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
+                            <div role="tablist" aria-label="Filter kategori berkas sidang" class="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
                                 <button type="button"
+                                        role="tab"
+                                        :aria-selected="activeTab === 'all'"
                                         @click="activeTab = 'all'"
                                         class="px-4 py-2.5 border-b-2 text-xs font-bold transition-colors whitespace-nowrap inline-flex items-center gap-2 cursor-pointer shrink-0"
                                         :class="activeTab === 'all' ? 'border-orange-600 text-orange-600 dark:text-orange-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'">
@@ -1157,6 +1543,8 @@
 
                                 @foreach($categories as $catKey => $cat)
                                     <button type="button"
+                                            role="tab"
+                                            :aria-selected="activeTab === '{{ $catKey }}'"
                                             @click="activeTab = '{{ $catKey }}'"
                                             class="px-4 py-2.5 border-b-2 text-xs font-bold transition-colors whitespace-nowrap inline-flex items-center gap-2 cursor-pointer shrink-0"
                                             :class="activeTab === '{{ $catKey }}' ? 'border-orange-600 text-orange-600 dark:text-orange-400' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'">
@@ -1182,7 +1570,8 @@
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         @foreach($cat['fields'] as $field => $info)
-                                            <div class="p-4 bg-slate-50/60 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 rounded-2xl transition-colors hover:border-slate-300 dark:hover:border-slate-600 space-y-2">
+                                            <div class="p-4 bg-slate-50/60 dark:bg-slate-800/40 border rounded-2xl transition-colors space-y-2"
+                                                 :class="invalidField === '{{ $field }}' ? 'border-rose-400 dark:border-rose-600 ring-2 ring-rose-500/20' : 'border-slate-200 dark:border-slate-700/80 hover:border-slate-300 dark:hover:border-slate-600'">
                                                 <div class="flex items-center justify-between gap-2">
                                                     <label for="{{ $field }}" class="block text-xs font-bold text-slate-800 dark:text-slate-100">
                                                         {{ $info['label'] }} <span class="text-rose-500">*</span>
@@ -1201,30 +1590,42 @@
                                                        name="{{ $field }}"
                                                        id="{{ $field }}"
                                                        x-model="files['{{ $field }}']"
+                                                       @input="if (invalidField === '{{ $field }}') invalidField = ''"
                                                        placeholder="https://drive.google.com/..."
                                                        required
                                                        class="block w-full h-10 px-3 text-xs text-slate-800 dark:text-slate-100 rounded-xl border border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-orange-500 bg-white dark:bg-slate-900">
 
-                                                <div class="flex items-center justify-between pt-0.5">
-                                                    <template x-if="isDrive(files['{{ $field }}'])">
+                                                <div class="flex items-center justify-between gap-2 pt-0.5">
+                                                    <template x-if="driveLinkStatus(files['{{ $field }}']) === 'valid'">
                                                         <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
-                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                                                            <span>Google Drive Valid</span>
+                                                            <svg class="w-3.5 h-3.5 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                                            <span>Google Drive / Docs Valid</span>
                                                         </span>
                                                     </template>
-                                                    <template x-if="files['{{ $field }}'] && !isDrive(files['{{ $field }}'])">
+                                                    <template x-if="driveLinkStatus(files['{{ $field }}']) === 'bad_home'">
+                                                        <span class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 dark:text-rose-400">
+                                                            <svg class="w-3.5 h-3.5 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                            <span>Link beranda Drive (gunakan link berbagi)</span>
+                                                        </span>
+                                                    </template>
+                                                    <template x-if="driveLinkStatus(files['{{ $field }}']) === 'other'">
                                                         <span class="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 dark:text-amber-400">
-                                                            <span>Link Terisi</span>
+                                                            <span>Tautan Non-Drive (Pastikan publik)</span>
                                                         </span>
                                                     </template>
-                                                    <template x-if="!files['{{ $field }}']">
+                                                    <template x-if="driveLinkStatus(files['{{ $field }}']) === 'invalid'">
+                                                        <span class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 dark:text-rose-400">
+                                                            <span>Harus diawali https://</span>
+                                                        </span>
+                                                    </template>
+                                                    <template x-if="driveLinkStatus(files['{{ $field }}']) === 'empty'">
                                                         <span class="text-[11px] text-slate-500 dark:text-slate-400 italic">Belum diisi</span>
                                                     </template>
 
-                                                    <template x-if="files['{{ $field }}']">
-                                                        <a :href="files['{{ $field }}']" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-blue-700 dark:text-blue-400 hover:underline inline-flex items-center gap-0.5">
+                                                    <template x-if="driveLinkStatus(files['{{ $field }}']) === 'valid' || driveLinkStatus(files['{{ $field }}']) === 'other'">
+                                                        <a :href="files['{{ $field }}']" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-blue-700 dark:text-blue-400 hover:underline inline-flex items-center gap-0.5 shrink-0">
                                                             <span>Buka Link</span>
-                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                            <svg class="w-3 h-3" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                                         </a>
                                                     </template>
                                                 </div>
@@ -1238,13 +1639,17 @@
                     </div>
 
                     <!-- Pernyataan Kesiapan Sidang -->
-                    <div class="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 space-y-2">
+                    <div id="statement_agreed_box"
+                         :class="invalidField === 'statement_agreed' ? 'border-rose-400 dark:border-rose-600 ring-2 ring-rose-500/20' : 'border-amber-200 dark:border-amber-800/60'"
+                         class="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border space-y-2 transition-colors">
                         <span class="block text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">Pernyataan Kesiapan Sidang</span>
                         <label class="flex items-start gap-3 cursor-pointer">
                             <input type="checkbox"
+                                   id="statement_agreed"
                                    name="statement_agreed"
                                    value="1"
                                    x-model="biodata.statement_agreed"
+                                   @change="if (invalidField === 'statement_agreed') invalidField = ''"
                                    required
                                    class="mt-0.5 rounded border-amber-400 text-orange-600 focus:ring-orange-500">
                             <span class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
@@ -1258,17 +1663,25 @@
                     </div>
 
                     <!-- Submit Footer -->
-                    <div class="pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div class="text-xs text-slate-500 dark:text-slate-400">
-                            Pastikan seluruh tautan Google Drive disetel ke mode <strong class="text-slate-700 dark:text-slate-200">"Anyone with the link can view"</strong>. Setelah dikirim, Anda langsung dapat mencetak PDF Formulir Pendaftaran Sidang.
+                    <div class="pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Pastikan seluruh tautan Google Drive disetel ke mode <strong class="text-slate-700 dark:text-slate-200">"Anyone with the link can view"</strong>. Setelah dikirim, Anda langsung dapat mencetak PDF Formulir Pendaftaran Sidang.
+                            </p>
+                            <p class="text-[11px] font-semibold"
+                               :class="isAllReady ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300'"
+                               x-text="isAllReady ? 'Semua persyaratan lengkap dan siap dikirim.' : ('Ringkasan: Biodata ' + biodataFilledCount + '/' + biodataTotalCount + ' • Berkas ' + totalFilesFilled + '/' + totalFilesCount + ' • Pernyataan ' + (biodata.statement_agreed ? '✓' : 'Belum'))"></p>
                         </div>
                         @if($activeWave)
-                            <button type="submit" class="w-full sm:w-auto h-10 px-6 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-pointer shrink-0">
-                                Kirim Pengajuan Sidang
+                            <button type="submit"
+                                    :disabled="isSubmitting"
+                                    class="w-full sm:w-auto h-10 px-6 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors shadow-sm cursor-pointer shrink-0 inline-flex items-center justify-center gap-2">
+                                <svg x-show="isSubmitting" x-cloak class="w-4 h-4 animate-spin" aria-hidden="true" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <span x-text="isSubmitting ? 'Mengirim Pengajuan...' : 'Kirim Pengajuan Sidang'">Kirim Pengajuan Sidang</span>
                             </button>
                         @else
                             <button type="button" disabled class="w-full sm:w-auto h-10 px-6 bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider rounded-xl cursor-not-allowed flex items-center justify-center gap-2 shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                                 <span>Pendaftaran Belum Dibuka</span>
                             </button>
                         @endif

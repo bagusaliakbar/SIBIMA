@@ -35,6 +35,10 @@
              openValidation: false,
              showFiles: false,
              selectedApp: null,
+             validationReviews: {},
+             validationStatus: 'pending',
+             validationFeedback: '',
+             isSubmittingValidation: false,
              openRegisterModal: false,
              candidateTheses: {{ Js::from($candidateTheses->map(fn($t) => [
                  'id' => $t->id,
@@ -87,13 +91,49 @@
                  this.selectedThesisId = id;
                  this.selectedThesisData = this.candidateTheses.find(t => t.id == id) || null;
              },
-             setAllStatus(val) {
-                 if (!this.$refs.validForm) return;
-                 const radios = this.$refs.validForm.querySelectorAll('input[type=radio][value=' + val + ']');
-                 radios.forEach(r => {
-                     r.checked = true;
-                     r.dispatchEvent(new Event('change'));
+             openValidationModal(app) {
+                 const keys = Object.keys(this.fileLabels);
+                 const reviews = {};
+                 keys.forEach(k => {
+                     const existing = app && app.file_reviews && app.file_reviews[k] ? app.file_reviews[k] : null;
+                     reviews[k] = {
+                         status: existing && existing.status === 'rejected' ? 'rejected' : 'approved',
+                         note: existing && existing.note ? existing.note : ''
+                     };
                  });
+                 this.validationReviews = reviews;
+                 this.validationStatus = (app && app.status) ? app.status : 'pending';
+                 this.validationFeedback = (app && app.admin_feedback) ? app.admin_feedback : '';
+                 this.isSubmittingValidation = false;
+                 this.selectedApp = app;
+                 this.openValidation = true;
+             },
+             setFileReviewStatus(field, status) {
+                 if (!this.validationReviews[field]) {
+                     this.validationReviews[field] = { status: 'approved', note: '' };
+                 }
+                 this.validationReviews[field].status = status;
+                 if (status === 'rejected') {
+                     this.validationStatus = 'rejected';
+                 } else if (this.rejectedReviewCount === 0 && this.validationStatus === 'rejected') {
+                     this.validationStatus = 'approved';
+                 }
+             },
+             setAllStatus(val) {
+                 Object.keys(this.fileLabels).forEach(k => {
+                     if (!this.validationReviews[k]) {
+                         this.validationReviews[k] = { status: val, note: '' };
+                     } else {
+                         this.validationReviews[k].status = val;
+                     }
+                 });
+                 this.validationStatus = val;
+             },
+             get rejectedReviewCount() {
+                 return Object.values(this.validationReviews).filter(r => r && r.status === 'rejected').length;
+             },
+             get approvedReviewCount() {
+                 return Object.values(this.validationReviews).filter(r => r && r.status === 'approved').length;
              },
 
              // PREVIEW PENDAFTARAN SIDANG SKRIPSI (20 BERKAS)
@@ -231,9 +271,9 @@
              },
 
              switchToValidation() {
-                 this.selectedApp = this.previewApp;
+                 const app = this.previewApp;
                  this.openPreview = false;
-                 this.openValidation = true;
+                 if (app) this.openValidationModal(app);
              }
          }">
         @include('thesis_defenses.partials.admin-wave-header')
@@ -241,30 +281,30 @@
         @include('thesis_defenses.partials.admin-kpi-cards')
 
         {{-- TABLE CARD WITH INTEGRATED SEARCH & STATUS FILTER --}}
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs overflow-hidden">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
             {{-- Toolbar: Status Tabs & Action Controls --}}
-            <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/30 flex flex-col gap-3.5">
+            <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 flex flex-col gap-3.5">
                 {{-- Row 1: Status Filter Tabs (Left) & Quick Wave Summary (Right) --}}
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     {{-- Status Filter Tabs (Capsule / Segmented Control) --}}
-                    <div class="inline-flex items-center gap-1 p-1 bg-slate-200/60 dark:bg-slate-900/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-x-auto max-w-full">
-                        <span class="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 px-2 hidden md:inline">Status:</span>
+                    <div class="inline-flex items-center gap-1 p-1 bg-slate-200/60 dark:bg-slate-900/80 rounded-2xl border border-slate-200 dark:border-slate-700/80 overflow-x-auto max-w-full">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-2 hidden md:inline">Status:</span>
 
                         {{-- Semua Status --}}
                         <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'all', 'search' => $search]) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? 'all') === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60' }}">
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? 'all') === 'all' ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/60 dark:hover:bg-slate-800/60' }}">
                             <span>Semua</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-300/60 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}">
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-bold {{ ($status ?? 'all') === 'all' ? 'bg-white/20 text-white' : 'bg-slate-300/60 dark:bg-slate-700 text-slate-700 dark:text-slate-200' }}">
                                 {{ $stats['total'] ?? 0 }}
                             </span>
                         </a>
 
                         {{-- Menunggu --}}
                         <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'pending', 'search' => $search]) }}"
-                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'pending' ? 'bg-amber-500 text-white shadow-xs' : 'text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' }}">
-                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'pending' ? 'bg-amber-600 text-white shadow-xs' : 'text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 hover:bg-amber-100/50 dark:hover:bg-amber-950/40' }}">
+                            <svg class="w-3.5 h-3.5 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             <span>Menunggu</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? '') === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-bold {{ ($status ?? '') === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-200' }}">
                                 {{ $stats['pending'] ?? 0 }}
                             </span>
                         </a>
@@ -272,8 +312,9 @@
                         {{-- Disetujui --}}
                         <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'approved', 'search' => $search]) }}"
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'approved' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-200 hover:bg-emerald-100/50 dark:hover:bg-emerald-950/40' }}">
-                            <span>✓ Disetujui</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? '') === 'approved' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200' }}">
+                            <svg class="w-3.5 h-3.5 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span>Disetujui</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-bold {{ ($status ?? '') === 'approved' ? 'bg-white/20 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200' }}">
                                 {{ $stats['approved'] ?? 0 }}
                             </span>
                         </a>
@@ -281,8 +322,9 @@
                         {{-- Ditolak / Revisi --}}
                         <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => 'rejected', 'search' => $search]) }}"
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 {{ ($status ?? '') === 'rejected' ? 'bg-rose-600 text-white shadow-xs' : 'text-rose-700 dark:text-rose-400 hover:text-rose-900 dark:hover:text-rose-200 hover:bg-rose-100/50 dark:hover:bg-rose-950/40' }}">
-                            <span>✕ Perlu Revisi</span>
-                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-black {{ ($status ?? '') === 'rejected' ? 'bg-white/20 text-white' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200' }}">
+                            <svg class="w-3.5 h-3.5 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                            <span>Perlu Revisi</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[11px] font-bold {{ ($status ?? '') === 'rejected' ? 'bg-white/20 text-white' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200' }}">
                                 {{ $stats['rejected'] ?? 0 }}
                             </span>
                         </a>
@@ -296,7 +338,7 @@
                 </div>
 
                 {{-- Row 2: Search Bar (Left) & Action Buttons (Right) --}}
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-200/50 dark:border-slate-700/60">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-200/70 dark:border-slate-700/60">
                     {{-- Search Bar Form --}}
                     <form action="{{ route('thesis-defense-applications.index') }}" method="GET" class="relative flex items-center w-full sm:w-72 md:w-80 lg:w-96 min-w-0">
                         @if(!empty($selectedWaveId))
@@ -308,8 +350,8 @@
 
                         <div class="relative w-full">
                             {{-- Search Icon / Submit Button --}}
-                            <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-orange-500 transition-colors cursor-pointer" title="Cari" aria-label="Cari">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-orange-600 transition-colors cursor-pointer" title="Cari" aria-label="Cari">
+                                <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </button>
@@ -317,14 +359,14 @@
                             {{-- Input Field --}}
                             <input type="text" name="search" value="{{ $search }}"
                                    placeholder="Cari nama mahasiswa, NPM, judul skripsi..."
-                                   class="w-full h-9 pl-9 pr-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs">
+                                   class="w-full h-10 pl-9 pr-9 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-2xs">
 
                             {{-- Reset / Clear Button --}}
                             @if($search)
-                                <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => $status]) }}" 
-                                   class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold transition-colors"
-                                   title="Reset Pencarian">
-                                    ✕
+                                <a href="{{ route('thesis-defense-applications.index', ['wave_id' => $selectedWaveId, 'status' => $status]) }}"
+                                   class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                                   title="Reset Pencarian" aria-label="Reset Pencarian">
+                                    <svg class="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </a>
                             @endif
                         </div>
@@ -333,21 +375,21 @@
                     {{-- Action Buttons: Daftarkan Mahasiswa, Export Excel, Rekap Pembayaran Dropdown --}}
                     <div class="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
                         {{-- Daftarkan Mahasiswa Modal Button --}}
-                        <button type="button" 
+                        <button type="button"
                                 @click="openRegisterModal = true"
-                                class="h-9 inline-flex items-center justify-center gap-1.5 px-3.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 whitespace-nowrap cursor-pointer"
+                                class="h-10 inline-flex items-center justify-center gap-1.5 px-3.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors shadow-sm shrink-0 whitespace-nowrap cursor-pointer"
                                 title="Daftarkan Mahasiswa ke Sidang Skripsi">
-                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-white shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
                             </svg>
                             <span class="whitespace-nowrap">Daftarkan Mahasiswa</span>
                         </button>
 
                         {{-- Export Excel Button --}}
-                        <a href="{{ route('thesis-defense-applications.export-excel', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}" 
-                           class="h-9 inline-flex items-center justify-center gap-1.5 px-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 whitespace-nowrap cursor-pointer"
+                        <a href="{{ route('thesis-defense-applications.export-excel', ['wave_id' => $selectedWaveId, 'status' => $status, 'search' => $search]) }}"
+                           class="h-10 inline-flex items-center justify-center gap-1.5 px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-colors shadow-sm shrink-0 whitespace-nowrap cursor-pointer"
                            title="Export Data Validasi Sidang ke Excel">
-                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-white shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                             <span class="whitespace-nowrap">Export Excel</span>
@@ -355,15 +397,16 @@
 
                         {{-- Dropdown Rekap Pembayaran (PDF & Word) --}}
                         <div x-data="{ openRekap: false }" @click.away="openRekap = false" class="relative shrink-0">
-                            <button type="button" 
+                            <button type="button"
                                     @click="openRekap = !openRekap"
-                                    class="h-9 inline-flex items-center justify-center gap-1.5 px-3.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 whitespace-nowrap cursor-pointer"
+                                    :aria-expanded="openRekap"
+                                    class="h-10 inline-flex items-center justify-center gap-1.5 px-3.5 bg-white hover:bg-slate-50 text-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-colors shadow-2xs shrink-0 whitespace-nowrap cursor-pointer"
                                     title="Unduh Rekap Bukti Pembayaran">
-                                <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                                 <span class="whitespace-nowrap">Rekap Pembayaran</span>
-                                <svg class="w-3.5 h-3.5 text-white/80 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': openRekap }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 shrink-0 transition-transform duration-200" :class="{ 'rotate-180': openRekap }" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
@@ -537,15 +580,15 @@
                                     {{-- Supervisors --}}
                                     <div class="mt-2.5 flex flex-wrap gap-2">
                                         @if($app->thesis->pembimbing1)
-                                            <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-indigo-50/80 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-800/60 text-[11px]">
-                                                <span class="w-3.5 h-3.5 rounded bg-indigo-600 text-white flex items-center justify-center text-[11px] font-black">1</span>
-                                                <span class="font-bold text-indigo-950 dark:text-indigo-200 truncate max-w-[150px]">{{ $app->thesis->pembimbing1->name }}</span>
+                                            <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px]">
+                                                <span class="w-4 h-4 rounded bg-slate-700 dark:bg-slate-600 text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                                                <span class="font-bold text-slate-800 dark:text-slate-200 truncate max-w-[150px]">{{ $app->thesis->pembimbing1->name }}</span>
                                             </div>
                                         @endif
                                         @if($app->thesis->pembimbing2)
-                                            <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-50/80 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-800/60 text-[11px]">
-                                                <span class="w-3.5 h-3.5 rounded bg-blue-600 text-white flex items-center justify-center text-[11px] font-black">2</span>
-                                                <span class="font-bold text-blue-950 dark:text-blue-200 truncate max-w-[150px]">{{ $app->thesis->pembimbing2->name }}</span>
+                                            <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-50/80 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-800/60 text-[11px]">
+                                                <span class="w-4 h-4 rounded bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">2</span>
+                                                <span class="font-bold text-blue-900 dark:text-blue-200 truncate max-w-[150px]">{{ $app->thesis->pembimbing2->name }}</span>
                                             </div>
                                         @endif
                                     </div>
@@ -553,13 +596,13 @@
                                 <td class="py-4 px-6 text-center whitespace-nowrap">
                                     <div class="flex flex-col items-center gap-1.5">
                                         <button type="button"
-                                                @click="selectedApp = {{ json_encode($appData) }}; showFiles = true" 
-                                                class="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border {{ $rejectedCount > 0 ? 'border-rose-300 dark:border-rose-800 bg-rose-50/30' : 'border-slate-200 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600' }} rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-2xs group/doc cursor-pointer">
-                                            <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                @click="selectedApp = {{ json_encode($appData) }}; showFiles = true"
+                                                class="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border {{ $rejectedCount > 0 ? 'border-rose-300 dark:border-rose-800 bg-rose-50/30' : 'border-slate-200 dark:border-slate-700 hover:border-orange-400 dark:hover:border-orange-600' }} rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 transition-colors shadow-2xs group/doc cursor-pointer">
+                                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
                                             <span>20 Berkas Sidang</span>
-                                            <svg class="w-3.5 h-3.5 text-slate-400 group-hover/doc:text-indigo-600 dark:group-hover/doc:text-indigo-400 transition-transform group-hover/doc:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-3.5 h-3.5 text-slate-400 group-hover/doc:text-orange-600 dark:group-hover/doc:text-orange-400 transition-transform group-hover/doc:translate-x-0.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
                                         </button>
@@ -570,20 +613,20 @@
                                                 $isFormulirRejected = ($formulirReview['status'] ?? '') === 'rejected';
                                             @endphp
                                             <a href="{{ $formulirUrl }}" target="_blank"
-                                               class="inline-flex items-center gap-1 px-2.5 py-1 border {{ $isFormulirRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300' : 'border-blue-200 dark:border-blue-800/60 bg-blue-50/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50' }} rounded-lg text-[11px] font-bold transition-all shadow-2xs"
+                                               class="inline-flex items-center gap-1 px-2.5 py-1 border {{ $isFormulirRejected ? 'border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300' : 'border-blue-200 dark:border-blue-800/60 bg-blue-50/70 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50' }} rounded-lg text-[11px] font-bold transition-colors shadow-2xs"
                                                title="{{ $isFormulirRejected ? 'Ditolak: ' . ($formulirReview['note'] ?? 'Perlu revisi') : 'Lihat PDF Formulir Digital SIBIMA' }}">
                                                 <span>Formulir (PDF)</span>
                                                 @if($isFormulirRejected)
-                                                    <span class="text-rose-500 font-black text-xs">✕</span>
+                                                    <svg class="w-3 h-3 text-rose-600 dark:text-rose-400 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                                                 @else
-                                                    <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                    <svg class="w-3 h-3 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                                 @endif
                                             </a>
                                         @endif
 
                                         @if($rejectedCount > 0)
-                                            <span class="inline-flex items-center gap-1 text-[11px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-800/80">
-                                                <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                            <span class="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-800/80">
+                                                <svg class="w-3 h-3 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                                                 <span>{{ $rejectedCount }} Berkas Ditolak</span>
                                             </span>
                                         @else
@@ -602,9 +645,9 @@
                                         @else
                                             <x-status-badge type="amber" label="MENUNGGU" />
                                         @endif
-                                        
+
                                         @if($app->admin_feedback)
-                                            <p class="text-[11px] text-rose-600 dark:text-rose-400 font-bold mt-1 max-w-[140px] truncate bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-100 dark:border-rose-900/50" 
+                                            <p class="text-[11px] text-rose-600 dark:text-rose-400 font-bold mt-1 max-w-[140px] truncate bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-100 dark:border-rose-900/50"
                                                title="{{ $app->admin_feedback }}">
                                                 "{{ $app->admin_feedback }}"
                                             </p>
@@ -614,15 +657,15 @@
                                 <td class="py-4 px-6 text-right whitespace-nowrap">
                                     <div class="flex items-center justify-end gap-2">
                                         <button type="button"
-                                                @click="openPreviewModal({{ json_encode($appData) }})" 
-                                                class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-2xs hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center gap-1.5"
+                                                @click="openPreviewModal({{ json_encode($appData) }})"
+                                                class="px-3 py-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-colors shadow-2xs cursor-pointer flex items-center gap-1.5"
                                                 title="Pratinjau Lengkap Pendaftaran Sidang">
-                                            <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                            <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                             <span>Preview</span>
                                         </button>
                                         <button type="button"
-                                                @click="selectedApp = {{ json_encode($appData) }}; openValidation = true" 
-                                                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all shadow-xs shadow-orange-500/20 hover:scale-[1.02] active:scale-95 cursor-pointer">
+                                                @click="openValidationModal({{ json_encode($appData) }})"
+                                                class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-[11px] font-bold rounded-xl uppercase tracking-wider transition-colors shadow-xs cursor-pointer">
                                             Validasi
                                         </button>
                                         <form action="{{ route('thesis-defense-applications.destroy', $app) }}"

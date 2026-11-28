@@ -67,18 +67,27 @@
                             <p class="text-xs text-slate-700 dark:text-slate-300 line-clamp-2 bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/60">{{ $app->thesis->title }}</p>
                         @endif
 
+                        @if($mHasDigitalForm)
+                            <div class="flex flex-wrap items-center gap-2">
+                                <a href="{{ $mFormulirUrl }}" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 rounded-xl text-xs font-bold">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                    <span>Formulir (PDF)</span>
+                                </a>
+                            </div>
+                        @endif
+
                         <div class="flex items-center gap-2 pt-1">
-                            <button type="button" @click="openPreviewModal({{ json_encode($mAppData) }})" class="flex-1 h-9 inline-flex items-center justify-center gap-1.5 px-3 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-xl text-xs font-bold transition-colors cursor-pointer">
+                            <button type="button" @click="openPreviewModal({{ json_encode($mAppData) }})" class="flex-1 h-10 inline-flex items-center justify-center gap-1.5 px-3 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 rounded-xl text-xs font-bold transition-colors cursor-pointer">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                 <span>Preview</span>
                             </button>
-                            <button type="button" @click="selectedApp = {{ json_encode($mAppData) }}; openValidation = true" class="flex-1 h-9 inline-flex items-center justify-center px-3 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer">
+                            <button type="button" @click="openValidationModal({{ json_encode($mAppData) }})" class="flex-1 h-10 inline-flex items-center justify-center px-3 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer">
                                 Validasi
                             </button>
                             <form action="{{ route('seminar-applications.destroy', $app) }}" method="POST" class="inline" data-confirm="Apakah Anda yakin ingin MEMBATALKAN &amp; MENGHAPUS pengajuan seminar proposal untuk mahasiswa {{ $student->name }}?" data-confirm-title="Batalkan Pengajuan Seminar" data-confirm-type="danger" data-confirm-button="Ya, Batalkan & Hapus">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" aria-label="Hapus pengajuan {{ $student->name }}" title="Batalkan & Hapus Pengajuan Seminar" class="h-9 w-9 inline-flex items-center justify-center bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 rounded-xl transition-colors cursor-pointer">
+                                <button type="submit" aria-label="Hapus pengajuan {{ $student->name }}" title="Batalkan & Hapus Pengajuan Seminar" class="h-10 w-10 inline-flex items-center justify-center bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 rounded-xl transition-colors cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             </form>

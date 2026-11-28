@@ -139,6 +139,10 @@ class DefenseDigitalRegistrationFormTest extends TestCase
         $response->assertSee('Ir. Pembimbing Dua, M.T');
         $response->assertSee('Kosong + Kotak Materai 10.000');
         $response->assertSee('19 Berkas Google Drive');
+        $response->assertSee('openBaak');
+        $response->assertSee('handleSubmit');
+        $response->assertSee('sibima_defense_draft_');
+        $response->assertSee('driveLinkStatus');
         $response->assertDontSee('name="file_formulir"', false);
     }
 
@@ -184,9 +188,14 @@ class DefenseDigitalRegistrationFormTest extends TestCase
         $this->assertEquals('41211', $freshStudent->postal_code);
         $this->assertEquals('0260411415', $freshStudent->home_phone);
 
-        // Status page shows Print & Preview PDF action
+        // Status page shows Print & Preview PDF action, clean Indonesian status title, status filter pills, and student self-cancel while pending
         $statusRes = $this->actingAs($freshStudent)->get(route('thesis-defense-applications.index'));
         $statusRes->assertStatus(200);
+        $statusRes->assertSee('Status Pengajuan Sidang');
+        $statusRes->assertDontSee('Status Pengajuan Sidang: PENDING');
+        $statusRes->assertSee('Batalkan Pengajuan');
+        $statusRes->assertSee(route('thesis-defense-applications.destroy', $app->id));
+        $statusRes->assertSee('statusFilter');
         $statusRes->assertSee('Cetak Formulir (PDF)');
         $statusRes->assertSee('Pratinjau PDF');
         $statusRes->assertSee(route('thesis-defense-applications.form-pdf', $app->id));
@@ -247,11 +256,13 @@ class DefenseDigitalRegistrationFormTest extends TestCase
         $this->actingAs($setup['p1'])->get(route('thesis-defense-applications.form-pdf', $app->id))->assertStatus(200);
         $this->actingAs($otherStudent)->get(route('thesis-defense-applications.form-pdf', $app->id))->assertStatus(403);
 
-        // Admin index shows Formulir (PDF) link & digital form payload
+        // Admin index shows Formulir (PDF) link, digital form payload & reactive validation modal helpers
         $adminRes = $this->actingAs($admin)->get(route('thesis-defense-applications.index', ['wave_id' => $setup['wave']->id]));
         $adminRes->assertStatus(200);
         $adminRes->assertSee('Formulir (PDF)');
         $adminRes->assertSee('has_digital_form');
+        $adminRes->assertSee('openValidationModal');
+        $adminRes->assertSee('rejectedReviewCount');
 
         // Admin ZIP includes auto-generated 1_Formulir_Pendaftaran.pdf
         $zipRes = $this->actingAs($admin)->get(route('thesis-defense-applications.download-zip', $app->id));
